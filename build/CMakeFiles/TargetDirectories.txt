@@ -1,3 +1,0 @@
-/home/user/MasterThesis/build/CMakeFiles/animationLoop.dir
-/home/user/MasterThesis/build/CMakeFiles/edit_cache.dir
-/home/user/MasterThesis/build/CMakeFiles/rebuild_cache.dir
