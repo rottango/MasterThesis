@@ -13,8 +13,8 @@
 
 int main()
 {
-    Node ugv1(0, 0, 0, 0, 5, 40, 45);
-    Node ugv2(0, 0, 0, 0, 5, 40, 45);
+    Node ugv1(0, 0, 0, 0, 0, 5, 40, 45);
+    Node ugv2(0, 0, 0, 0, 0, 5, 40, 45);
 
     double x = 1, y = 0, theta = 90;
     calculateRotationMatrix(x, y, theta);

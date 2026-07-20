@@ -14,6 +14,12 @@ void calculateRotationMatrix(double &x, double &y, double theta)
     y = old_x * sin(theta * PI / 180) - old_y * cos(theta * PI / 180);
 }
 
+void calculateNewPoints(Node &ugv, double theta)
+{
+    calculateRotationMatrix(ugv.x_axis_point, ugv.y_axis_point, theta);
+    ugv.theta_rotation += theta;
+}
+
 double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2)
 {
     double square_difference_x = (x2 - x1) * (x2 - x1);

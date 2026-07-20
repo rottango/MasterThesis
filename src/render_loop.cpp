@@ -1,3 +1,4 @@
+#include <calculate.hpp>
 #include <draw_on_screen.hpp>
 #include <node_class.hpp>
 #include <opencv2/opencv.hpp>
@@ -77,10 +78,13 @@ void renderLoop(cv::Mat img,
                 cv::imshow(windowName, tempImg);
             }
         }
-    case ',':
+    case ',': // rotate left main node
+        calculateNewPoints(ugv1, 1);
 
         break;
-    case '.':
+    case '.': // rotate right
+        calculateNewPoints(ugv1, -1);
+
         break;
     default:
         break;

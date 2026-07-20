@@ -13,6 +13,7 @@ public:
     double y_position; // [+] right / [-]left
     double z_position; // [+] up / [-] down
     double local_rotation;
+    double theta_rotation;
     double x_axis_point;
     double y_axis_point;
 
@@ -22,6 +23,7 @@ public:
          double y_position,
          double z_position,
          double local_rotation, // current absolute heading relative to the world axis
+         double theta_rotation,
          double vehicle_size,
          double inner,
          double measurment_error_CM);

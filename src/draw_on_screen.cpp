@@ -56,6 +56,7 @@ void drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 
 void drawAxis(cv::Mat &img, Node ugv)
 {
+
     cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_axis_point, ugv.y_position), cv::Scalar(0, 0, 255), 5);
     cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_position, ugv.y_axis_point), cv::Scalar(255, 0, 0), 5);
 }

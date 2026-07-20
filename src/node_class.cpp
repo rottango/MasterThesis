@@ -7,6 +7,7 @@ Node::Node(double x_position,
            double z_position,
            double vehicle_size,
            double local_rotation,
+           double theta_rotation,
            double inner,
            double measurment_error_CM)
 {
@@ -14,6 +15,9 @@ Node::Node(double x_position,
     this->y_position = y_position;
     this->z_position = z_position;
     this->local_rotation = local_rotation;
+    this->theta_rotation = theta_rotation;
+    this->local_rotation = std::fmod(theta_rotation, 360.00f);
+
     this->vehicle_size = vehicle_size;
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
