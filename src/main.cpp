@@ -16,7 +16,10 @@ int main()
     Node ugv1(0, 0, 0, 0, 5, 40, 45);
     Node ugv2(0, 0, 0, 0, 5, 40, 45);
 
-    const std::string windowName = "w";
+    double x = 1, y = 0, theta = 90;
+    calculateRotationMatrix(x, y, theta);
+    std::cout << "Rotation matrix values new x: " << x << " new y: " << y << "\n\n";
+    const std::string windowName = "Visualization";
     cv::namedWindow(windowName, cv::WindowFlags::WINDOW_NORMAL);
     cv::resizeWindow(windowName, cv::Size(1920, 1080));
     cv::Mat img(1080, 1920, CV_8UC3, cv::Scalar(255, 255, 255));

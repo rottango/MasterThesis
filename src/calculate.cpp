@@ -5,6 +5,15 @@ void calculate()
 {
 }
 
+void calculateRotationMatrix(double &x, double &y, double theta)
+{
+    double old_x = x;
+    double old_y = y;
+
+    x = old_x * cos(theta * PI / 180) - old_y * sin(theta * PI / 180);
+    y = old_x * sin(theta * PI / 180) - old_y * cos(theta * PI / 180);
+}
+
 double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2)
 {
     double square_difference_x = (x2 - x1) * (x2 - x1);
