@@ -7,6 +7,7 @@ void calculate()
 
 void calculateRotationMatrix(double &x, double &y, double theta)
 {
+
     double old_x = x;
     double old_y = y;
 
@@ -16,7 +17,13 @@ void calculateRotationMatrix(double &x, double &y, double theta)
 
 void calculateNewPoints(Node &ugv, double theta)
 {
-    calculateRotationMatrix(ugv.x_axis_point, ugv.y_axis_point, theta);
+    double x_position = ugv.x_position, y_position = ugv.y_position;
+    double x_axis_point = ugv.x_axis_point, y_axis_point = ugv.y_axis_point;
+    double x_pos_diff = x_axis_point - x_position;
+    double y_pos_diff = y_axis_point - y_position;
+    calculateRotationMatrix(x_pos_diff, y_pos_diff, theta);
+    ugv.x_axis_point = ugv.x_position + x_pos_diff;
+    ugv.y_axis_point = ugv.y_position + y_pos_diff;
     ugv.theta_rotation += theta;
 }
 
