@@ -6,15 +6,22 @@ Node::Node(double x_position,
            double y_position,
            double z_position,
            double vehicle_size,
+           double local_rotation,
            double inner,
            double measurment_error_CM)
 {
     this->x_position = x_position;
     this->y_position = y_position;
     this->z_position = z_position;
+    this->local_rotation = local_rotation;
     this->vehicle_size = vehicle_size;
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
+}
+
+void Node::change_local_rotation(double new_local_rotation)
+{
+    this->local_rotation = new_local_rotation;
 }
 
 void Node::changePositionXYZ(double new_x_position,
