@@ -66,15 +66,22 @@ void renderLoop(cv::Mat img,
                 ugv2.x_position = j - 100;
                 ugv2.y_position = i - 100;
 
-                char pressedKey = cv::waitKey(frequencyOfMapUpdate);
+                char pressedKey = cv::waitKey(frequencyOfMapUpdate - frequencyOfMapUpdate + 2);
 
                 ugv1.drawNode(tempImg);
                 ugv2.drawNode(tempImg);
                 drawConnectingLine(tempImg, ugv1, ugv2);
                 drawTextOnScreen(tempImg, ugv1, ugv2);
+                drawAxis(tempImg, ugv1);
+                drawAxis(tempImg, ugv2);
                 cv::imshow(windowName, tempImg);
             }
         }
+    case ',':
+
+        break;
+    case '.':
+        break;
     default:
         break;
     }

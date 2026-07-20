@@ -17,6 +17,8 @@ Node::Node(double x_position,
     this->vehicle_size = vehicle_size;
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
+
+    changeAxisPoints(this->x_position, this->y_position, this->z_position);
 }
 
 void Node::change_local_rotation(double new_local_rotation)
@@ -31,6 +33,16 @@ void Node::changePositionXYZ(double new_x_position,
     this->x_position = new_x_position;
     this->y_position = new_y_position;
     this->z_position = new_z_position;
+
+    changeAxisPoints(this->x_position, this->y_position, this->z_position);
+}
+
+void Node::changeAxisPoints(double new_x_position,
+                            double new_y_position,
+                            double new_z_position)
+{
+    this->x_axis_point = new_x_position + 100;
+    this->y_axis_point = new_y_position - 100;
 }
 
 void Node::drawNode(cv::Mat img)

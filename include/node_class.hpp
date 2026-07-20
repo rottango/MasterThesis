@@ -13,6 +13,8 @@ public:
     double y_position; // [+] right / [-]left
     double z_position; // [+] up / [-] down
     double local_rotation;
+    double x_axis_point;
+    double y_axis_point;
 
     // struct colorPreset();
 
@@ -27,6 +29,10 @@ public:
     void changePositionXYZ(double new_x_position,
                            double new_y_position,
                            double new_z_position);
+
+    void changeAxisPoints(double new_x_position,
+                          double new_y_position,
+                          double new_z_position);
 
     void change_local_rotation(double new_local_rotation);
 
