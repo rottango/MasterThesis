@@ -1,6 +1,10 @@
 #pragma once
 #include <calculate.hpp>
 #include <node_class.hpp>
+
+#define DEGREES_TO_RADIANS PI / 180
+#define RADIANS_TO_DEGREES 180 / PI
+
 void calculate()
 {
 }
@@ -11,8 +15,8 @@ void calculateRotationMatrix(double &x, double &y, double theta)
     double old_x = x;
     double old_y = y;
 
-    x = old_x * cos(theta * PI / 180) - old_y * sin(theta * PI / 180);
-    y = old_x * sin(theta * PI / 180) + old_y * cos(theta * PI / 180);
+    x = old_x * cos(theta * DEGREES_TO_RADIANS) - old_y * sin(theta * DEGREES_TO_RADIANS);
+    y = old_x * sin(theta * DEGREES_TO_RADIANS) + old_y * cos(theta * DEGREES_TO_RADIANS);
 }
 
 void calculateNewPoints(Node &ugv, double theta)
@@ -40,7 +44,7 @@ double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2
 
 double calculateAngle(Node observer, Node target)
 {
-    return ((atan2(target.x_position - observer.x_position, target.y_position - observer.y_position) * 180 / PI) - 180) * (-1);
+    return ((atan2(target.x_position - observer.x_position, target.y_position - observer.y_position) * RADIANS_TO_DEGREES) - 180) * (-1);
 }
 
 // ugv (100,100)
