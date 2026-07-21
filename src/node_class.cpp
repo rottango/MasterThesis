@@ -5,9 +5,9 @@
 Node::Node(double x_position,
            double y_position,
            double z_position,
-           double vehicle_size,
            double local_rotation,
            double theta_rotation,
+           double vehicle_size,
            double inner,
            double measurment_error_CM)
 {
@@ -16,7 +16,6 @@ Node::Node(double x_position,
     this->z_position = z_position;
     this->local_rotation = local_rotation;
     this->theta_rotation = theta_rotation;
-    this->local_rotation = std::fmod(theta_rotation, 360.00f);
 
     this->vehicle_size = vehicle_size;
     this->inner = inner;
@@ -29,9 +28,9 @@ Node::Node(double x_position,
     // changeAxisPoints(t;his->x_position, this->y_position, this->z_position);
 }
 
-void Node::change_local_rotation(double new_local_rotation)
+void Node::change_theta_rotation(double new_theta_rotation)
 {
-    this->local_rotation = new_local_rotation;
+    this->theta_rotation = (std::fmod(this->theta_rotation + new_theta_rotation, 360.00f));
 }
 
 void Node::changePositionXYZ(double new_x_position,

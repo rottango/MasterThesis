@@ -10,8 +10,9 @@ void drawTextOnScreen(cv::Mat &img, Node observer, Node target)
     std::string measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
     // double result = atan((target.y_position - observer.y_position) / (target.x_position - observer.x_position)) * 180 / PI;
     double resultarctan2 = calculateAngle(observer, target);
+
     // std::string angle_output = "angle: = " + std::to_string(result);
-    std::string angle_output_atan2 = "angle atan2: = " + std::to_string(resultarctan2);
+    std::string angle_output_atan2 = "angle atan2: = " + std::to_string(std::fmod(resultarctan2 + observer.theta_rotation, 360.00f));
 
     cv::putText(img,
                 distance_output + measurment_error_output,

@@ -26,7 +26,7 @@ void calculateNewPoints(Node &ugv, double theta)
     ugv.y_y_axis_point = ugv.y_position + y_pos_diff;
     ugv.x_x_axis_point = ugv.x_position - y_pos_diff;
     ugv.y_x_axis_point = ugv.y_position + x_pos_diff;
-    ugv.theta_rotation += theta;
+    ugv.change_theta_rotation(theta);
 }
 
 double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2)

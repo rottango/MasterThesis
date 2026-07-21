@@ -38,7 +38,7 @@ public:
                           double new_y_position,
                           double new_z_position);
 
-    void change_local_rotation(double new_local_rotation);
+    void change_theta_rotation(double new_theta_rotation);
 
     void drawNode(cv::Mat img);
 
