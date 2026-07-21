@@ -7,4 +7,5 @@
 void renderLoop(cv::Mat img,
                 const std::string windowName,
                 Node &ugv1,
-                Node &ugv2);
+                Node &ugv2,
+                Draw &draw1);

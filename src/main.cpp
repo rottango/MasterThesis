@@ -5,7 +5,7 @@
 #include <thread>
 
 #include <calculate.hpp>
-#include <draw_on_screen.hpp>
+#include <draw_class.hpp>
 #include <node_class.hpp>
 #include <render_loop.hpp>
 
@@ -13,8 +13,9 @@
 
 int main()
 {
-    Node ugv1(0, 0, 0, 0, 0, 5, 40, 45);
-    Node ugv2(0, 0, 0, 0, 0, 5, 40, 45);
+    Node ugv1(0, 0, 0, 0, 5, 40, 45);
+    Node ugv2(0, 0, 0, 0, 5, 40, 45);
+    Draw draw1;
 
     const std::string windowName = "Visualization";
     cv::namedWindow(windowName, cv::WindowFlags::WINDOW_NORMAL);
@@ -24,7 +25,7 @@ int main()
     while (true)
     {
         cv::Mat imgCop = img.clone();
-        renderLoop(imgCop, windowName, ugv1, ugv2);
+        renderLoop(imgCop, windowName, ugv1, ugv2, draw1);
     }
 
     return 0;

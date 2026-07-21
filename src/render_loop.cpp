@@ -1,5 +1,5 @@
 #include <calculate.hpp>
-#include <draw_on_screen.hpp>
+#include <draw_class.hpp>
 #include <node_class.hpp>
 #include <opencv2/opencv.hpp>
 
@@ -8,7 +8,8 @@ const int frequencyOfMapUpdate = 17;
 void renderLoop(cv::Mat img,
                 const std::string windowName,
                 Node &ugv1,
-                Node &ugv2)
+                Node &ugv2,
+                Draw &draw1)
 {
     char pressedKey = cv::waitKey(frequencyOfMapUpdate);
     switch (pressedKey)
@@ -71,10 +72,10 @@ void renderLoop(cv::Mat img,
 
                 ugv1.drawNode(tempImg);
                 ugv2.drawNode(tempImg);
-                drawConnectingLine(tempImg, ugv1, ugv2);
-                drawTextOnScreen(tempImg, ugv1, ugv2);
-                drawAxis(tempImg, ugv1);
-                drawAxis(tempImg, ugv2);
+                draw1.drawConnectingLine(tempImg, ugv1, ugv2);
+                draw1.drawTextOnScreen(tempImg, ugv1, ugv2);
+                draw1.drawAxis(tempImg, ugv1);
+                draw1.drawAxis(tempImg, ugv2);
                 cv::imshow(windowName, tempImg);
             }
         }
@@ -90,7 +91,7 @@ void renderLoop(cv::Mat img,
         break;
     }
 
-    draw(img, ugv1, ugv2);
+    draw1.drawFrame(img, ugv1, ugv2);
     cv::imshow(windowName, img);
 
     std::cout << "PressedKey: " << pressedKey << "\n";

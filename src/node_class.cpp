@@ -5,7 +5,6 @@
 Node::Node(double x_position,
            double y_position,
            double z_position,
-           double local_rotation,
            double theta_rotation,
            double vehicle_size,
            double inner,
@@ -14,7 +13,6 @@ Node::Node(double x_position,
     this->x_position = x_position;
     this->y_position = y_position;
     this->z_position = z_position;
-    this->local_rotation = local_rotation;
     this->theta_rotation = theta_rotation;
 
     this->vehicle_size = vehicle_size;
@@ -25,12 +23,36 @@ Node::Node(double x_position,
     this->y_x_axis_point = y_position;
     this->x_y_axis_point = x_position;
     this->y_y_axis_point = y_position - 100;
-    // changeAxisPoints(t;his->x_position, this->y_position, this->z_position);
+
+    assingColors();
 }
 
-void Node::change_theta_rotation(double new_theta_rotation)
+void Node::changeThetaRotation(double new_theta_rotation)
 {
     this->theta_rotation = (std::fmod(this->theta_rotation + new_theta_rotation, 360.00f));
+}
+
+void Node::assingColors()
+{
+    this->vehicle_color[0] = 35;
+    this->vehicle_color[1] = 75;
+    this->vehicle_color[2] = 0;
+
+    this->inner_color[0] = 0;
+    this->inner_color[1] = 100;
+    this->inner_color[2] = 0;
+
+    this->measurment_error_color[0] = 0;
+    this->measurment_error_color[1] = 114;
+    this->measurment_error_color[2] = 0;
+
+    this->observer_line_color[0] = 0;
+    this->observer_line_color[1] = 128;
+    this->observer_line_color[2] = 0;
+
+    this->text_color[0] = 0;
+    this->text_color[1] = 176;
+    this->text_color[2] = 56;
 }
 
 void Node::changePositionXYZ(double new_x_position,
@@ -59,9 +81,9 @@ void Node::changeAxisPoints(double new_x_position,
 
 void Node::drawNode(cv::Mat img)
 {
-    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->vehicle_size, cv::Scalar(52, 66, 227), cv::FILLED, 8, 0);
-    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->inner, cv::Scalar(52, 66, 227), 2, 8, 0);
-    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->measurment_error_CM, cv::Scalar(52, 66, 227), 2, 8, 0);
+    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->vehicle_size, this->vehicle_color, cv::FILLED, 8, 0);
+    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->inner, this->inner_color, 2, 8, 0);
+    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->measurment_error_CM, this->measurment_error_CM, 2, 8, 0);
 }
 
 void Node::setVehicleSize(double newvehicle_size)

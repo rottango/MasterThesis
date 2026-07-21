@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.16)
  set(
  SOURCES
  src/calculate.cpp
- src/draw_on_screen.cpp
+ src/draw_class.cpp
  src/main.cpp
  src/node_class.cpp
  src/render_loop.cpp

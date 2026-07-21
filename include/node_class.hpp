@@ -1,5 +1,6 @@
 #pragma once
 
+#include "boost/lexical_cast.hpp"
 #include <opencv2/opencv.hpp>
 
 // observer
@@ -9,22 +10,30 @@
 class Node
 {
 public:
-    double x_position; // [+] front / [-]back
-    double y_position; // [+] right / [-]left
+    double x_position; // [+] right / [-]left
+    double y_position; // [+] back/ [-]front
     double z_position; // [+] up / [-] down
-    double local_rotation;
     double theta_rotation;
     double x_y_axis_point;
     double y_y_axis_point;
     double x_x_axis_point;
     double y_x_axis_point;
-
-    // struct colorPreset();
+    // rgb
+    cv::Scalar vehicle_color;          // 004b23 //800f2f
+    cv::Scalar inner_color;            // 006400 //a4133c
+    cv::Scalar measurment_error_color; // 007200 //c9184a
+    cv::Scalar observer_line_color;    // 008000 //ff4d6d
+    cv::Scalar text_color;             // 38b000 //ff758f
+    // bgr ugv1/ugv2
+    //  234b00 //2f0f80
+    //  006400 //3c13a4
+    //  007200 //4a18c9
+    //  008000 //6d4dff
+    //  00b038 //8f75ff
 
     Node(double x_position,
          double y_position,
          double z_position,
-         double local_rotation, // current absolute heading relative to the world axis
          double theta_rotation,
          double vehicle_size,
          double inner,
@@ -38,7 +47,9 @@ public:
                           double new_y_position,
                           double new_z_position);
 
-    void change_theta_rotation(double new_theta_rotation);
+    void assingColors();
+
+    void changeThetaRotation(double new_theta_rotation);
 
     void drawNode(cv::Mat img);
 
