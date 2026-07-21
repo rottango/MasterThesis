@@ -18,12 +18,12 @@ public:
     double y_y_axis_point;
     double x_x_axis_point;
     double y_x_axis_point;
-    // rgb
-    cv::Scalar vehicle_color;          // 004b23 //800f2f
-    cv::Scalar inner_color;            // 006400 //a4133c
-    cv::Scalar measurment_error_color; // 007200 //c9184a
-    cv::Scalar observer_line_color;    // 008000 //ff4d6d
-    cv::Scalar text_color;             // 38b000 //ff758f
+
+    cv::Scalar vehicle_color;
+    cv::Scalar inner_color;
+    cv::Scalar measurment_error_color;
+    cv::Scalar observer_line_color;
+    cv::Scalar text_color;
     // bgr ugv1/ugv2
     //  234b00 //2f0f80
     //  006400 //3c13a4

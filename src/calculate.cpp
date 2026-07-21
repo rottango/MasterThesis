@@ -46,34 +46,3 @@ double calculateAngle(Node observer, Node target)
 {
     return ((atan2(target.x_position - observer.x_position, target.y_position - observer.y_position) * RADIANS_TO_DEGREES) - 180) * (-1);
 }
-
-// ugv (100,100)
-// axis point (200,100)
-// theta(90)
-
-// x_pos_diff= 200 - 100 = 100
-// y_pos_diff= 100 - 100 = 0
-// normalized vector = (100,0)
-// wchich is correct i think
-
-// new point:
-
-// new_x=100 * cos(90) - 0 * sin(90)
-// cos(90)=0
-// new_y=100*sin(90) + 0*cos(90)
-// sin(90)=1
-
-// new_x= 100 *0=0
-// new_y= 100
-
-// i think its ok?
-
-// ugv.x_y_axis_point = ugv.x_position + x_pos_diff;
-// ugv.y_y_axis_point = ugv.y_position + y_pos_diff;
-// ugv.theta_rotation += theta;
-
-// new cordinates of axis point:
-// x_y_axis_point = 100+0
-// y_y_axis_point= 100+100
-//(100,200)
-//
