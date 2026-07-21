@@ -1,6 +1,25 @@
+#pragma once
+
 #include <calculate.hpp>
 #include <draw_class.hpp>
 #include <node_class.hpp>
+#include <opencv2/opencv.hpp>
+#include <stdio.h>
+
+Draw::Draw(std::string windowName,
+           cv::WindowFlags flag,
+           cv::Size windowSize,
+           int rows,
+           int cols,
+           int makeTypeFlag,
+           cv::Scalar backgroundColor) : img{rows,
+                                             cols,
+                                             makeTypeFlag,
+                                             backgroundColor}
+{
+    cv::namedWindow(windowName, flag);
+    cv::resizeWindow(windowName, windowSize);
+}
 
 void Draw::generateText(Node observer, Node target)
 {

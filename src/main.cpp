@@ -15,16 +15,26 @@ int main()
 {
     Node ugv1(0, 0, 0, 0, 5, 40, 45);
     Node ugv2(0, 0, 0, 0, 5, 40, 45);
-    Draw draw1;
 
-    const std::string windowName = "Visualization";
-    cv::namedWindow(windowName, cv::WindowFlags::WINDOW_NORMAL);
-    cv::resizeWindow(windowName, cv::Size(1920, 1080));
-    cv::Mat img(1080, 1920, CV_8UC3, cv::Scalar(255, 255, 255));
+    std::string windowName = "Visualization";
+    cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;
+    int rows = 1080;
+    int cols = 1920;
+    cv::Size windowSize{cols, rows};
+    int makeTypeFlag = CV_8UC3;
+    cv::Scalar backgroundColor{255, 255, 255};
+
+    Draw draw1(windowName,
+               flag,
+               windowSize,
+               rows,
+               cols,
+               makeTypeFlag,
+               backgroundColor);
 
     while (true)
     {
-        cv::Mat imgCop = img.clone();
+        cv::Mat imgCop = draw1.img.clone();
         renderLoop(imgCop, windowName, ugv1, ugv2, draw1);
     }
 

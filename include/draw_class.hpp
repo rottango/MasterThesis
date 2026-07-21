@@ -14,6 +14,16 @@ public:
 
     cv::Point2d middleOfAngleLine;
 
+    cv::Mat img;
+
+    Draw(std::string windowNameme,
+         cv::WindowFlags flag,
+         cv::Size windowSize,
+         int rows,
+         int cols,
+         int makeTypeFlag,
+         cv::Scalar backgroundColor);
+
     void drawTextOnScreen(cv::Mat &img, Node ugv1, Node ugv2);
 
     void drawAxis(cv::Mat &img, Node ugv);
