@@ -22,7 +22,11 @@ Node::Node(double x_position,
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
 
-    changeAxisPoints(this->x_position, this->y_position, this->z_position);
+    this->x_x_axis_point = x_position + 100;
+    this->y_x_axis_point = y_position;
+    this->x_y_axis_point = x_position;
+    this->y_y_axis_point = y_position - 100;
+    // changeAxisPoints(t;his->x_position, this->y_position, this->z_position);
 }
 
 void Node::change_local_rotation(double new_local_rotation)
@@ -34,19 +38,24 @@ void Node::changePositionXYZ(double new_x_position,
                              double new_y_position,
                              double new_z_position)
 {
+    double x_delta = new_x_position - this->x_position;
+    double y_delta = new_y_position - this->y_position;
+    double z_delta = new_z_position - this->z_position;
     this->x_position = new_x_position;
     this->y_position = new_y_position;
     this->z_position = new_z_position;
 
-    changeAxisPoints(this->x_position, this->y_position, this->z_position);
+    changeAxisPoints(x_delta, y_delta, z_delta);
 }
 
 void Node::changeAxisPoints(double new_x_position,
                             double new_y_position,
                             double new_z_position)
 {
-    this->x_axis_point = new_x_position + 100;
-    this->y_axis_point = new_y_position - 100;
+    this->x_y_axis_point = x_y_axis_point + new_x_position;
+    this->y_y_axis_point = y_y_axis_point + new_y_position;
+    this->x_x_axis_point = x_x_axis_point + new_x_position;
+    this->y_x_axis_point = y_x_axis_point + new_y_position;
 }
 
 void Node::drawNode(cv::Mat img)

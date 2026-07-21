@@ -14,8 +14,10 @@ public:
     double z_position; // [+] up / [-] down
     double local_rotation;
     double theta_rotation;
-    double x_axis_point;
-    double y_axis_point;
+    double x_y_axis_point;
+    double y_y_axis_point;
+    double x_x_axis_point;
+    double y_x_axis_point;
 
     // struct colorPreset();
 

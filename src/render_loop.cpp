@@ -79,11 +79,11 @@ void renderLoop(cv::Mat img,
             }
         }
     case ',': // rotate left main node
-        calculateNewPoints(ugv1, 1);
+        calculateNewPoints(ugv1, -1);
 
         break;
     case '.': // rotate right
-        calculateNewPoints(ugv1, -1);
+        calculateNewPoints(ugv1, 1);
 
         break;
     default:

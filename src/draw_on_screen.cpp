@@ -56,9 +56,8 @@ void drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 
 void drawAxis(cv::Mat &img, Node ugv)
 {
-
-    cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_axis_point, ugv.y_position), cv::Scalar(0, 0, 255), 5);
-    cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_position, ugv.y_axis_point), cv::Scalar(255, 0, 0), 5);
+    cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_x_axis_point, ugv.y_x_axis_point), cv::Scalar(0, 0, 255), 5); // x axis red
+    cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_y_axis_point, ugv.y_y_axis_point), cv::Scalar(255, 0, 0), 5); // y axis blue
 }
 
 void draw(cv::Mat &img, Node ugv1, Node ugv2)
