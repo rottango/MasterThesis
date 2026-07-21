@@ -1,6 +1,7 @@
 #pragma once
 
 #include "boost/lexical_cast.hpp"
+#include <color_palet_struct.hpp>
 #include <opencv2/opencv.hpp>
 
 // observer
@@ -19,11 +20,8 @@ public:
     double x_x_axis_point;
     double y_x_axis_point;
 
-    cv::Scalar vehicle_color;
-    cv::Scalar inner_color;
-    cv::Scalar measurment_error_color;
-    cv::Scalar observer_line_color;
-    cv::Scalar text_color;
+    colorPalet ugvColorPalet;
+
     // bgr ugv1/ugv2
     //  234b00 //2f0f80
     //  006400 //3c13a4

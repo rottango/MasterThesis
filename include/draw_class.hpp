@@ -13,7 +13,7 @@ public:
     std::string angle_output_atan2;
 
     cv::Point2d middleOfAngleLine;
-
+    cv::Point2d centerOfScreen;
     cv::Mat img;
 
     Draw(std::string windowNameme,

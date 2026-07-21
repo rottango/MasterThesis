@@ -19,6 +19,8 @@ Draw::Draw(std::string windowName,
 {
     cv::namedWindow(windowName, flag);
     cv::resizeWindow(windowName, windowSize);
+
+    this->centerOfScreen = cv::Point2d(rows / 2, cols / 2);
 }
 
 void Draw::generateText(Node observer, Node target)
@@ -34,25 +36,25 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 {
     cv::putText(img,
                 this->distance_output + this->measurment_error_output,
-                cv::Point2d(img.rows / 2, img.cols / 2),
+                this->centerOfScreen,
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN, 2,
-                cv::Scalar(127, 127, 127),
+                observer.ugvColorPalet.text_color,
                 1,
                 7);
     cv::putText(img,
                 this->observer_pos_output,
-                cv::Point2d(img.rows / 2, (img.cols / 2) + 25),
+                cv::Point2d(this->centerOfScreen.x, this->centerOfScreen.y + 25),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
-                cv::Scalar(127, 127, 127),
+                observer.ugvColorPalet.text_color,
                 1,
                 7);
     cv::putText(img,
                 this->target_pos_output,
-                cv::Point2d(img.rows / 2, (img.cols / 2) + 50),
+                cv::Point2d(this->centerOfScreen.x, this->centerOfScreen.y + 50),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
-                cv::Scalar(127, 127, 127),
+                target.ugvColorPalet.text_color,
                 1,
                 7);
     cv::putText(img,
@@ -60,7 +62,7 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
                 this->middleOfAngleLine,
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 0.75,
-                cv::Scalar(127, 127, 127),
+                observer.ugvColorPalet.text_color,
                 1,
                 7);
 }
@@ -87,7 +89,7 @@ void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
     cv::line(img,
              cv::Point2d(observer.x_position, observer.y_position),
              cv::Point2d(target.x_position, target.y_position),
-             observer.observer_line_color,
+             observer.ugvColorPalet.observer_line_color,
              2,
              cv::LineTypes::LINE_4,
              0);

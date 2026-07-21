@@ -8,7 +8,7 @@ Node::Node(double x_position,
            double theta_rotation,
            double vehicle_size,
            double inner,
-           double measurment_error_CM)
+           double measurment_error_CM) : ugvColorPalet()
 {
     this->x_position = x_position;
     this->y_position = y_position;
@@ -34,25 +34,25 @@ void Node::changeThetaRotation(double new_theta_rotation)
 
 void Node::assingColors()
 {
-    this->vehicle_color[0] = 35;
-    this->vehicle_color[1] = 75;
-    this->vehicle_color[2] = 0;
+    ugvColorPalet.vehicle_color[0] = 35;
+    ugvColorPalet.vehicle_color[1] = 75;
+    ugvColorPalet.vehicle_color[2] = 0;
 
-    this->inner_color[0] = 0;
-    this->inner_color[1] = 100;
-    this->inner_color[2] = 0;
+    ugvColorPalet.inner_color[0] = 0;
+    ugvColorPalet.inner_color[1] = 100;
+    ugvColorPalet.inner_color[2] = 0;
 
-    this->measurment_error_color[0] = 0;
-    this->measurment_error_color[1] = 114;
-    this->measurment_error_color[2] = 0;
+    ugvColorPalet.measurment_error_color[0] = 0;
+    ugvColorPalet.measurment_error_color[1] = 114;
+    ugvColorPalet.measurment_error_color[2] = 0;
 
-    this->observer_line_color[0] = 0;
-    this->observer_line_color[1] = 128;
-    this->observer_line_color[2] = 0;
+    ugvColorPalet.observer_line_color[0] = 0;
+    ugvColorPalet.observer_line_color[1] = 128;
+    ugvColorPalet.observer_line_color[2] = 0;
 
-    this->text_color[0] = 0;
-    this->text_color[1] = 176;
-    this->text_color[2] = 56;
+    ugvColorPalet.text_color[0] = 0;
+    ugvColorPalet.text_color[1] = 176;
+    ugvColorPalet.text_color[2] = 56;
 }
 
 void Node::changePositionXYZ(double new_x_position,
@@ -81,14 +81,14 @@ void Node::changeAxisPoints(double new_x_position,
 
 void Node::drawNode(cv::Mat img)
 {
-    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->vehicle_size, this->vehicle_color, cv::FILLED, 8, 0);
-    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->inner, this->inner_color, 2, 8, 0);
-    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->measurment_error_CM, this->measurment_error_CM, 2, 8, 0);
+    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->vehicle_size, this->ugvColorPalet.vehicle_color, cv::FILLED, 8, 0);
+    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->inner, this->ugvColorPalet.inner_color, 2, 8, 0);
+    cv::circle(img, cv::Point2d(this->x_position, this->y_position), this->measurment_error_CM, this->ugvColorPalet.measurment_error_color, 2, 8, 0);
 }
 
-void Node::setVehicleSize(double newvehicle_size)
+void Node::setVehicleSize(double new_vehicle_size)
 {
-    this->vehicle_size = newvehicle_size;
+    this->vehicle_size = new_vehicle_size;
 }
 
 void Node::setInner(double new_inner)
