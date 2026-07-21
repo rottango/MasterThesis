@@ -5,6 +5,7 @@
 #include <thread>
 
 #include <calculate.hpp>
+#include <color_palet_struct.hpp>
 #include <draw_class.hpp>
 #include <node_class.hpp>
 #include <render_loop.hpp>
@@ -13,8 +14,8 @@
 
 int main()
 {
-    Node ugv1(0, 0, 0, 0, 5, 40, 45);
-    Node ugv2(0, 0, 0, 0, 5, 40, 45);
+    Node ugv1(0, 0, 0, 0, 5, 40, 45, ugv1ColorPalet);
+    Node ugv2(0, 0, 0, 0, 5, 40, 45, ugv2ColorPalet);
 
     std::string windowName = "Visualization";
     cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;

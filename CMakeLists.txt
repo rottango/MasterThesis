@@ -14,6 +14,7 @@ cmake_minimum_required(VERSION 3.16)
  src/main.cpp
  src/node_class.cpp
  src/render_loop.cpp
+ src/color_palet_struct.cpp
  )
  
  

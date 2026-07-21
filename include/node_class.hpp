@@ -35,7 +35,8 @@ public:
          double theta_rotation,
          double vehicle_size,
          double inner,
-         double measurment_error_CM);
+         double measurment_error_CM,
+         colorPalet ugvColorPalet);
 
     void changePositionXYZ(double new_x_position,
                            double new_y_position,

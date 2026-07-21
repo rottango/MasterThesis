@@ -8,7 +8,8 @@ Node::Node(double x_position,
            double theta_rotation,
            double vehicle_size,
            double inner,
-           double measurment_error_CM) : ugvColorPalet()
+           double measurment_error_CM,
+           colorPalet newugvColorPalet)
 {
     this->x_position = x_position;
     this->y_position = y_position;
@@ -24,7 +25,7 @@ Node::Node(double x_position,
     this->x_y_axis_point = x_position;
     this->y_y_axis_point = y_position - 100;
 
-    assingColors();
+    this->ugvColorPalet = newugvColorPalet;
 }
 
 void Node::changeThetaRotation(double new_theta_rotation)
