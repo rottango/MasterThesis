@@ -14,8 +14,8 @@
 
 int main()
 {
-    Node ugv1(0, 0, 0, 0, 5, 40, 45, ugv1ColorPalet);
-    Node ugv2(0, 0, 0, 0, 5, 40, 45, ugv2ColorPalet);
+    Node ugv1(500, 500, 0, 0, 5, 40, 45, ugv1ColorPalet);
+    Node ugv2(1000, 500, 0, 0, 5, 40, 45, ugv2ColorPalet);
 
     std::string windowName = "Visualization";
     cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;

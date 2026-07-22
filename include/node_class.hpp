@@ -20,6 +20,8 @@ public:
     double x_x_axis_point;
     double y_x_axis_point;
 
+    double observer_angle_atan2_measurment;
+
     colorPalet ugvColorPalet;
 
     // bgr ugv1/ugv2
