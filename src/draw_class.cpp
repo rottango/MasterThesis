@@ -23,14 +23,19 @@ Draw::Draw(std::string windowName,
     this->centerOfScreen = cv::Point2d(rows / 2, cols / 2);
 }
 
-void Draw::generateText(Node &observer, Node target)
+void Draw::generateText(Node observer, Node target)
 {
     this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.x_position, target.x_position, observer.y_position, target.y_position));
     this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.x_position) + "," + std::to_string(observer.y_position) + ")";
     this->target_pos_output = "target (x,y) = (" + std::to_string(target.x_position) + "," + std::to_string(target.y_position) + ")";
     this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
-    observer.observer_angle_atan2_measurment = std::fmod(calculateAngle(observer, target) + observer.theta_rotation, 360.00f);
-    this->angle_output_atan2 = "angle atan2: = " + std::to_string(observer.observer_angle_atan2_measurment);
+
+    double remainder = std::fmod(calculateAngle(observer, target) + observer.theta_rotation, 360.00f);
+    if (remainder < 0)
+    {
+        remainder += 360;
+    }
+    this->angle_output_atan2 = "angle atan2: = " + std::to_string(remainder);
 }
 
 void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
@@ -74,7 +79,7 @@ void Draw::drawAxis(cv::Mat &img, Node ugv)
     cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_y_axis_point, ugv.y_y_axis_point), cv::Scalar(255, 0, 0), 5); // y axis blue
 }
 
-void Draw::drawFrame(cv::Mat &img, Node &ugv1, Node ugv2)
+void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
 {
     ugv1.drawNode(img);
     ugv2.drawNode(img);
@@ -83,7 +88,6 @@ void Draw::drawFrame(cv::Mat &img, Node &ugv1, Node ugv2)
     drawTextOnScreen(img, ugv1, ugv2);
     drawAxis(img, ugv1);
     drawAxis(img, ugv2);
-    drawAngleSemiCircle(ugv1, img);
 }
 
 void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
@@ -96,18 +100,4 @@ void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
              cv::LineTypes::LINE_4,
              0);
     this->middleOfAngleLine = cv::Point2d((observer.x_position + target.x_position) / 2, (observer.y_position + target.y_position) / 2);
-}
-
-void Draw::drawAngleSemiCircle(Node observer,
-                               cv::Mat &img)
-{
-    cv::ellipse(img,
-                cv::Point2d(observer.x_position, observer.y_position),
-                cv::Size(100, 100),
-                0,   // angle
-                -90, // start angle
-                0,
-                observer.ugvColorPalet.text_color,
-                1,
-                cv::LineTypes::LINE_8);
 }

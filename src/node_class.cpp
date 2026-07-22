@@ -30,7 +30,15 @@ Node::Node(double x_position,
 
 void Node::changeThetaRotation(double new_theta_rotation)
 {
-    this->theta_rotation = (std::fmod(this->theta_rotation + new_theta_rotation, 360.00f));
+    double remainder = std::fmod(this->theta_rotation + new_theta_rotation, 360.00f);
+    if (remainder < 0)
+    {
+        this->theta_rotation = remainder + 360;
+    }
+    else
+    {
+        this->theta_rotation = remainder;
+    }
 }
 
 void Node::assingColors()
