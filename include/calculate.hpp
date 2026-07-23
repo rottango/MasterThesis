@@ -5,6 +5,10 @@
 
 #define PI 3.14159265
 
+cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point, cv::Point2d opencv_origin_point);
+
+cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point, cv::Point2d opencv_origin_point);
+
 void calculate();
 
 double calculateAngle(Node observer, Node target);

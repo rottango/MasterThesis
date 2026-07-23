@@ -20,7 +20,7 @@ Draw::Draw(std::string windowName,
     cv::namedWindow(windowName, flag);
     cv::resizeWindow(windowName, windowSize);
 
-    this->centerOfScreen = cv::Point2d(rows / 2, cols / 2);
+    this->centerOfScreen = cv::Point2d(cols / 2, rows / 2);
 }
 
 void Draw::generateText(Node observer, Node target)
