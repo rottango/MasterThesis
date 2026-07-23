@@ -14,15 +14,13 @@ public:
     cv::Point2d opencv_x_y_point;
     double opencv_z_position; // [+] up / [-] down
 
-    double cartesian_x_position; // [+] right / [-] left
-    double cartesian_y_position; // [+] front/ [-] back
+    cv::Point2d cartesian_x_y_point;
     double cartesian_z_position; // [+] up / [-] down
 
     double theta_rotation;
-    double x_y_axis_point;
-    double y_y_axis_point;
-    double x_x_axis_point;
-    double y_x_axis_point;
+
+    cv::Point2d x_axis_point;
+    cv::Point2d y_axis_point;
 
     colorPalet ugvColorPalet;
 

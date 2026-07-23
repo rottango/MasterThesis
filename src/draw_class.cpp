@@ -75,8 +75,8 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 
 void Draw::drawAxis(cv::Mat &img, Node ugv)
 {
-    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.x_x_axis_point, ugv.y_x_axis_point), cv::Scalar(0, 0, 255), 5); // x axis red
-    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.x_y_axis_point, ugv.y_y_axis_point), cv::Scalar(255, 0, 0), 5); // y axis blue
+    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.x_axis_point.x, ugv.x_axis_point.y), cv::Scalar(0, 0, 255), 5); // x axis red
+    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.y_axis_point.x, ugv.y_axis_point.y), cv::Scalar(255, 0, 0), 5); // y axis blue
 }
 
 void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)

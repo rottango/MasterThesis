@@ -11,8 +11,7 @@ Node::Node(cv::Point2d opencv_x_y_point,
            double measurment_error_CM,
            colorPalet newUgvColorPalet)
 {
-    this->opencv_x_y_point.x = opencv_x_y_point.x;
-    this->opencv_x_y_point.y = opencv_x_y_point.y;
+    this->opencv_x_y_point = opencv_x_y_point;
     this->opencv_z_position = opencv_z_position;
     this->theta_rotation = theta_rotation;
 
@@ -20,10 +19,10 @@ Node::Node(cv::Point2d opencv_x_y_point,
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
 
-    this->x_x_axis_point = opencv_x_y_point.x + 100;
-    this->y_x_axis_point = opencv_x_y_point.y;
-    this->x_y_axis_point = opencv_x_y_point.x;
-    this->y_y_axis_point = opencv_x_y_point.y - 100;
+    this->x_axis_point.x = opencv_x_y_point.x + 100;
+    this->x_axis_point.y = opencv_x_y_point.y;
+    this->y_axis_point.x = opencv_x_y_point.x;       // y axis
+    this->y_axis_point.y = opencv_x_y_point.y - 100; // grot y axis
 
     this->ugvColorPalet = newUgvColorPalet;
 }
@@ -69,11 +68,8 @@ void Node::changePositionXYZ(cv::Point2d new_opencv_x_y_point,
 {
     cv::Point2d opencv_x_y_delta_point(new_opencv_x_y_point.x - this->opencv_x_y_point.x,
                                        new_opencv_x_y_point.y - this->opencv_x_y_point.y);
-    double x_delta = new_opencv_x_y_point.x - this->opencv_x_y_point.x;
-    double y_delta = new_opencv_x_y_point.y - this->opencv_x_y_point.y;
     double z_delta = new_opencv_z_position - this->opencv_z_position;
-    this->opencv_x_y_point.x = new_opencv_x_y_point.x;
-    this->opencv_x_y_point.y = new_opencv_x_y_point.y;
+    this->opencv_x_y_point = new_opencv_x_y_point;
     this->opencv_z_position = new_opencv_z_position;
 
     changeAxisPoints(opencv_x_y_delta_point, z_delta);
@@ -83,10 +79,10 @@ void Node::changePositionXYZ(cv::Point2d new_opencv_x_y_point,
 void Node::changeAxisPoints(cv::Point2d new_opencv_x_y_point,
                             double new_opencv_z_position)
 {
-    this->x_y_axis_point = x_y_axis_point + new_opencv_x_y_point.x;
-    this->y_y_axis_point = y_y_axis_point + new_opencv_x_y_point.y;
-    this->x_x_axis_point = x_x_axis_point + new_opencv_x_y_point.x;
-    this->y_x_axis_point = y_x_axis_point + new_opencv_x_y_point.y;
+    this->y_axis_point.x = y_axis_point.x + new_opencv_x_y_point.x;
+    this->y_axis_point.y = y_axis_point.y + new_opencv_x_y_point.y;
+    this->x_axis_point.x = x_axis_point.x + new_opencv_x_y_point.x;
+    this->x_axis_point.y = x_axis_point.y + new_opencv_x_y_point.y;
 }
 
 void Node::drawNode(cv::Mat img)
