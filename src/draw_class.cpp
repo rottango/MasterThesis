@@ -5,7 +5,6 @@
 #include <node_class.hpp>
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
-
 Draw::Draw(std::string windowName,
            cv::WindowFlags flag,
            cv::Size windowSize,
@@ -19,8 +18,6 @@ Draw::Draw(std::string windowName,
 {
     cv::namedWindow(windowName, flag);
     cv::resizeWindow(windowName, windowSize);
-
-    this->centerOfScreen = cv::Point2d(cols / 2, rows / 2);
 }
 
 void Draw::generateText(Node observer, Node target)
@@ -42,14 +39,14 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 {
     cv::putText(img,
                 this->distance_output + this->measurment_error_output,
-                this->centerOfScreen,
+                opencv_screen_center,
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN, 2,
                 observer.ugvColorPalet.text_color,
                 1,
                 7);
     cv::putText(img,
                 this->observer_pos_output,
-                cv::Point2d(this->centerOfScreen.x, this->centerOfScreen.y + 25),
+                opencv_screen_center,
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
                 observer.ugvColorPalet.text_color,
@@ -57,7 +54,7 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
                 7);
     cv::putText(img,
                 this->target_pos_output,
-                cv::Point2d(this->centerOfScreen.x, this->centerOfScreen.y + 50),
+                opencv_screen_center,
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
                 target.ugvColorPalet.text_color,

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <extern_variables.hpp>
 #include <opencv2/opencv.hpp>
 
 struct colorPalet

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <extern_variables.hpp>
 #include <node_class.hpp>
 
 #define PI 3.14159265
