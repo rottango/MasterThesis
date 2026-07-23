@@ -6,8 +6,8 @@
 
 #include <calculate.hpp>
 #include <color_palet_struct.hpp>
+#include <define.hpp>
 #include <draw_class.hpp>
-#include <extern_variables.hpp>
 #include <node_class.hpp>
 #include <render_loop.hpp>
 
@@ -15,25 +15,22 @@
 
 int main()
 {
-    setExternValues(1920, 1080, cv::Point2d(screen_width_pixels, screen_height_pixels));
-
     std::string windowName = "Visualization";
     cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;
 
-    std::cout << opencv_screen_center.x << "dasdasd " << opencv_screen_center.y << "\n";
-    cv::Size windowSize{screen_width_pixels, screen_height_pixels};
+    cv::Size windowSize{screen_x_pixels, screen_y_pixels};
     int makeTypeFlag = CV_8UC3;
     cv::Scalar backgroundColor{87, 80, 73};
-    cv::Point2d ugv_location = openCVPointToCartesianPoint(cv::Point2d(0, 0), opencv_screen_center);
+    cv::Point2d ugv_location = openCVPointToCartesianPoint(cv::Point2d(0, 0), cv::Point2d(screen_x_pixels, screen_y_pixels));
 
-    Node ugv1(cartesianPointToOpenCVPoint(cv::Point2d(100, 100), opencv_screen_center), 0, 0, 5, 40, 45, ugv1ColorPalet);
-    Node ugv2(cartesianPointToOpenCVPoint(cv::Point2d(-100, -100), opencv_screen_center), 0, 0, 5, 40, 45, ugv2ColorPalet);
+    Node ugv1(cartesianPointToOpenCVPoint(cv::Point2d(100, 100), cv::Point2d(screen_x_pixels, screen_y_pixels)), 0, 0, 5, 40, 45, ugv1ColorPalet);
+    Node ugv2(cartesianPointToOpenCVPoint(cv::Point2d(-100, -100), cv::Point2d(screen_x_pixels, screen_y_pixels)), 0, 0, 5, 40, 45, ugv2ColorPalet);
 
     Draw draw1(windowName,
                flag,
                windowSize,
-               screen_height_pixels,
-               screen_width_pixels,
+               screen_y_pixels,
+               screen_x_pixels,
                makeTypeFlag,
                backgroundColor);
 
