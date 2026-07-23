@@ -1,6 +1,5 @@
 #pragma once
 
-#include <extern_variables.hpp>
 #include <node_class.hpp>
 #include <opencv2/opencv.hpp>
 #include <stdio.h>

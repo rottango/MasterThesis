@@ -15,8 +15,7 @@
 
 int main()
 {
-    screen_height_pixels = 1080;
-    screen_width_pixels = 1920;
+    setExternValues(1920, 1080, cv::Point2d(screen_width_pixels, screen_height_pixels));
 
     std::string windowName = "Visualization";
     cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;

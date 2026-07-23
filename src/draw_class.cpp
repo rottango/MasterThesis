@@ -1,10 +1,11 @@
-#pragma once
 
 #include <calculate.hpp>
 #include <draw_class.hpp>
+#include <extern_variables.hpp>
 #include <node_class.hpp>
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
+
 Draw::Draw(std::string windowName,
            cv::WindowFlags flag,
            cv::Size windowSize,

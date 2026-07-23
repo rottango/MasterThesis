@@ -2,7 +2,6 @@
 
 #include "boost/lexical_cast.hpp"
 #include <color_palet_struct.hpp>
-#include <extern_variables.hpp>
 #include <opencv2/opencv.hpp>
 
 // observer
