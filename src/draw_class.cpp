@@ -40,14 +40,14 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 {
     cv::putText(img,
                 this->distance_output + this->measurment_error_output,
-                opencv_screen_center,
+                cv::Point2d(1920 / 2, 1080 / 2),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN, 2,
                 observer.ugvColorPalet.text_color,
                 1,
                 7);
     cv::putText(img,
                 this->observer_pos_output,
-                opencv_screen_center,
+                cv::Point2d(1920 / 2, (1080 / 2) + 25),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
                 observer.ugvColorPalet.text_color,
@@ -55,7 +55,7 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
                 7);
     cv::putText(img,
                 this->target_pos_output,
-                opencv_screen_center,
+                cv::Point2d(1920 / 2, (1080 / 2) + 50),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
                 target.ugvColorPalet.text_color,

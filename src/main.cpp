@@ -18,19 +18,19 @@ int main()
     std::string windowName = "Visualization";
     cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;
 
-    cv::Size windowSize{screen_x_pixels, screen_y_pixels};
+    cv::Size windowSize{1920, 1080};
     int makeTypeFlag = CV_8UC3;
     cv::Scalar backgroundColor{87, 80, 73};
-    cv::Point2d ugv_location = openCVPointToCartesianPoint(cv::Point2d(0, 0), cv::Point2d(screen_x_pixels, screen_y_pixels));
+    cv::Point2d ugv_location = openCVPointToCartesianPoint(cv::Point2d(0, 0), cv::Point2d(1920, 1080));
 
-    Node ugv1(cartesianPointToOpenCVPoint(cv::Point2d(100, 100), cv::Point2d(screen_x_pixels, screen_y_pixels)), 0, 0, 5, 40, 45, ugv1ColorPalet);
-    Node ugv2(cartesianPointToOpenCVPoint(cv::Point2d(-100, -100), cv::Point2d(screen_x_pixels, screen_y_pixels)), 0, 0, 5, 40, 45, ugv2ColorPalet);
+    Node ugv1(cartesianPointToOpenCVPoint(cv::Point2d(100, 100), cv::Point2d(1920 / 2, 1080 / 2)), 0, 0, 5, 40, 45, ugv1ColorPalet);
+    Node ugv2(cartesianPointToOpenCVPoint(cv::Point2d(-100, -100), cv::Point2d(1920 / 2, 1080 / 2)), 0, 0, 5, 40, 45, ugv2ColorPalet);
 
     Draw draw1(windowName,
                flag,
                windowSize,
-               screen_y_pixels,
-               screen_x_pixels,
+               1080,
+               1920,
                makeTypeFlag,
                backgroundColor);
 
