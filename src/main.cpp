@@ -22,17 +22,11 @@ int main()
     int middle_y = rows / 2;
     cv::Size windowSize{cols, rows};
     int makeTypeFlag = CV_8UC3;
-    cv::Scalar backgroundColor{255, 255, 255};
+    cv::Scalar backgroundColor{87, 80, 73};
+    cv::Point2d ugv_location = openCVPointToCartesianPoint(cv::Point2d(0, 0), cv::Point2d(middle_x, middle_y));
 
-    cv::Point2d cartesianTestPoint = openCVPointToCartesianPoint(cv::Point2d(middle_x, middle_y), cv::Point2d(middle_x, middle_y));
-
-    std::cout << "x: " << cartesianTestPoint.x << ",y: " << cartesianTestPoint.y << "\n";
-
-    cv::Point2d openCVTestPoint = cartesianPointToOpenCVPoint(cartesianTestPoint, cv::Point2d(550, 550));
-
-    std::cout << "x: " << openCVTestPoint.x << ",y: " << openCVTestPoint.y << "\n";
-    Node ugv1(cartesianTestPoint.x, cartesianTestPoint.y, 0, 0, 5, 40, 45, ugv1ColorPalet);
-    Node ugv2(0, 0, 0, 0, 5, 40, 45, ugv2ColorPalet);
+    Node ugv1(cartesianPointToOpenCVPoint(cv::Point2d(100, 100), cv::Point2d(middle_x, middle_y)), 0, 0, 5, 40, 45, ugv1ColorPalet);
+    Node ugv2(cartesianPointToOpenCVPoint(cv::Point2d(-100, -100), cv::Point2d(middle_x, middle_y)), 0, 0, 5, 40, 45, ugv2ColorPalet);
 
     Draw draw1(windowName,
                flag,

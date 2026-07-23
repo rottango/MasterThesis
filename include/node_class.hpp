@@ -11,9 +11,13 @@
 class Node
 {
 public:
-    double x_position; // [+] right / [-]left
-    double y_position; // [+] back/ [-]front
-    double z_position; // [+] up / [-] down
+    cv::Point2d opencv_x_y_point;
+    double opencv_z_position; // [+] up / [-] down
+
+    double cartesian_x_position; // [+] right / [-] left
+    double cartesian_y_position; // [+] front/ [-] back
+    double cartesian_z_position; // [+] up / [-] down
+
     double theta_rotation;
     double x_y_axis_point;
     double y_y_axis_point;
@@ -29,22 +33,19 @@ public:
     //  008000 //6d4dff
     //  00b038 //8f75ff
 
-    Node(double x_position,
-         double y_position,
-         double z_position,
+    Node(cv::Point2d opencv_x_y_point,
+         double opencv_z_position,
          double theta_rotation,
          double vehicle_size,
          double inner,
          double measurment_error_CM,
          colorPalet ugvColorPalet);
 
-    void changePositionXYZ(double new_x_position,
-                           double new_y_position,
-                           double new_z_position);
+    void changePositionXYZ(cv::Point2d opencv_x_y_point,
+                           double new_opencv_z_position);
 
-    void changeAxisPoints(double new_x_position,
-                          double new_y_position,
-                          double new_z_position);
+    void changeAxisPoints(cv::Point2d opencv_x_y_point,
+                          double new_opencv_z_position);
 
     void assingColors();
 
@@ -52,7 +53,7 @@ public:
 
     void drawNode(cv::Mat img);
 
-    void setVehicleSize(double newvehicle_size);
+    void setVehicleSize(double new_vehicle_size);
 
     void setInner(double new_inner);
 

@@ -31,15 +31,14 @@ void calculateRotationMatrix(double &x, double &y, double theta)
 
 void calculateNewPoints(Node &ugv, double theta)
 {
-    double x_position = ugv.x_position, y_position = ugv.y_position;
     double x_y_axis_point = ugv.x_y_axis_point, y_y_axis_point = ugv.y_y_axis_point;
-    double x_pos_diff = x_y_axis_point - x_position;
-    double y_pos_diff = y_y_axis_point - y_position;
+    double x_pos_diff = x_y_axis_point - ugv.opencv_x_y_point.x;
+    double y_pos_diff = y_y_axis_point - ugv.opencv_x_y_point.y;
     calculateRotationMatrix(x_pos_diff, y_pos_diff, theta);
-    ugv.x_y_axis_point = ugv.x_position + x_pos_diff;
-    ugv.y_y_axis_point = ugv.y_position + y_pos_diff;
-    ugv.x_x_axis_point = ugv.x_position - y_pos_diff;
-    ugv.y_x_axis_point = ugv.y_position + x_pos_diff;
+    ugv.x_y_axis_point = ugv.opencv_x_y_point.x + x_pos_diff;
+    ugv.y_y_axis_point = ugv.opencv_x_y_point.y + y_pos_diff;
+    ugv.x_x_axis_point = ugv.opencv_x_y_point.x - y_pos_diff;
+    ugv.y_x_axis_point = ugv.opencv_x_y_point.y + x_pos_diff;
     ugv.changeThetaRotation(theta);
 }
 
@@ -54,5 +53,5 @@ double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2
 
 double calculateAngle(Node observer, Node target)
 {
-    return ((atan2(target.x_position - observer.x_position, target.y_position - observer.y_position) * RADIANS_TO_DEGREES) - 180) * (-1);
+    return ((atan2(target.opencv_x_y_point.x - observer.opencv_x_y_point.x, target.opencv_x_y_point.y - observer.opencv_x_y_point.y) * RADIANS_TO_DEGREES) - 180) * (-1);
 }

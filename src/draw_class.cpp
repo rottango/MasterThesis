@@ -25,9 +25,9 @@ Draw::Draw(std::string windowName,
 
 void Draw::generateText(Node observer, Node target)
 {
-    this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.x_position, target.x_position, observer.y_position, target.y_position));
-    this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.x_position) + "," + std::to_string(observer.y_position) + ")";
-    this->target_pos_output = "target (x,y) = (" + std::to_string(target.x_position) + "," + std::to_string(target.y_position) + ")";
+    this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.opencv_x_y_point.x, target.opencv_x_y_point.x, observer.opencv_x_y_point.y, target.opencv_x_y_point.y));
+    this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.opencv_x_y_point.x) + "," + std::to_string(observer.opencv_x_y_point.y) + ")";
+    this->target_pos_output = "target (x,y) = (" + std::to_string(target.opencv_x_y_point.x) + "," + std::to_string(target.opencv_x_y_point.y) + ")";
     this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
 
     double remainder = std::fmod(calculateAngle(observer, target) + observer.theta_rotation, 360.00f);
@@ -75,8 +75,8 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
 
 void Draw::drawAxis(cv::Mat &img, Node ugv)
 {
-    cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_x_axis_point, ugv.y_x_axis_point), cv::Scalar(0, 0, 255), 5); // x axis red
-    cv::arrowedLine(img, cv::Point2d(ugv.x_position, ugv.y_position), cv::Point2d(ugv.x_y_axis_point, ugv.y_y_axis_point), cv::Scalar(255, 0, 0), 5); // y axis blue
+    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.x_x_axis_point, ugv.y_x_axis_point), cv::Scalar(0, 0, 255), 5); // x axis red
+    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.x_y_axis_point, ugv.y_y_axis_point), cv::Scalar(255, 0, 0), 5); // y axis blue
 }
 
 void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
@@ -93,11 +93,11 @@ void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
 void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
 {
     cv::line(img,
-             cv::Point2d(observer.x_position, observer.y_position),
-             cv::Point2d(target.x_position, target.y_position),
+             cv::Point2d(observer.opencv_x_y_point.x, observer.opencv_x_y_point.y),
+             cv::Point2d(target.opencv_x_y_point.x, target.opencv_x_y_point.y),
              observer.ugvColorPalet.observer_line_color,
              2,
              cv::LineTypes::LINE_4,
              0);
-    this->middleOfAngleLine = cv::Point2d((observer.x_position + target.x_position) / 2, (observer.y_position + target.y_position) / 2);
+    this->middleOfAngleLine = cv::Point2d((observer.opencv_x_y_point.x + target.opencv_x_y_point.x) / 2, (observer.opencv_x_y_point.y + target.opencv_x_y_point.y) / 2);
 }

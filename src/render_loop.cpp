@@ -15,28 +15,28 @@ void renderLoop(cv::Mat img,
     switch (pressedKey)
     {
     case 'a':
-        ugv1.changePositionXYZ(ugv1.x_position - 10, ugv1.y_position, ugv1.z_position);
+        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x - 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
         break;
     case 's':
-        ugv1.changePositionXYZ(ugv1.x_position, ugv1.y_position + 10, ugv1.z_position);
+        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y + 10), ugv1.opencv_z_position);
         break;
     case 'd':
-        ugv1.changePositionXYZ(ugv1.x_position + 10, ugv1.y_position, ugv1.z_position);
+        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x + 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
         break;
     case 'w':
-        ugv1.changePositionXYZ(ugv1.x_position, ugv1.y_position - 10, ugv1.z_position);
+        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y - 10), ugv1.opencv_z_position);
         break;
     case 'Q':
-        ugv2.changePositionXYZ(ugv2.x_position - 10, ugv2.y_position, ugv2.z_position);
+        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x - 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
         break;
     case 'T':
-        ugv2.changePositionXYZ(ugv2.x_position, ugv2.y_position + 10, ugv2.z_position);
+        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y + 10), ugv2.opencv_z_position);
         break;
     case 'S':
-        ugv2.changePositionXYZ(ugv2.x_position + 10, ugv2.y_position, ugv2.z_position);
+        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x + 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
         break;
     case 'R':
-        ugv2.changePositionXYZ(ugv2.x_position, ugv2.y_position - 10, ugv2.z_position);
+        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y - 10), ugv2.opencv_z_position);
         break;
     case '=':
         ugv1.setMeasurmentError(ugv1.getMeasurmentError() + 1);
@@ -63,10 +63,10 @@ void renderLoop(cv::Mat img,
             for (int j = 100; j < 1920; j += 5)
             {
                 cv::Mat tempImg = img.clone();
-                ugv1.x_position = j;
-                ugv1.y_position = i;
-                ugv2.x_position = j - 100;
-                ugv2.y_position = i - 100;
+                ugv1.opencv_x_y_point.x = j;
+                ugv1.opencv_x_y_point.y = i;
+                ugv2.opencv_x_y_point.x = j - 100;
+                ugv2.opencv_x_y_point.y = i - 100;
 
                 char pressedKey = cv::waitKey(frequencyOfMapUpdate - frequencyOfMapUpdate + 2);
 
@@ -95,7 +95,7 @@ void renderLoop(cv::Mat img,
     cv::imshow(windowName, img);
 
     // std::cout << "PressedKey: " << pressedKey << "\n";
-    std::cout << "OpenCV (x,y) = " << "(" << ugv1.x_position << "," << ugv1.y_position << ")" << "\t";
-    cv::Point2d cartesianPoint = openCVPointToCartesianPoint(cv::Point2d(ugv1.x_position, ugv1.y_position), cv::Point2d(draw1.centerOfScreen.x, draw1.centerOfScreen.y));
+    std::cout << "OpenCV (x,y) = " << "(" << ugv1.opencv_x_y_point.x << "," << ugv1.opencv_x_y_point.y << ")" << "\t";
+    cv::Point2d cartesianPoint = openCVPointToCartesianPoint(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y), cv::Point2d(draw1.centerOfScreen.x, draw1.centerOfScreen.y));
     std::cout << "Carthesian (x,y) = " << "(" << cartesianPoint.x << "," << cartesianPoint.y << ")" << "\n";
 }
