@@ -24,9 +24,9 @@ public:
          int makeTypeFlag,
          cv::Scalar backgroundColor);
 
-    void drawTextOnScreen(cv::Mat &img, Node ugv1, Node ugv2);
+    void openCVDrawTextOnScreen(cv::Mat &img, Node ugv1, Node ugv2);
 
-    void drawAxis(cv::Mat &img, Node ugv);
+    void openCVDrawAxis(cv::Mat &img, Node ugv);
 
     void drawConnectingLine(cv::Mat &img, Node ugv1, Node ugv2);
 

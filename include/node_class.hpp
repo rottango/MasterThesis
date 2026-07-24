@@ -19,8 +19,8 @@ public:
 
     double theta_rotation;
 
-    cv::Point2d x_axis_point;
-    cv::Point2d y_axis_point;
+    cv::Point2d opencv_x_axis_point;
+    cv::Point2d opencv_y_axis_point;
 
     colorPalet ugvColorPalet;
 
@@ -39,8 +39,8 @@ public:
          double measurment_error_CM,
          colorPalet ugvColorPalet);
 
-    void changePositionXYZ(cv::Point2d opencv_x_y_point,
-                           double new_opencv_z_position);
+    void openCVCartesianCalculateAngle(cv::Point2d opencv_x_y_point,
+                                       double new_opencv_z_position);
 
     void changeAxisPoints(cv::Point2d opencv_x_y_point,
                           double new_opencv_z_position);

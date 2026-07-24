@@ -30,13 +30,13 @@ void calculateRotationMatrix(double &x, double &y, double theta)
 
 void calculateNewPoints(Node &ugv, double theta)
 {
-    double x_pos_diff = ugv.y_axis_point.x - ugv.opencv_x_y_point.x;
-    double y_pos_diff = ugv.y_axis_point.y - ugv.opencv_x_y_point.y;
+    double x_pos_diff = ugv.opencv_y_axis_point.x - ugv.opencv_x_y_point.x;
+    double y_pos_diff = ugv.opencv_y_axis_point.y - ugv.opencv_x_y_point.y;
     calculateRotationMatrix(x_pos_diff, y_pos_diff, theta);
-    ugv.y_axis_point.x = ugv.opencv_x_y_point.x + x_pos_diff;
-    ugv.y_axis_point.y = ugv.opencv_x_y_point.y + y_pos_diff;
-    ugv.x_axis_point.x = ugv.opencv_x_y_point.x - y_pos_diff;
-    ugv.x_axis_point.y = ugv.opencv_x_y_point.y + x_pos_diff;
+    ugv.opencv_y_axis_point.x = ugv.opencv_x_y_point.x + x_pos_diff;
+    ugv.opencv_y_axis_point.y = ugv.opencv_x_y_point.y + y_pos_diff;
+    ugv.opencv_x_axis_point.x = ugv.opencv_x_y_point.x - y_pos_diff;
+    ugv.opencv_x_axis_point.y = ugv.opencv_x_y_point.y + x_pos_diff;
     ugv.changeThetaRotation(theta);
 }
 
@@ -49,7 +49,7 @@ double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2
     return distance;
 }
 
-double calculateAngle(Node observer, Node target)
+double cartesianCalculateAngle(Node observer, Node target)
 {
 
     return ((atan2(target.cartesian_x_y_point.y - observer.cartesian_x_y_point.y, target.cartesian_x_y_point.x - observer.cartesian_x_y_point.x)) * RADIANS_TO_DEGREES);

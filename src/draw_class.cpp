@@ -28,23 +28,23 @@ void Draw::generateText(Node observer, Node target)
     this->target_pos_output = "target (x,y) = (" + std::to_string(target.opencv_x_y_point.x) + "," + std::to_string(target.opencv_x_y_point.y) + ")";
     this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
 
-    double remainder = calculateAngle(observer, target);
+    double remainder = cartesianCalculateAngle(observer, target);
 
     this->angle_output_atan2 = "angle atan2: = " + std::to_string(remainder);
 }
 
-void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
+void Draw::openCVDrawTextOnScreen(cv::Mat &img, Node observer, Node target)
 {
     cv::putText(img,
                 this->distance_output + this->measurment_error_output,
-                cv::Point2d(1920 / 2, 1080 / 2),
+                cv::Point2d(0, 1080 - 75),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN, 2,
                 observer.ugvColorPalet.text_color,
                 1,
                 7);
     cv::putText(img,
                 this->observer_pos_output,
-                cv::Point2d(1920 / 2, (1080 / 2) + 25),
+                cv::Point2d(0, 1080 - 50),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
                 observer.ugvColorPalet.text_color,
@@ -52,7 +52,7 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
                 7);
     cv::putText(img,
                 this->target_pos_output,
-                cv::Point2d(1920 / 2, (1080 / 2) + 50),
+                cv::Point2d(0, 1080 - 25),
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 2,
                 target.ugvColorPalet.text_color,
@@ -68,10 +68,10 @@ void Draw::drawTextOnScreen(cv::Mat &img, Node observer, Node target)
                 7);
 }
 
-void Draw::drawAxis(cv::Mat &img, Node ugv)
+void Draw::openCVDrawAxis(cv::Mat &img, Node ugv)
 {
-    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.x_axis_point.x, ugv.x_axis_point.y), cv::Scalar(0, 0, 255), 5); // x axis red
-    cv::arrowedLine(img, cv::Point2d(ugv.opencv_x_y_point.x, ugv.opencv_x_y_point.y), cv::Point2d(ugv.y_axis_point.x, ugv.y_axis_point.y), cv::Scalar(255, 0, 0), 5); // y axis blue
+    cv::arrowedLine(img, ugv.opencv_x_y_point, ugv.opencv_x_axis_point, cv::Scalar(0, 0, 255), 5); // x axis red
+    cv::arrowedLine(img, ugv.opencv_x_y_point, ugv.opencv_y_axis_point, cv::Scalar(255, 0, 0), 5); // y axis blue
 }
 
 void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
@@ -80,9 +80,9 @@ void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
     ugv2.drawNode(img);
     drawConnectingLine(img, ugv1, ugv2);
     generateText(ugv1, ugv2);
-    drawTextOnScreen(img, ugv1, ugv2);
-    drawAxis(img, ugv1);
-    drawAxis(img, ugv2);
+    openCVDrawTextOnScreen(img, ugv1, ugv2);
+    openCVDrawAxis(img, ugv1);
+    openCVDrawAxis(img, ugv2);
 }
 
 void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)

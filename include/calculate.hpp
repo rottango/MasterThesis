@@ -11,7 +11,7 @@ cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point, cv::Point2d
 
 void calculate();
 
-double calculateAngle(Node observer, Node target);
+double cartesianCalculateAngle(Node observer, Node target);
 
 double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2);
 

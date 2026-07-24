@@ -15,28 +15,28 @@ void renderLoop(cv::Mat img,
     switch (pressedKey)
     {
     case 'a':
-        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x - 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x - 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
         break;
     case 's':
-        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y + 10), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y + 10), ugv1.opencv_z_position);
         break;
     case 'd':
-        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x + 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x + 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
         break;
     case 'w':
-        ugv1.changePositionXYZ(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y - 10), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y - 10), ugv1.opencv_z_position);
         break;
     case 'Q':
-        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x - 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x - 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
         break;
     case 'T':
-        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y + 10), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y + 10), ugv2.opencv_z_position);
         break;
     case 'S':
-        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x + 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x + 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
         break;
     case 'R':
-        ugv2.changePositionXYZ(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y - 10), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y - 10), ugv2.opencv_z_position);
         break;
     case '=':
         ugv1.setMeasurmentError(ugv1.getMeasurmentError() + 1);
