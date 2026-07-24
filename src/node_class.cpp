@@ -21,10 +21,8 @@ Node::Node(cv::Point2d opencv_x_y_point,
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
 
-    this->x_axis_point.x = opencv_x_y_point.x + 100;
-    this->x_axis_point.y = opencv_x_y_point.y;
-    this->y_axis_point.x = opencv_x_y_point.x;       // y axis
-    this->y_axis_point.y = opencv_x_y_point.y - 100; // grot y axis
+    this->x_axis_point = openCVPointToCartesianPoint(cv::Point2d(opencv_x_y_point.x + 100, opencv_x_y_point.y), cv::Point2d(1920 / 2, 1080 / 2));
+    this->y_axis_point = openCVPointToCartesianPoint(cv::Point2d(opencv_x_y_point.x, opencv_x_y_point.y + 100), cv::Point2d(1920 / 2, 1080 / 2));
 
     this->ugvColorPalet = newUgvColorPalet;
 }
