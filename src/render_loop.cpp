@@ -96,6 +96,6 @@ void renderLoop(cv::Mat img,
 
     // std::cout << "PressedKey: " << pressedKey << "\n";
     std::cout << "OpenCV (x,y) = " << "(" << ugv1.opencv_x_y_point.x << "," << ugv1.opencv_x_y_point.y << ")" << "\t";
-    cv::Point2d cartesianPoint = openCVPointToCartesianPoint(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y), cv::Point2d(draw1.centerOfScreen.x, draw1.centerOfScreen.y));
-    std::cout << "Carthesian (x,y) = " << "(" << cartesianPoint.x << "," << cartesianPoint.y << ")" << "\n";
+    cv::Point2d cartesianPoint = openCVPointToCartesianPoint(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y), cv::Point2d(1920 / 2, 1080 / 2));
+    std::cout << "Cartesian (x,y) = " << "(" << cartesianPoint.x << "," << cartesianPoint.y << ")" << "\n";
 }
