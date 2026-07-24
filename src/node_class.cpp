@@ -72,7 +72,7 @@ void Node::changePositionXYZ(cv::Point2d new_opencv_x_y_point,
     this->opencv_z_position = new_opencv_z_position;
 
     changeAxisPoints(opencv_x_y_delta_point, z_delta);
-    cv::Point2d temporary_cartesian_point = openCVPointToCartesianPoint(cv::Point(this->opencv_x_y_point.x, this->opencv_x_y_point.y), cv::Point2d(1920 / 2, 1080 / 2));
+    this->cartesian_x_y_point = openCVPointToCartesianPoint(cv::Point(this->opencv_x_y_point.x, this->opencv_x_y_point.y), cv::Point2d(1920 / 2, 1080 / 2));
 }
 
 void Node::changeAxisPoints(cv::Point2d new_opencv_x_y_point,

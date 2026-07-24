@@ -51,7 +51,6 @@ double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2
 
 double calculateAngle(Node observer, Node target)
 {
-    cv::Point2d target_cartesian_point = openCVPointToCartesianPoint(target.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
-    cv::Point2d observer_cartesian_point = openCVPointToCartesianPoint(observer.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
-    return ((atan2(target_cartesian_point.y - observer_cartesian_point.y, target_cartesian_point.x - observer_cartesian_point.x) * RADIANS_TO_DEGREES));
+
+    return ((atan2(target.cartesian_x_y_point.y - observer.cartesian_x_y_point.y, target.cartesian_x_y_point.x - observer.cartesian_x_y_point.x)) * RADIANS_TO_DEGREES);
 }
