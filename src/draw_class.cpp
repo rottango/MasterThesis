@@ -28,11 +28,8 @@ void Draw::generateText(Node observer, Node target)
     this->target_pos_output = "target (x,y) = (" + std::to_string(target.opencv_x_y_point.x) + "," + std::to_string(target.opencv_x_y_point.y) + ")";
     this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
 
-    double remainder = std::fmod(calculateAngle(observer, target) + observer.theta_rotation, 360.00f);
-    if (remainder < 0)
-    {
-        remainder += 360;
-    }
+    double remainder = calculateAngle(observer, target);
+
     this->angle_output_atan2 = "angle atan2: = " + std::to_string(remainder);
 }
 
