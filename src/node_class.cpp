@@ -12,6 +12,9 @@ Node::Node(cv::Point2d opencv_x_y_point,
 {
     this->opencv_x_y_point = opencv_x_y_point;
     this->opencv_z_position = opencv_z_position;
+
+    this->opencv_x_y_point = openCVPointToCartesianPoint(opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+
     this->theta_rotation = theta_rotation;
 
     this->vehicle_size = vehicle_size;
@@ -69,10 +72,11 @@ void Node::changePositionXYZ(cv::Point2d new_opencv_x_y_point,
                                        new_opencv_x_y_point.y - this->opencv_x_y_point.y);
     double z_delta = new_opencv_z_position - this->opencv_z_position;
     this->opencv_x_y_point = new_opencv_x_y_point;
+    this->cartesian_x_y_point = openCVPointToCartesianPoint(opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+
     this->opencv_z_position = new_opencv_z_position;
 
     changeAxisPoints(opencv_x_y_delta_point, z_delta);
-    this->cartesian_x_y_point = openCVPointToCartesianPoint(cv::Point(this->opencv_x_y_point.x, this->opencv_x_y_point.y), cv::Point2d(1920 / 2, 1080 / 2));
 }
 
 void Node::changeAxisPoints(cv::Point2d new_opencv_x_y_point,
