@@ -18,6 +18,7 @@ public:
     double cartesian_z_position; // [+] up / [-] down
 
     double theta_rotation;
+    double angle_output_atan2_to_target;
 
     cv::Point2d opencv_x_axis_point;
     cv::Point2d opencv_y_axis_point;

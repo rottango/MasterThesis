@@ -33,4 +33,6 @@ public:
     void drawFrame(cv::Mat &img, Node ugv1, Node ugv2);
 
     void generateText(Node observer, Node target);
+
+    void drawElipse(cv::Mat &img, Node observer);
 };

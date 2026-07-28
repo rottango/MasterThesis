@@ -21,6 +21,20 @@ Draw::Draw(std::string windowName,
     cv::resizeWindow(windowName, windowSize);
 }
 
+void Draw::drawElipse(cv::Mat &img, Node observer)
+{
+    cv::ellipse(img,                                         // cv::InputOutputArray img,
+                observer.opencv_x_y_point,                   // cv::Point center
+                cv::Size2d(100, 100),                        // cv::Size axes
+                0,                                           // double angle STAYS 0, then its like i want it to be
+                0,                                           // double startAngle
+                observer.angle_output_atan2_to_target + 180, // double endAngle
+                observer.ugvColorPalet.text_color,           // const cv::Scalar &color
+                1,                                           // int thickness
+                8,                                           // int lineType = 8
+                0);                                          // int shift = 0
+}
+
 void Draw::generateText(Node observer, Node target)
 {
     this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.opencv_x_y_point.x, target.opencv_x_y_point.x, observer.opencv_x_y_point.y, target.opencv_x_y_point.y));
@@ -28,9 +42,8 @@ void Draw::generateText(Node observer, Node target)
     this->target_pos_output = "target (x,y) = (" + std::to_string(target.opencv_x_y_point.x) + "," + std::to_string(target.opencv_x_y_point.y) + ")";
     this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
 
-    double remainder = cartesianCalculateAngle(observer, target);
-
-    this->angle_output_atan2 = "angle atan2: = " + std::to_string(remainder);
+    observer.angle_output_atan2_to_target = cartesianCalculateAngle(observer, target);
+    this->angle_output_atan2 = "angle atan2: = " + std::to_string(observer.angle_output_atan2_to_target);
 }
 
 void Draw::openCVDrawTextOnScreen(cv::Mat &img, Node observer, Node target)
@@ -59,7 +72,7 @@ void Draw::openCVDrawTextOnScreen(cv::Mat &img, Node observer, Node target)
                 1,
                 7);
     cv::putText(img,
-                this->angle_output_atan2,
+                angle_output_atan2,
                 this->middleOfAngleLine,
                 cv::HersheyFonts::FONT_HERSHEY_PLAIN,
                 0.75,
@@ -83,6 +96,7 @@ void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
     openCVDrawTextOnScreen(img, ugv1, ugv2);
     openCVDrawAxis(img, ugv1);
     openCVDrawAxis(img, ugv2);
+    drawElipse(img, ugv1);
 }
 
 void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
