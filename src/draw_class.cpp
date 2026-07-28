@@ -23,19 +23,30 @@ Draw::Draw(std::string windowName,
 
 void Draw::drawElipse(cv::Mat &img, Node observer)
 {
-    cv::ellipse(img,                                         // cv::InputOutputArray img,
-                observer.opencv_x_y_point,                   // cv::Point center
-                cv::Size2d(100, 100),                        // cv::Size axes
-                0,                                           // double angle STAYS 0, then its like i want it to be
-                0,                                           // double startAngle
-                observer.angle_output_atan2_to_target + 180, // double endAngle
-                observer.ugvColorPalet.text_color,           // const cv::Scalar &color
-                1,                                           // int thickness
-                8,                                           // int lineType = 8
-                0);                                          // int shift = 0
+    double angle = 0;
+    double start_angle = 0;
+    double end_angle = observer.angle_output_atan2_to_target;
+    cv::Scalar color = observer.ugvColorPalet.text_color;
+    bool invert = 0;
+
+    end_angle *= -1;
+
+    start_angle = observer.theta_rotation;
+
+    cv::ellipse(img,                               // cv::InputOutputArray img,
+                observer.opencv_x_y_point,         // cv::Point center
+                cv::Size2d(100, 100),              // cv::Size axes
+                angle,                             // double angle STAYS 0, then its like i want it to be
+                start_angle,                       // double startAngle
+                end_angle,                         // double endAngle
+                observer.ugvColorPalet.text_color, // const cv::Scalar &color
+                1,                                 // int thickness
+                8,                                 // int lineType = 8
+                0);                                // int shift = 0
+    std::cout << "end_angle: " << end_angle << "\n";
 }
 
-void Draw::generateText(Node observer, Node target)
+void Draw::generateText(Node &observer, Node target)
 {
     this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.opencv_x_y_point.x, target.opencv_x_y_point.x, observer.opencv_x_y_point.y, target.opencv_x_y_point.y));
     this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.opencv_x_y_point.x) + "," + std::to_string(observer.opencv_x_y_point.y) + ")";
