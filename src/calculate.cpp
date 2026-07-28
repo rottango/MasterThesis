@@ -51,6 +51,15 @@ double calculateDistanceBetweenPoints(double x1, double x2, double y1, double y2
 
 double cartesianCalculateAngle(Node observer, Node target)
 {
-
-    return ((atan2(target.cartesian_x_y_point.y - observer.cartesian_x_y_point.y, target.cartesian_x_y_point.x - observer.cartesian_x_y_point.x)) * RADIANS_TO_DEGREES);
+    double result = ((atan2(target.cartesian_x_y_point.y - observer.cartesian_x_y_point.y, target.cartesian_x_y_point.x - observer.cartesian_x_y_point.x)) * RADIANS_TO_DEGREES);
+    result -= observer.theta_rotation;
+    if (result < -180)
+    {
+        result += 360;
+    }
+    if (result > 180)
+    {
+        result -= 360;
+    }
+    return result;
 }
