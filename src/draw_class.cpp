@@ -31,7 +31,7 @@ void Draw::drawElipse(cv::Mat &img, Node observer)
 
     end_angle *= -1;
 
-    start_angle = observer.theta_rotation;
+    start_angle = observer.theta_rotation_degrees;
 
     cv::ellipse(img,                               // cv::InputOutputArray img,
                 observer.opencv_x_y_point,         // cv::Point center

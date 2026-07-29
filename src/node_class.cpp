@@ -4,7 +4,7 @@
 
 Node::Node(cv::Point2d cartesian_x_y_point,
            double cartesian_z_position,
-           double theta_rotation,
+           double theta_rotation_degrees,
            double vehicle_size,
            double inner,
            double measurment_error_CM,
@@ -20,7 +20,7 @@ Node::Node(cv::Point2d cartesian_x_y_point,
     this->opencv_x_axis_point = cartesianPointToOpenCVPoint(cartesian_x_axis_point, cv::Point2d(1920 / 2, 1080 / 2));
     this->opencv_y_axis_point = cartesianPointToOpenCVPoint(cartesian_y_axis_point, cv::Point2d(1920 / 2, 1080 / 2));
 
-    this->theta_rotation = theta_rotation;
+    this->theta_rotation_degrees = theta_rotation_degrees;
 
     this->vehicle_size = vehicle_size;
     this->inner = inner;
@@ -31,17 +31,19 @@ Node::Node(cv::Point2d cartesian_x_y_point,
     this->ugvColorPalet = newUgvColorPalet;
 }
 
-void Node::changeThetaRotation(double new_theta_rotation)
+void Node::change_theta_rotation_degrees(double new_theta_rotation_degrees)
 {
-    double remainder = std::fmod(this->theta_rotation + new_theta_rotation, 360.00f);
-    if (remainder < 0)
+    double remainder = this->theta_rotation_degrees + new_theta_rotation_degrees;
+    remainder = std::fmod(remainder, 360.00f);
+    if (remainder >= 180)
     {
-        this->theta_rotation = remainder + 360;
+        remainder -= 360;
     }
-    else
+    if (remainder < -180)
     {
-        this->theta_rotation = remainder;
+        remainder += 360;
     }
+    this->theta_rotation_degrees = remainder;
 }
 
 void Node::assingColors()

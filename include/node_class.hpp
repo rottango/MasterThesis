@@ -24,7 +24,7 @@ public:
     cv::Point2d cartesian_y_axis_point;
 
     // not specified
-    double theta_rotation;
+    double theta_rotation_degrees;
     double angle_output_atan2_to_target;
 
     // misc
@@ -32,7 +32,7 @@ public:
 
     Node(cv::Point2d cartesian_x_y_point,
          double cartesian_z_position,
-         double theta_rotation,
+         double theta_rotation_degrees,
          double vehicle_size,
          double inner,
          double measurment_error_CM,
@@ -46,7 +46,7 @@ public:
 
     void assingColors();
 
-    void changeThetaRotation(double new_theta_rotation);
+    void change_theta_rotation_degrees(double new_theta_rotation_degrees);
 
     void drawNode(cv::Mat img);
 
