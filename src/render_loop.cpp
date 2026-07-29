@@ -59,13 +59,10 @@ void renderLoop(cv::Mat img,
     case '1':
         break;
     case ',': // rotate left main node ugv1.cartesian_x_y_point = openCVPointToCartesianPoint(ugv1.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
-        // ugv2.cartesian_x_y_point = openCVPointToCartesianPoint(ugv2.opencv_x_y_point);
         calculateNewPoints(ugv1, -1);
 
         break;
     case '.': // rotate right
-        // ugv1.cartesian_x_y_point = openCVPointToCartesianPoint(ugv1.opencv_x_y_point);
-        // ugv2.cartesian_x_y_point = openCVPointToCartesianPoint(ugv2.opencv_x_y_point);
         calculateNewPoints(ugv1, 1);
         break;
     default:

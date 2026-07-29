@@ -35,8 +35,9 @@ void calculateNewPoints(Node &ugv, double theta_rotation_degrees)
     calculateRotationMatrix(x_pos_diff, y_pos_diff, theta_rotation_degrees);
     ugv.cartesian_y_axis_point.x = ugv.cartesian_x_y_point.x + x_pos_diff;
     ugv.cartesian_y_axis_point.y = ugv.cartesian_x_y_point.y + y_pos_diff;
-    ugv.cartesian_x_axis_point.x = ugv.cartesian_x_y_point.x - y_pos_diff;
-    ugv.cartesian_x_axis_point.y = ugv.cartesian_x_y_point.y + x_pos_diff;
+
+    ugv.cartesian_x_axis_point.x = ugv.cartesian_x_y_point.x + y_pos_diff;
+    ugv.cartesian_x_axis_point.y = ugv.cartesian_x_y_point.y - x_pos_diff;
     ugv.change_theta_rotation_degrees(theta_rotation_degrees);
 }
 

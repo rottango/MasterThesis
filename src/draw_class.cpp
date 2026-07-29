@@ -24,14 +24,10 @@ Draw::Draw(std::string windowName,
 void Draw::drawElipse(cv::Mat &img, Node observer)
 {
     double angle = 0;
-    double start_angle = 0;
-    double end_angle = observer.angle_output_atan2_to_target;
+    double start_angle = -observer.theta_rotation_degrees;
+    double end_angle = start_angle - observer.angle_output_atan2_to_target;
     cv::Scalar color = observer.ugvColorPalet.text_color;
     bool invert = 0;
-
-    end_angle *= -1;
-
-    start_angle = observer.theta_rotation_degrees;
 
     cv::ellipse(img,                                                       // cv::InputOutputArray img,
                 cartesianPointToOpenCVPoint(observer.cartesian_x_y_point), // cv::Point center
