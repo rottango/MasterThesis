@@ -2,25 +2,29 @@
 #include <calculate.hpp>
 #include <node_class.hpp>
 
-Node::Node(cv::Point2d opencv_x_y_point,
-           double opencv_z_position,
+Node::Node(cv::Point2d cartesian_x_y_point,
+           double cartesian_z_position,
            double theta_rotation,
            double vehicle_size,
            double inner,
            double measurment_error_CM,
            colorPalet newUgvColorPalet)
 {
-    this->opencv_x_y_point = opencv_x_y_point;
-    this->opencv_z_position = opencv_z_position;
+    this->cartesian_x_y_point = cartesian_x_y_point;
+    this->cartesian_z_position = cartesian_z_position;
+    this->cartesian_x_axis_point = cv::Point2d(cartesian_x_y_point.x + 100, cartesian_x_y_point.y);
+    this->cartesian_y_axis_point = cv::Point2d(cartesian_x_y_point.x, cartesian_x_y_point.y + 100);
 
-    this->cartesian_x_y_point = openCVPointToCartesianPoint(opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+    this->opencv_x_y_point = cartesianPointToOpenCVPoint(cartesian_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+    this->opencv_z_position = 0;
+    this->opencv_x_axis_point = cartesianPointToOpenCVPoint(cartesian_x_axis_point, cv::Point2d(1920 / 2, 1080 / 2));
+    this->opencv_y_axis_point = cartesianPointToOpenCVPoint(cartesian_y_axis_point, cv::Point2d(1920 / 2, 1080 / 2));
 
     this->theta_rotation = theta_rotation;
 
     this->vehicle_size = vehicle_size;
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
-
     this->opencv_x_axis_point = cv::Point2d(opencv_x_y_point.x + 100, opencv_x_y_point.y);
     this->opencv_y_axis_point = cv::Point2d(opencv_x_y_point.x, opencv_x_y_point.y - 100);
 

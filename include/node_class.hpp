@@ -11,29 +11,27 @@
 class Node
 {
 public:
+    // openCV
     cv::Point2d opencv_x_y_point;
-    double opencv_z_position; // [+] up / [-] down
-
-    cv::Point2d cartesian_x_y_point;
-    double cartesian_z_position; // [+] up / [-] down
-
-    double theta_rotation;
-    double angle_output_atan2_to_target;
-
+    double opencv_z_position;
     cv::Point2d opencv_x_axis_point;
     cv::Point2d opencv_y_axis_point;
 
+    /// cartesian
+    cv::Point2d cartesian_x_y_point;
+    double cartesian_z_position;
+    cv::Point2d cartesian_x_axis_point;
+    cv::Point2d cartesian_y_axis_point;
+
+    // not specified
+    double theta_rotation;
+    double angle_output_atan2_to_target;
+
+    // misc
     colorPalet ugvColorPalet;
 
-    // bgr ugv1/ugv2
-    //  234b00 //2f0f80
-    //  006400 //3c13a4
-    //  007200 //4a18c9
-    //  008000 //6d4dff
-    //  00b038 //8f75ff
-
-    Node(cv::Point2d opencv_x_y_point,
-         double opencv_z_position,
+    Node(cv::Point2d cartesian_x_y_point,
+         double cartesian_z_position,
          double theta_rotation,
          double vehicle_size,
          double inner,

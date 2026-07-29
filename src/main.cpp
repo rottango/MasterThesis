@@ -22,8 +22,8 @@ int main()
     int makeTypeFlag = CV_8UC3;
     cv::Scalar backgroundColor{87, 80, 73};
 
-    Node ugv1(cartesianPointToOpenCVPoint(cv::Point2d(0, 0), cv::Point2d(1920 / 2, 1080 / 2)), 0, 0, 5, 40, 45, ugv1ColorPalet);
-    Node ugv2(cartesianPointToOpenCVPoint(cv::Point2d(-100, -100), cv::Point2d(1920 / 2, 1080 / 2)), 0, 0, 5, 40, 45, ugv2ColorPalet);
+    Node ugv1(cv::Point2d(0, 0), 0, 0, 5, 40, 45, ugv1ColorPalet);
+    Node ugv2(cv::Point2d(-100, -100), 0, 0, 5, 40, 45, ugv2ColorPalet);
 
     Draw draw1(windowName,
                flag,
