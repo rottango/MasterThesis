@@ -4,14 +4,14 @@
 #define DEGREES_TO_RADIANS PI / 180
 #define RADIANS_TO_DEGREES 180 / PI
 
-cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point, cv::Point2d opencv_origin_point)
+cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point)
 {
-    return cv::Point2d(opencv_point.x - opencv_origin_point.x, opencv_origin_point.y - opencv_point.y);
+    return cv::Point2d(opencv_point.x - 1920 / 2, 1080 / 2 - opencv_point.y);
 }
 
-cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point, cv::Point2d opencv_origin_point)
+cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point)
 {
-    return cv::Point2d(cartesian_point.x + opencv_origin_point.x, opencv_origin_point.y - cartesian_point.y);
+    return cv::Point2d(cartesian_point.x + 1920 / 2, 1080 / 2 - cartesian_point.y);
 }
 
 void calculate(double x, double y)

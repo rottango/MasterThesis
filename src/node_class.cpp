@@ -3,7 +3,6 @@
 #include <node_class.hpp>
 
 Node::Node(cv::Point2d cartesian_x_y_point,
-           double cartesian_z_position,
            double theta_rotation_degrees,
            double vehicle_size,
            double inner,
@@ -11,22 +10,14 @@ Node::Node(cv::Point2d cartesian_x_y_point,
            colorPalet newUgvColorPalet)
 {
     this->cartesian_x_y_point = cartesian_x_y_point;
-    this->cartesian_z_position = cartesian_z_position;
     this->cartesian_x_axis_point = cv::Point2d(cartesian_x_y_point.x + 100, cartesian_x_y_point.y);
     this->cartesian_y_axis_point = cv::Point2d(cartesian_x_y_point.x, cartesian_x_y_point.y + 100);
-
-    this->opencv_x_y_point = cartesianPointToOpenCVPoint(cartesian_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
-    this->opencv_z_position = 0;
-    this->opencv_x_axis_point = cartesianPointToOpenCVPoint(cartesian_x_axis_point, cv::Point2d(1920 / 2, 1080 / 2));
-    this->opencv_y_axis_point = cartesianPointToOpenCVPoint(cartesian_y_axis_point, cv::Point2d(1920 / 2, 1080 / 2));
 
     this->theta_rotation_degrees = theta_rotation_degrees;
 
     this->vehicle_size = vehicle_size;
     this->inner = inner;
     this->measurment_error_CM = measurment_error_CM;
-    this->opencv_x_axis_point = cv::Point2d(opencv_x_y_point.x + 100, opencv_x_y_point.y);
-    this->opencv_y_axis_point = cv::Point2d(opencv_x_y_point.x, opencv_x_y_point.y - 100);
 
     this->ugvColorPalet = newUgvColorPalet;
 }
@@ -69,34 +60,21 @@ void Node::assingColors()
     ugvColorPalet.text_color[2] = 56;
 }
 
-void Node::openCVCartesianCalculateAngle(cv::Point2d new_opencv_x_y_point,
-                                         double new_opencv_z_position)
+void Node::openCVCartesianCalculateAngle(cv::Point2d new_cartesian_x_y_point)
 {
-    cv::Point2d opencv_x_y_delta_point(new_opencv_x_y_point.x - this->opencv_x_y_point.x,
-                                       new_opencv_x_y_point.y - this->opencv_x_y_point.y);
-    double z_delta = new_opencv_z_position - this->opencv_z_position;
-    this->opencv_x_y_point = new_opencv_x_y_point;
-    this->cartesian_x_y_point = openCVPointToCartesianPoint(opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+    cv::Point2d opencv_x_y_delta_point(new_cartesian_x_y_point.x - this->cartesian_x_y_point.x,
+                                       new_cartesian_x_y_point.y - this->cartesian_x_y_point.y);
+    this->cartesian_x_y_point = new_cartesian_x_y_point;
 
-    this->opencv_z_position = new_opencv_z_position;
-
-    changeAxisPoints(opencv_x_y_delta_point, z_delta);
+    changeAxisPoints(opencv_x_y_delta_point);
 }
 
-void Node::changeAxisPoints(cv::Point2d new_opencv_x_y_point,
-                            double new_opencv_z_position)
+void Node::changeAxisPoints(cv::Point2d new_cartesian_x_y_point)
 {
-    this->opencv_y_axis_point.x = opencv_y_axis_point.x + new_opencv_x_y_point.x;
-    this->opencv_y_axis_point.y = opencv_y_axis_point.y + new_opencv_x_y_point.y;
-    this->opencv_x_axis_point.x = opencv_x_axis_point.x + new_opencv_x_y_point.x;
-    this->opencv_x_axis_point.y = opencv_x_axis_point.y + new_opencv_x_y_point.y;
-}
-
-void Node::drawNode(cv::Mat img)
-{
-    cv::circle(img, cv::Point2d(this->opencv_x_y_point.x, this->opencv_x_y_point.y), this->vehicle_size, this->ugvColorPalet.vehicle_color, cv::FILLED, 8, 0);
-    cv::circle(img, cv::Point2d(this->opencv_x_y_point.x, this->opencv_x_y_point.y), this->inner, this->ugvColorPalet.inner_color, 2, 8, 0);
-    cv::circle(img, cv::Point2d(this->opencv_x_y_point.x, this->opencv_x_y_point.y), this->measurment_error_CM, this->ugvColorPalet.measurment_error_color, 2, 8, 0);
+    this->cartesian_y_axis_point.x = cartesian_y_axis_point.x + new_cartesian_x_y_point.x;
+    this->cartesian_y_axis_point.y = cartesian_y_axis_point.y + new_cartesian_x_y_point.y;
+    this->cartesian_x_axis_point.x = cartesian_x_axis_point.x + new_cartesian_x_y_point.x;
+    this->cartesian_x_axis_point.y = cartesian_x_axis_point.y + new_cartesian_x_y_point.y;
 }
 
 void Node::setVehicleSize(double new_vehicle_size)

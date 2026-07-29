@@ -15,28 +15,28 @@ void renderLoop(cv::Mat img,
     switch (pressedKey)
     {
     case 'a':
-        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x - 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.cartesian_x_y_point.x - 10, ugv1.cartesian_x_y_point.y));
         break;
     case 's':
-        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y + 10), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.cartesian_x_y_point.x, ugv1.cartesian_x_y_point.y - 10));
         break;
     case 'd':
-        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x + 10, ugv1.opencv_x_y_point.y), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.cartesian_x_y_point.x + 10, ugv1.cartesian_x_y_point.y));
         break;
     case 'w':
-        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y - 10), ugv1.opencv_z_position);
+        ugv1.openCVCartesianCalculateAngle(cv::Point2d(ugv1.cartesian_x_y_point.x, ugv1.cartesian_x_y_point.y + 10));
         break;
     case 'Q':
-        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x - 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.cartesian_x_y_point.x - 10, ugv2.cartesian_x_y_point.y));
         break;
     case 'T':
-        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y + 10), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.cartesian_x_y_point.x, ugv2.cartesian_x_y_point.y - 10));
         break;
     case 'S':
-        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x + 10, ugv2.opencv_x_y_point.y), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.cartesian_x_y_point.x + 10, ugv2.cartesian_x_y_point.y));
         break;
     case 'R':
-        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.opencv_x_y_point.x, ugv2.opencv_x_y_point.y - 10), ugv2.opencv_z_position);
+        ugv2.openCVCartesianCalculateAngle(cv::Point2d(ugv2.cartesian_x_y_point.x, ugv2.cartesian_x_y_point.y + 10));
         break;
     case '=':
         ugv1.setMeasurmentError(ugv1.getMeasurmentError() + 1);
@@ -59,13 +59,13 @@ void renderLoop(cv::Mat img,
     case '1':
         break;
     case ',': // rotate left main node ugv1.cartesian_x_y_point = openCVPointToCartesianPoint(ugv1.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
-        ugv2.cartesian_x_y_point = openCVPointToCartesianPoint(ugv2.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+        // ugv2.cartesian_x_y_point = openCVPointToCartesianPoint(ugv2.opencv_x_y_point);
         calculateNewPoints(ugv1, -1);
 
         break;
     case '.': // rotate right
-        ugv1.cartesian_x_y_point = openCVPointToCartesianPoint(ugv1.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
-        ugv2.cartesian_x_y_point = openCVPointToCartesianPoint(ugv2.opencv_x_y_point, cv::Point2d(1920 / 2, 1080 / 2));
+        // ugv1.cartesian_x_y_point = openCVPointToCartesianPoint(ugv1.opencv_x_y_point);
+        // ugv2.cartesian_x_y_point = openCVPointToCartesianPoint(ugv2.opencv_x_y_point);
         calculateNewPoints(ugv1, 1);
         break;
     default:
@@ -74,9 +74,8 @@ void renderLoop(cv::Mat img,
 
     draw1.drawFrame(img, ugv1, ugv2);
     cv::imshow(windowName, img);
-
+    cv::Point2d temp_opencv_point_x_y = cartesianPointToOpenCVPoint(ugv1.cartesian_x_y_point);
     // std::cout << "PressedKey: " << pressedKey << "\n";
-    std::cout << "OpenCV (x,y) = " << "(" << ugv1.opencv_x_y_point.x << "," << ugv1.opencv_x_y_point.y << ")" << "\t";
-    cv::Point2d cartesianPoint = openCVPointToCartesianPoint(cv::Point2d(ugv1.opencv_x_y_point.x, ugv1.opencv_x_y_point.y), cv::Point2d(1920 / 2, 1080 / 2));
-    std::cout << "Cartesian (x,y) = " << "(" << cartesianPoint.x << "," << cartesianPoint.y << ")" << "\n";
+    std::cout << "OpenCV (x,y) = " << "(" << temp_opencv_point_x_y.x << "," << temp_opencv_point_x_y.y << ")" << "\t";
+    std::cout << "Cartesian (x,y) = " << "(" << ugv1.cartesian_x_y_point.x << "," << ugv1.cartesian_x_y_point.y << ")" << "\n";
 }

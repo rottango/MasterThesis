@@ -11,15 +11,8 @@
 class Node
 {
 public:
-    // openCV
-    cv::Point2d opencv_x_y_point;
-    double opencv_z_position;
-    cv::Point2d opencv_x_axis_point;
-    cv::Point2d opencv_y_axis_point;
-
-    /// cartesian
+    // cartesian
     cv::Point2d cartesian_x_y_point;
-    double cartesian_z_position;
     cv::Point2d cartesian_x_axis_point;
     cv::Point2d cartesian_y_axis_point;
 
@@ -31,24 +24,19 @@ public:
     colorPalet ugvColorPalet;
 
     Node(cv::Point2d cartesian_x_y_point,
-         double cartesian_z_position,
          double theta_rotation_degrees,
          double vehicle_size,
          double inner,
          double measurment_error_CM,
          colorPalet ugvColorPalet);
 
-    void openCVCartesianCalculateAngle(cv::Point2d opencv_x_y_point,
-                                       double new_opencv_z_position);
+    void openCVCartesianCalculateAngle(cv::Point2d opencv_x_y_point);
 
-    void changeAxisPoints(cv::Point2d opencv_x_y_point,
-                          double new_opencv_z_position);
+    void changeAxisPoints(cv::Point2d opencv_x_y_point);
 
     void assingColors();
 
     void change_theta_rotation_degrees(double new_theta_rotation_degrees);
-
-    void drawNode(cv::Mat img);
 
     void setVehicleSize(double new_vehicle_size);
 

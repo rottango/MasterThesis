@@ -33,24 +33,24 @@ void Draw::drawElipse(cv::Mat &img, Node observer)
 
     start_angle = observer.theta_rotation_degrees;
 
-    cv::ellipse(img,                               // cv::InputOutputArray img,
-                observer.opencv_x_y_point,         // cv::Point center
-                cv::Size2d(100, 100),              // cv::Size axes
-                angle,                             // double angle STAYS 0, then its like i want it to be
-                start_angle,                       // double startAngle
-                end_angle,                         // double endAngle
-                observer.ugvColorPalet.text_color, // const cv::Scalar &color
-                1,                                 // int thickness
-                8,                                 // int lineType = 8
-                0);                                // int shift = 0
+    cv::ellipse(img,                                                       // cv::InputOutputArray img,
+                cartesianPointToOpenCVPoint(observer.cartesian_x_y_point), // cv::Point center
+                cv::Size2d(100, 100),                                      // cv::Size axes
+                angle,                                                     // double angle STAYS 0, then its like i want it to be
+                start_angle,                                               // double startAngle
+                end_angle,                                                 // double endAngle
+                observer.ugvColorPalet.text_color,                         // const cv::Scalar &color
+                1,                                                         // int thickness
+                8,                                                         // int lineType = 8
+                0);                                                        // int shift = 0
     std::cout << "end_angle: " << end_angle << "\n";
 }
 
 void Draw::generateText(Node &observer, Node target)
 {
-    this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.opencv_x_y_point.x, target.opencv_x_y_point.x, observer.opencv_x_y_point.y, target.opencv_x_y_point.y));
-    this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.opencv_x_y_point.x) + "," + std::to_string(observer.opencv_x_y_point.y) + ")";
-    this->target_pos_output = "target (x,y) = (" + std::to_string(target.opencv_x_y_point.x) + "," + std::to_string(target.opencv_x_y_point.y) + ")";
+    this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.cartesian_x_y_point.x, target.cartesian_x_y_point.x, observer.cartesian_x_y_point.y, target.cartesian_x_y_point.y));
+    this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.cartesian_x_y_point.x) + "," + std::to_string(observer.cartesian_x_y_point.y) + ")";
+    this->target_pos_output = "target (x,y) = (" + std::to_string(target.cartesian_x_y_point.x) + "," + std::to_string(target.cartesian_x_y_point.y) + ")";
     this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
 
     observer.angle_output_atan2_to_target = cartesianCalculateAngle(observer, target);
@@ -94,14 +94,34 @@ void Draw::openCVDrawTextOnScreen(cv::Mat &img, Node observer, Node target)
 
 void Draw::openCVDrawAxis(cv::Mat &img, Node ugv)
 {
-    cv::arrowedLine(img, ugv.opencv_x_y_point, ugv.opencv_x_axis_point, cv::Scalar(0, 0, 255), 5); // x axis red
-    cv::arrowedLine(img, ugv.opencv_x_y_point, ugv.opencv_y_axis_point, cv::Scalar(255, 0, 0), 5); // y axis blue
+    cv::Point2d temp_opencv_point_x_y = cartesianPointToOpenCVPoint(ugv.cartesian_x_y_point);
+    cv::Point2d temp_opencv_x_axis_point = cartesianPointToOpenCVPoint(ugv.cartesian_x_axis_point);
+    cv::Point2d temp_opencv_y_axis_point = cartesianPointToOpenCVPoint(ugv.cartesian_y_axis_point);
+
+    cv::arrowedLine(img,
+                    temp_opencv_point_x_y,
+                    temp_opencv_x_axis_point,
+                    cv::Scalar(0, 0, 255),
+                    5); // x axis red
+    cv::arrowedLine(img,
+                    temp_opencv_point_x_y,
+                    temp_opencv_y_axis_point,
+                    cv::Scalar(255, 0, 0),
+                    5); // y axis blue
+}
+
+void Draw::drawNode(cv::Mat img, Node ugv)
+{
+    cv::Point2d temp_opencv_point_x_y = cartesianPointToOpenCVPoint(ugv.cartesian_x_y_point);
+    cv::circle(img, temp_opencv_point_x_y, ugv.getVehicleSize(), ugv.ugvColorPalet.vehicle_color, cv::FILLED, 8, 0);
+    cv::circle(img, temp_opencv_point_x_y, ugv.getInner(), ugv.ugvColorPalet.inner_color, 2, 8, 0);
+    cv::circle(img, temp_opencv_point_x_y, ugv.getMeasurmentError(), ugv.ugvColorPalet.measurment_error_color, 2, 8, 0);
 }
 
 void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
 {
-    ugv1.drawNode(img);
-    ugv2.drawNode(img);
+    drawNode(img, ugv1);
+    drawNode(img, ugv2);
     drawConnectingLine(img, ugv1, ugv2);
     generateText(ugv1, ugv2);
     openCVDrawTextOnScreen(img, ugv1, ugv2);
@@ -112,12 +132,16 @@ void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
 
 void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
 {
+    cv::Point2d temp_observer_cartesian_x_y_point = cartesianPointToOpenCVPoint(observer.cartesian_x_y_point);
+    cv::Point2d temp_target_cartesian_x_y_point = cartesianPointToOpenCVPoint(target.cartesian_x_y_point);
+
     cv::line(img,
-             cv::Point2d(observer.opencv_x_y_point.x, observer.opencv_x_y_point.y),
-             cv::Point2d(target.opencv_x_y_point.x, target.opencv_x_y_point.y),
+             temp_observer_cartesian_x_y_point,
+             temp_target_cartesian_x_y_point,
              observer.ugvColorPalet.observer_line_color,
              2,
              cv::LineTypes::LINE_4,
              0);
-    this->middleOfAngleLine = cv::Point2d((observer.opencv_x_y_point.x + target.opencv_x_y_point.x) / 2, (observer.opencv_x_y_point.y + target.opencv_x_y_point.y) / 2);
+    this->middleOfAngleLine = cv::Point2d((temp_observer_cartesian_x_y_point.x + temp_target_cartesian_x_y_point.x) / 2,
+                                          (temp_observer_cartesian_x_y_point.y + temp_target_cartesian_x_y_point.y) / 2);
 }
