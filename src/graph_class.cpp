@@ -19,7 +19,7 @@ void Graph::removeAllNodes()
 {
 }
 
-int Graph::findNode()
+uint8_t Graph::findNode()
 {
 }
 

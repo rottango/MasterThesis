@@ -1,6 +1,8 @@
 #pragma once
 
 #include "boost/lexical_cast.hpp"
+#include <cstdint>
+
 #include <color_palet_struct.hpp>
 #include <opencv2/opencv.hpp>
 
@@ -43,13 +45,13 @@ public:
 
     void setVehicleSize(double new_vehicle_size_);
 
-    void setinner_(double new_inner_);
+    void setInner(double new_inner_);
 
     void setMeasurmentError(double new_measurment_error_CM_);
 
     double getVehicleSize();
 
-    double getinner_();
+    double getInner();
 
     double getMeasurmentError();
 

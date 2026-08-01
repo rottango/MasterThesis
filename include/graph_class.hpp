@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <utility>
 
+#include <cstdint>
 #include <edge_class.hpp>
 #include <grouping_manager_class.hpp>
 #include <node_class.hpp>
@@ -17,7 +18,7 @@ public:
 
     void removeAllNodes();
 
-    int findNode();
+    uint8_t findNode();
 
     void findEdge();
 

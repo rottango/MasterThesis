@@ -108,7 +108,7 @@ void Draw::drawNode(cv::Mat img, Node node)
 {
     cv::Point2d temp_opencv_point_x_y = cartesianPointToOpenCVPoint(node.cartesian_x_y_point);
     cv::circle(img, temp_opencv_point_x_y, node.getVehicleSize(), node.nodeColorPalet.vehicle_color, cv::FILLED, 8, 0);
-    cv::circle(img, temp_opencv_point_x_y, node.getinner_(), node.nodeColorPalet.inner__color, 2, 8, 0);
+    cv::circle(img, temp_opencv_point_x_y, node.getInner(), node.nodeColorPalet.inner__color, 2, 8, 0);
     cv::circle(img, temp_opencv_point_x_y, node.getMeasurmentError(), node.nodeColorPalet.measurment_error_color, 2, 8, 0);
 }
 

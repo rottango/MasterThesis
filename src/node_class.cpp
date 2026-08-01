@@ -1,4 +1,3 @@
-
 #include <node_class.hpp>
 
 Node::Node(uint8_t node_id, cv::Point2d cartesian_x_y_point,
@@ -84,7 +83,7 @@ void Node::setVehicleSize(double new_vehicle_size_)
     this->vehicle_size_ = new_vehicle_size_;
 }
 
-void Node::setinner_(double new_inner_)
+void Node::setInner(double new_inner_)
 {
     this->inner_ = new_inner_;
 }
@@ -99,7 +98,7 @@ double Node::getVehicleSize()
     return this->vehicle_size_;
 }
 
-double Node::getinner_()
+double Node::getInner()
 {
     return this->inner_;
 }
