@@ -1,25 +1,26 @@
 
-#include <calculate.hpp>
 #include <node_class.hpp>
 
-Node::Node(cv::Point2d cartesian_x_y_point,
+Node::Node(uint8_t node_id, cv::Point2d cartesian_x_y_point,
            double theta_rotation_degrees,
-           double vehicle_size,
-           double inner,
-           double measurment_error_CM,
-           colorPalet newUgvColorPalet)
+           double vehicle_size_,
+           double inner_,
+           double measurment_error_CM_,
+           colorPalet nodeColorPalet)
 {
+    this->node_id = node_id;
+
     this->cartesian_x_y_point = cartesian_x_y_point;
     this->cartesian_x_axis_point = cv::Point2d(cartesian_x_y_point.x + 100, cartesian_x_y_point.y);
     this->cartesian_y_axis_point = cv::Point2d(cartesian_x_y_point.x, cartesian_x_y_point.y + 100);
 
     this->theta_rotation_degrees = theta_rotation_degrees;
 
-    this->vehicle_size = vehicle_size;
-    this->inner = inner;
-    this->measurment_error_CM = measurment_error_CM;
+    this->vehicle_size_ = vehicle_size_;
+    this->inner_ = inner_;
+    this->measurment_error_CM_ = measurment_error_CM_;
 
-    this->ugvColorPalet = newUgvColorPalet;
+    this->nodeColorPalet = nodeColorPalet;
 }
 
 void Node::change_theta_rotation_degrees(double new_theta_rotation_degrees)
@@ -39,34 +40,35 @@ void Node::change_theta_rotation_degrees(double new_theta_rotation_degrees)
 
 void Node::assingColors()
 {
-    ugvColorPalet.vehicle_color[0] = 35;
-    ugvColorPalet.vehicle_color[1] = 75;
-    ugvColorPalet.vehicle_color[2] = 0;
+    nodeColorPalet.vehicle_color[0] = 35;
+    nodeColorPalet.vehicle_color[1] = 75;
+    nodeColorPalet.vehicle_color[2] = 0;
 
-    ugvColorPalet.inner_color[0] = 0;
-    ugvColorPalet.inner_color[1] = 100;
-    ugvColorPalet.inner_color[2] = 0;
+    nodeColorPalet.inner__color[0] = 0;
+    nodeColorPalet.inner__color[1] = 100;
+    nodeColorPalet.inner__color[2] = 0;
 
-    ugvColorPalet.measurment_error_color[0] = 0;
-    ugvColorPalet.measurment_error_color[1] = 114;
-    ugvColorPalet.measurment_error_color[2] = 0;
+    nodeColorPalet.measurment_error_color[0] = 0;
+    nodeColorPalet.measurment_error_color[1] = 114;
+    nodeColorPalet.measurment_error_color[2] = 0;
 
-    ugvColorPalet.observer_line_color[0] = 0;
-    ugvColorPalet.observer_line_color[1] = 128;
-    ugvColorPalet.observer_line_color[2] = 0;
+    nodeColorPalet.observer_line_color[0] = 0;
+    nodeColorPalet.observer_line_color[1] = 128;
+    nodeColorPalet.observer_line_color[2] = 0;
 
-    ugvColorPalet.text_color[0] = 0;
-    ugvColorPalet.text_color[1] = 176;
-    ugvColorPalet.text_color[2] = 56;
+    nodeColorPalet.text_color[0] = 0;
+    nodeColorPalet.text_color[1] = 176;
+    nodeColorPalet.text_color[2] = 56;
 }
 
-void Node::openCVCartesianCalculateAngle(cv::Point2d new_cartesian_x_y_point)
+void Node::changePosition(cv::Point2d new_cartesian_x_y_point)
 {
-    cv::Point2d opencv_x_y_delta_point(new_cartesian_x_y_point.x - this->cartesian_x_y_point.x,
-                                       new_cartesian_x_y_point.y - this->cartesian_x_y_point.y);
+    cv::Point2d cartesian_x_y_delta_point(new_cartesian_x_y_point.x - this->cartesian_x_y_point.x,
+                                          new_cartesian_x_y_point.y - this->cartesian_x_y_point.y);
+
     this->cartesian_x_y_point = new_cartesian_x_y_point;
 
-    changeAxisPoints(opencv_x_y_delta_point);
+    changeAxisPoints(cartesian_x_y_delta_point);
 }
 
 void Node::changeAxisPoints(cv::Point2d new_cartesian_x_y_point)
@@ -77,32 +79,32 @@ void Node::changeAxisPoints(cv::Point2d new_cartesian_x_y_point)
     this->cartesian_x_axis_point.y = cartesian_x_axis_point.y + new_cartesian_x_y_point.y;
 }
 
-void Node::setVehicleSize(double new_vehicle_size)
+void Node::setVehicleSize(double new_vehicle_size_)
 {
-    this->vehicle_size = new_vehicle_size;
+    this->vehicle_size_ = new_vehicle_size_;
 }
 
-void Node::setInner(double new_inner)
+void Node::setinner_(double new_inner_)
 {
-    this->inner = new_inner;
+    this->inner_ = new_inner_;
 }
 
-void Node::setMeasurmentError(double new_measurment_error_CM)
+void Node::setMeasurmentError(double new_measurment_error_CM_)
 {
-    this->measurment_error_CM = new_measurment_error_CM;
+    this->measurment_error_CM_ = new_measurment_error_CM_;
 }
 
 double Node::getVehicleSize()
 {
-    return this->vehicle_size;
+    return this->vehicle_size_;
 }
 
-double Node::getInner()
+double Node::getinner_()
 {
-    return this->inner;
+    return this->inner_;
 }
 
 double Node::getMeasurmentError()
 {
-    return this->measurment_error_CM;
+    return this->measurment_error_CM_;
 }

@@ -11,6 +11,8 @@
 class Node
 {
 public:
+    uint8_t node_id;
+
     // cartesian
     cv::Point2d cartesian_x_y_point;
     cv::Point2d cartesian_x_axis_point;
@@ -18,19 +20,20 @@ public:
 
     // not specified
     double theta_rotation_degrees;
-    double angle_output_atan2_to_target;
 
     // misc
-    colorPalet ugvColorPalet;
+    colorPalet nodeColorPalet;
 
-    Node(cv::Point2d cartesian_x_y_point,
+    bool is_active;
+
+    Node(uint8_t node_id, cv::Point2d cartesian_x_y_point,
          double theta_rotation_degrees,
-         double vehicle_size,
-         double inner,
-         double measurment_error_CM,
-         colorPalet ugvColorPalet);
+         double vehicle_size_,
+         double inner_,
+         double measurment_error_CM_,
+         colorPalet nodeColorPalet);
 
-    void openCVCartesianCalculateAngle(cv::Point2d opencv_x_y_point);
+    void changePosition(cv::Point2d opencv_x_y_point);
 
     void changeAxisPoints(cv::Point2d opencv_x_y_point);
 
@@ -38,20 +41,20 @@ public:
 
     void change_theta_rotation_degrees(double new_theta_rotation_degrees);
 
-    void setVehicleSize(double new_vehicle_size);
+    void setVehicleSize(double new_vehicle_size_);
 
-    void setInner(double new_inner);
+    void setinner_(double new_inner_);
 
-    void setMeasurmentError(double new_measurment_error_CM);
+    void setMeasurmentError(double new_measurment_error_CM_);
 
     double getVehicleSize();
 
-    double getInner();
+    double getinner_();
 
     double getMeasurmentError();
 
 private:
-    int vehicle_size;
-    int inner;
-    int measurment_error_CM;
+    int vehicle_size_;
+    int inner_;
+    int measurment_error_CM_;
 };

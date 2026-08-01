@@ -9,12 +9,15 @@ cmake_minimum_required(VERSION 3.16)
  
  set(
  SOURCES
- src/calculate.cpp
+ src/application_node.cpp
+ src/color_palet_struct.cpp
  src/draw_class.cpp
+ src/edge_class.cpp
+ src/graph_class.cpp
+ src/group_class.cpp
+ src/group_manager_class.cpp
  src/main.cpp
  src/node_class.cpp
- src/render_loop.cpp
- src/color_palet_struct.cpp
  )
  
  

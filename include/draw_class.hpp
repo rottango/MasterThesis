@@ -24,15 +24,15 @@ public:
          int makeTypeFlag,
          cv::Scalar backgroundColor);
 
-    void openCVDrawTextOnScreen(cv::Mat &img, Node ugv1, Node ugv2);
+    void DrawTextOnScreen(cv::Mat &img, std::vector<Node> node_list);
 
-    void openCVDrawAxis(cv::Mat &img, Node ugv);
+    void DrawAxis(cv::Mat &img, Node ugv);
 
-    void drawConnectingLine(cv::Mat &img, Node ugv1, Node ugv2);
+    void drawConnectingLine(cv::Mat &img, Node observer, Node target);
 
-    void drawFrame(cv::Mat &img, Node ugv1, Node ugv2);
+    void drawFrame(cv::Mat &img, std::vector<Node> node_list);
 
-    void generateText(Node &observer, Node target);
+    void generateText(std::vector<Node> node_list);
 
     void drawElipse(cv::Mat &img, Node observer);
 
