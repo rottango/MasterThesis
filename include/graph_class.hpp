@@ -5,6 +5,7 @@
 #include <utility>
 
 #include <edge_class.hpp>
+#include <grouping_manager_class.hpp>
 #include <node_class.hpp>
 
 class Graph
@@ -37,4 +38,5 @@ private:
 
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;
+    std::unordered_map<uint8_t, GroupingManager> grouping_managers_;
 };

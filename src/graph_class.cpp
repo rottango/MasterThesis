@@ -4,18 +4,51 @@
 #include <utility>
 
 #include <edge_class.hpp>
+#include <graph_class.hpp>
 #include <node_class.hpp>
-class Graph
+
+void Graph::addNode()
 {
+}
 
-    std::unordered_map<int, Node> nodes;
-    std::map<std::pair<int, int>, Edge> edges;
+void Graph::removeNode()
+{
+}
 
-    void nodeIDGeneration();
+void Graph::removeAllNodes()
+{
+}
 
-    void nodeIDValidation();
+int Graph::findNode()
+{
+}
 
-    void edgeIDGeneration();
+void Graph::findEdge()
+{
+}
 
-    void edgeIDValidation();
-};
+void Graph::addEdge()
+{
+}
+
+void Graph::removeEdge()
+{
+}
+void Graph::nodeIDGeneration()
+{
+}
+
+void Graph::nodeIDValidation()
+{
+}
+
+void Graph::edgeIDGeneration()
+{
+}
+
+void Graph::edgeIDValidation()
+{
+}
+void Graph::removeAllVerticesEdges()
+{
+}
