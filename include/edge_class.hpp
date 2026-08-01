@@ -1,9 +1,9 @@
 
 class Edge
 {
-    int edge_id;
-    int observer_id;
-    int target_id;
+    uint8_t edge_id;
+    uint8_t observer_id;
+    uint8_t target_id;
 
     double distance_between_vertices_meters;
     double angle_between_vertices_degrees;

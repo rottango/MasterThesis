@@ -14,6 +14,8 @@ public:
 
     void removeNode();
 
+    void removeAllNodes();
+
     int findNode();
 
     void findEdge();
@@ -31,10 +33,8 @@ private:
 
     void edgeIDValidation();
 
-    void changeEdgeVertices();
-
     void removeAllVerticesEdges();
 
-    std::unordered_map<int, Node> nodes_;
-    std::map<std::pair<int, int>, Edge> edges_;
+    std::unordered_map<uint8_t, Node> nodes_;
+    std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;
 };
