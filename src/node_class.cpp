@@ -22,37 +22,37 @@ Node::Node(uint8_t node_id, cv::Point2d cartesian_x_y_point,
     this->nodeColorPalet = nodeColorPalet;
 }
 
-uint8_t Node::getNodeId()
+uint8_t Node::getNodeId() const
 {
     return this->node_id_;
 }
 
-cv::Point2d Node::getXYPoint()
+cv::Point2d Node::getXYPoint() const
 {
     return this->cartesian_x_y_point_;
 }
 
-cv::Point2d Node::getXAxisPoint()
+cv::Point2d Node::getXAxisPoint() const
 {
     return this->cartesian_x_axis_point_;
 }
 
-cv::Point2d Node::getYAxisPoint()
+cv::Point2d Node::getYAxisPoint() const
 {
     return this->cartesian_y_axis_point_;
 }
 
-double Node::getVehicleSize()
+double Node::getVehicleSize() const
 {
     return this->vehicle_size_;
 }
 
-double Node::getInner()
+double Node::getInner() const
 {
     return this->inner_;
 }
 
-double Node::getMeasurmentError()
+double Node::getMeasurmentError() const
 {
     return this->measurment_error_CM_;
 }
@@ -77,21 +77,21 @@ void setYAxisPoint(cv::Point2d cartesian_y_axis_point_)
 // {
 // }
 
-void getThetaRotationDegrees(double theta_rotation_degrees_)
+void getThetaRotationDegrees()
 {
 }
 
-void Node::setVehicleSize(double new_vehicle_size_)
+void Node::setVehicleSize(int new_vehicle_size_)
 {
     this->vehicle_size_ = new_vehicle_size_;
 }
 
-void Node::setInner(double new_inner_)
+void Node::setInner(int new_inner_)
 {
     this->inner_ = new_inner_;
 }
 
-void Node::setMeasurmentError(double new_measurment_error_CM_)
+void Node::setMeasurmentError(int new_measurment_error_CM_)
 {
     this->measurment_error_CM_ = new_measurment_error_CM_;
 }

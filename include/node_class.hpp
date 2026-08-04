@@ -1,6 +1,5 @@
 #pragma once
 
-#include "boost/lexical_cast.hpp"
 #include <cstdint>
 
 #include <color_palet_struct.hpp>
@@ -9,64 +8,58 @@
 class Node
 {
 public:
-    Node(uint8_t node_id,
-         cv::Point2d cartesian_x_y_point,
-         double theta_rotation_degrees,
-         double vehicle_size_,
-         double inner_,
-         double measurment_error_CM_,
-         colorPalet nodeColorPalet);
+    Node(uint8_t node_id_,
+         cv::Point2d cartesian_x_y_point_,
+         double theta_rotation_degrees_,
+         uint8_t vehicle_size_,
+         uint8_t inner_,
+         uint8_t measurment_error_CM_,
+         colorPalet node_color_palet_);
+
+    uint8_t getNodeId() const;
+
+    cv::Point2d getXYPoint() const;
+
+    cv::Point2d getXAxisPoint() const;
+
+    cv::Point2d getYAxisPoint() const;
+
+    // bool getActiveState();
+
+    uint8_t getVehicleSize() const;
+
+    uint8_t getInner() const;
+
+    uint8_t getMeasurmentError() const;
+
+    double getThetaRotationDegrees() const;
+
+    void changePosition(cv::Point2d cartesian_x_y_point);
+
+    void rotateNodesAxis(double theta_rotation_degrees_); // inside call changeThetaRotationDegrees
+
+    void assingColors(colorPalet color_palet); // should be accessible publicly
 
 private:
-    uint8_t getNodeId();
+    void setVehicleSize(uint8_t new_vehicle_size_);
 
-    cv::Point2d getXYPoint();
+    void setInner(uint8_t new_inner_);
 
-    cv::Point2d getXAxisPoint();
+    void setMeasurmentError(uint8_t new_measurment_error_CM_);
 
-    cv::Point2d getYAxisPoint();
+    void setXYPoint(cv::Point2d cartesian_x_y_point_); // to call after chanignPosition()
 
-    bool getActiveState();
-
-    double getVehicleSize();
-
-    double getInner();
-
-    double getMeasurmentError();
-
-    void setNodeId(uint8_t node_id_);
-
-    void setXYPoint(cv::Point2d cartesian_x_y_point_);
-
-    void setXAxisPoint(cv::Point2d cartesian_x_axis_point_);
-
-    void setYAxisPoint(cv::Point2d cartesian_y_axis_point_);
-
-    // void setActiveState();
-
-    void getThetaRotationDegrees(double theta_rotation_degrees_);
-
-    void setVehicleSize(double new_vehicle_size_);
-
-    void setInner(double new_inner_);
-
-    void setMeasurmentError(double new_measurment_error_CM_);
-
-    void changePosition(cv::Point2d opencv_x_y_point);
-
-    void changeAxisPoints(cv::Point2d opencv_x_y_point);
-
-    void assingColors();
+    void changeAxisPoints(cv::Point2d cartesian_x_y_point); // to call after changix position()
 
     void changeThetaRotationDegrees(double new_theta_rotation_degrees);
 
-    uint8_t node_id_;
+    uint8_t node_id_; // no need to have a setter for the future
     cv::Point2d cartesian_x_y_point_;
     cv::Point2d cartesian_x_axis_point_;
     cv::Point2d cartesian_y_axis_point_;
-    int vehicle_size_;
-    int inner_;
-    int measurment_error_CM_;
+    uint8_t vehicle_size_;
+    uint8_t inner_;
+    uint8_t measurment_error_CM_;
     double theta_rotation_degrees_;
     colorPalet node_color_palet_;
     // bool is_active_;
