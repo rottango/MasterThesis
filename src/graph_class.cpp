@@ -17,7 +17,7 @@ void Graph::addNode()
 {
 }
 
-void Graph::removeNode()
+void Graph::removeNodeById()
 {
 }
 
@@ -25,11 +25,19 @@ void Graph::removeAllNodes()
 {
 }
 
-uint8_t Graph::findNode()
+Node Graph::findNodeById()
 {
 }
 
-void Graph::findEdge()
+Edge Graph::findEdgeById()
+{
+}
+
+bool Graph::DoesNodeExist()
+{
+}
+
+bool Graph::DoesEdgeExist()
 {
 }
 
@@ -37,7 +45,7 @@ void Graph::addEdge()
 {
 }
 
-void Graph::removeEdge()
+void Graph::removeEdgeById()
 {
 }
 

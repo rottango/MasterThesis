@@ -14,6 +14,18 @@ void GroupingManager::removeGroup()
 {
 }
 
+uint8_t GroupingManager::getGroupId()
+{
+}
+
+uint8_t GroupingManager::groupIdWhereNodeIdIs()
+{
+}
+
+std::vector<uint8_t> GroupingManager::nodeIdsInGroupByGroupId()
+{
+}
+
 uint8_t GroupingManager::groupIDGeneration()
 {
 }

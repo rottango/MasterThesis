@@ -18,17 +18,31 @@ public:
 
     void addNode();
 
-    void removeNode();
+    void removeNodeById();
 
     void removeAllNodes();
 
-    uint8_t findNode();
+    Node findNodeById();
 
-    void findEdge();
+    bool DoesNodeExist();
+
+    uint8_t NumerOfNodes();
 
     void addEdge();
 
-    void removeEdge();
+    void removeEdgeById();
+
+    void removeAlllEdges();
+
+    Edge findEdgeById();
+
+    bool DoesEdgeExist();
+
+    uint8_t NumerOfEdges();
+
+    std::unordered_map<uint8_t, Node> readOnlyNodes();
+
+    std::map<std::pair<uint8_t, uint8_t>, Edge> readOnlyEdges();
 
 private:
     void nodeIDGeneration();
@@ -44,4 +58,7 @@ private:
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;
     std::unordered_map<uint8_t, GroupingManager> grouping_managers_;
+
+    uint8_t next_node_id_;
+    uint8_t next_edge_id_;
 };

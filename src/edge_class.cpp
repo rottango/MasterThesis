@@ -8,24 +8,73 @@ Edge::Edge(uint8_t edge_id,
 
 uint8_t Edge::getEdgeId()
 {
+    return this->edge_id_;
 }
 
 uint8_t Edge::getObserverId()
 {
+    return this->observer_id_;
 }
 
 uint8_t Edge::getTargetId()
 {
+    return this->target_id_;
 }
 
-void Edge::setEdgeId()
+double Edge::getDistanceBetweenNodesMeters()
 {
+    return this->distance_between_nodes_meters_;
 }
 
-void Edge::setObserverId()
+double Edge::getAngleBetweenNodesDegrees()
 {
+
+    return this->angle_between_nodes_degrees_;
 }
 
-void Edge::setTargetId()
+double Edge::getTempTimestamp()
 {
+    return this->temp_timestamp_;
+}
+
+double Edge::getDistanceBetweenNodesMetersError()
+{
+    return this->distance_between_nodes_meters_error_;
+}
+
+double Edge::getAngleBetweenNodesDegreesError()
+{
+
+    return this->angle_between_nodes_degrees_eror_;
+}
+
+// void Edge::setEdgeId(); // not to be used, because only constructor should create edge id, it shouldnt change
+
+// void Edge::setObserverId(); // not to be used, because only constructor should create observer id, it shouldnt change, if should be changed, then it shoudl be deleted and a new edge created
+
+// void Edge::setTargetId(); // not to be used, because only constructor should create target id, it shouldnt change, if should be changed, then it shoudl be deleted and a new edge created
+
+void Edge::setDistanceBetweenNodesMeters(double distance_between_nodes_meters_)
+{
+    this->distance_between_nodes_meters_ = distance_between_nodes_meters_;
+}
+
+void Edge::setAngleBetweenNodesDegrees(double angle_between_nodes_degrees_)
+{
+    this->angle_between_nodes_degrees_ = angle_between_nodes_degrees_;
+}
+
+void Edge::setTempTimestamp(double temp_timestamp_)
+{
+    this->temp_timestamp_ = temp_timestamp_;
+}
+
+void Edge::setDistanceBetweenNodesMetersError(double distance_between_nodes_meters_error_)
+{
+    this->distance_between_nodes_meters_error_ = distance_between_nodes_meters_error_;
+}
+
+void Edge::setAngleBetweenNodesDegreesError(double angle_between_nodes_degrees_eror_)
+{
+    this->angle_between_nodes_degrees_eror_ = angle_between_nodes_degrees_eror_;
 }

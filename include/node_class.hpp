@@ -9,7 +9,8 @@
 class Node
 {
 public:
-    Node(uint8_t node_id, cv::Point2d cartesian_x_y_point,
+    Node(uint8_t node_id,
+         cv::Point2d cartesian_x_y_point,
          double theta_rotation_degrees,
          double vehicle_size_,
          double inner_,
@@ -33,17 +34,17 @@ private:
 
     double getMeasurmentError();
 
-    void setNodeId();
+    void setNodeId(uint8_t node_id_);
 
-    void setXYPoint();
+    void setXYPoint(cv::Point2d cartesian_x_y_point_);
 
-    void setXAxisPoint();
+    void setXAxisPoint(cv::Point2d cartesian_x_axis_point_);
 
-    void setYAxisPoint();
+    void setYAxisPoint(cv::Point2d cartesian_y_axis_point_);
 
-    void setActiveState();
+    // void setActiveState();
 
-    void setThetaRotationDegrees();
+    void getThetaRotationDegrees(double theta_rotation_degrees_);
 
     void setVehicleSize(double new_vehicle_size_);
 
@@ -57,7 +58,7 @@ private:
 
     void assingColors();
 
-    void change_theta_rotation_degrees(double new_theta_rotation_degrees);
+    void changeThetaRotationDegrees(double new_theta_rotation_degrees);
 
     uint8_t node_id_;
     cv::Point2d cartesian_x_y_point_;
@@ -68,5 +69,5 @@ private:
     int measurment_error_CM_;
     double theta_rotation_degrees_;
     colorPalet node_color_palet_;
-    bool is_active_;
+    // bool is_active_;
 };
