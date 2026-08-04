@@ -6,12 +6,9 @@
 #include <vector>
 
 #include <application_node.hpp>
-#include <calculate.hpp>
 #include <color_palet_struct.hpp>
-#include <define.hpp>
 #include <draw_class.hpp>
 #include <node_class.hpp>
-#include <render_loop.hpp>
 
 #define PI 3.14159265
 
@@ -43,8 +40,8 @@ int main()
 
     while (true)
     {
-        cv::Mat imgCop = draw1.img.clone();
-        renderLoop(imgCop, windowName, node_vector, draw1);
+        cv::Mat imageCop = draw1.image.clone();
+        renderLoop(imageCop, windowName, node_vector, draw1);
     }
 
     return 0;

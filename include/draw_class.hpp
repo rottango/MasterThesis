@@ -12,9 +12,9 @@ public:
     std::string measurment_error_output;
     std::string angle_output_atan2;
 
-    cv::Point2d middleOfAngleLine;
-    cv::Point2d centerOfScreen;
-    cv::Mat img;
+    cv::Point2d middle_of_angle_line;
+    cv::Point2d center_of_screen;
+    cv::Mat image;
 
     Draw(std::string windowNameme,
          cv::WindowFlags flag,
@@ -24,17 +24,17 @@ public:
          int makeTypeFlag,
          cv::Scalar backgroundColor);
 
-    void DrawTextOnScreen(cv::Mat &img, std::vector<Node> node_list);
+    void drawTextOnScreen(cv::Mat &image, std::vector<Node> node_list);
 
-    void DrawAxis(cv::Mat &img, Node ugv);
+    void drawAxis(cv::Mat &image, Node ugv);
 
-    void drawConnectingLine(cv::Mat &img, Node observer, Node target);
+    void drawConnectingLine(cv::Mat &image, Node observer, Node target);
 
-    void drawFrame(cv::Mat &img, std::vector<Node> node_list);
+    void drawFrame(cv::Mat &image, std::vector<Node> node_list);
 
     void generateText(std::vector<Node> node_list);
 
-    void drawElipse(cv::Mat &img, Node observer);
+    void drawElipse(cv::Mat &image, Node observer);
 
-    void drawNode(cv::Mat img, Node ugv);
+    void drawNode(cv::Mat image, Node ugv);
 };

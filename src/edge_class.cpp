@@ -1,17 +1,31 @@
 #include <edge_class.hpp>
 
+Edge::Edge(uint8_t edge_id,
+           uint8_t observer_id,
+           uint8_t target_id_)
+{
+}
+
 uint8_t Edge::getEdgeId()
 {
 }
 
-uint8_t getObserverId()
+uint8_t Edge::getObserverId()
 {
 }
 
-uint8_t getTargetId();
+uint8_t Edge::getTargetId()
+{
+}
 
-void setEdgeId();
+void Edge::setEdgeId()
+{
+}
 
-void setObserverId();
+void Edge::setObserverId()
+{
+}
 
-void setTargetId();
+void Edge::setTargetId()
+{
+}

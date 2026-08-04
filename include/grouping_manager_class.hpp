@@ -12,6 +12,10 @@ public:
                     uint8_t proximity_param_,
                     uint8_t hysteresis_param_);
 
+    void addGroup();
+
+    void removeGroup();
+
 private:
     uint8_t group_size_param_; // prefered group size by the groupping manager
     uint8_t proximity_param_;  // how close nodes are to be to be considered for one group
@@ -22,8 +26,4 @@ private:
     uint8_t groupIDGeneration();
 
     bool groupIDValidation();
-
-    void addGroup();
-
-    void removeGroup();
 };

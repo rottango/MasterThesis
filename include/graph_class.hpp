@@ -12,6 +12,10 @@
 class Graph
 {
 public:
+    Graph(std::unordered_map<uint8_t, Node> nodes_,
+          std::map<std::pair<uint8_t, uint8_t>, Edge> edges_,
+          std::unordered_map<uint8_t, GroupingManager> grouping_managers_);
+
     void addNode();
 
     void removeNode();
@@ -35,7 +39,7 @@ private:
 
     void edgeIDValidation();
 
-    void removeAllVerticesEdges();
+    void removeAllNodeEdges();
 
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;
