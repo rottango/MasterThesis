@@ -7,8 +7,7 @@ class Edge
 public:
     Edge(uint8_t edge_id,
          uint8_t observer_id,
-         uint8_t target_id_) {
-    };
+         uint8_t target_id_);
 
 private:
     uint8_t edge_id_;

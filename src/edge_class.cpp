@@ -4,6 +4,9 @@ Edge::Edge(uint8_t edge_id,
            uint8_t observer_id,
            uint8_t target_id_)
 {
+    this->edge_id_ = edge_id;
+    this->observer_id_ = observer_id;
+    this->target_id_ = target_id_;
 }
 
 uint8_t Edge::getEdgeId()

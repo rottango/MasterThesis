@@ -14,35 +14,5 @@
 
 int main()
 {
-    Application application;
-
-    std::vector<Node> node_vector;
-    std::string windowName = "Visualization";
-    cv::WindowFlags flag = cv::WindowFlags::WINDOW_NORMAL;
-
-    cv::Size windowSize{1920, 1080};
-    int makeTypeFlag = CV_8UC3;
-    cv::Scalar backgroundColor{87, 80, 73};
-
-    Node ugv1(0, cv::Point2d(0, 0), 0, 5, 40, 45, ugv1ColorPalet);
-    Node ugv2(1, cv::Point2d(-100, -100), 0, 5, 40, 45, ugv2ColorPalet);
-
-    node_vector.push_back(ugv1);
-    node_vector.push_back(ugv2);
-
-    Draw draw1(windowName,
-               flag,
-               windowSize,
-               1080,
-               1920,
-               makeTypeFlag,
-               backgroundColor);
-
-    while (true)
-    {
-        cv::Mat imageCop = draw1.image.clone();
-        renderLoop(imageCop, windowName, node_vector, draw1);
-    }
-
     return 0;
 }
