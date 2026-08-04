@@ -38,7 +38,7 @@ public:
 
     void rotateNodesAxis(double theta_rotation_degrees_); // inside call changeThetaRotationDegrees
 
-    void assingColors(colorPalet color_palet); // should be accessible publicly
+    void assignColors(colorPalet color_palet); // should be accessible publicly
 
 private:
     void setVehicleSize(uint8_t new_vehicle_size_);
@@ -49,7 +49,7 @@ private:
 
     void setXYPoint(cv::Point2d cartesian_x_y_point_); // to call after chanignPosition()
 
-    void changeAxisPoints(cv::Point2d cartesian_x_y_point); // to call after changix position()
+    void changeAxisPoints(); // to call after changix position()
 
     void changeThetaRotationDegrees(double new_theta_rotation_degrees);
 

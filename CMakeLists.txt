@@ -15,9 +15,9 @@ cmake_minimum_required(VERSION 3.16)
  src/edge_class.cpp
  src/graph_class.cpp
  src/group_class.cpp
- src/group_manager_class.cpp
  src/main.cpp
  src/node_class.cpp
+ src/grouping_manager_class.cpp
  )
  
  
