@@ -18,6 +18,7 @@ cmake_minimum_required(VERSION 3.16)
  src/main.cpp
  src/node_class.cpp
  src/grouping_manager_class.cpp
+ src/reusable_calculations.cpp
  )
  
  
