@@ -6,24 +6,12 @@
 
 class Edge
 {
+    friend class Graph;
+
 public:
     Edge(uint8_t edge_id,
          uint8_t observer_id,
          uint8_t target_id_);
-
-private:
-    uint8_t edge_id_;
-    uint8_t observer_id_;
-    uint8_t target_id_;
-
-    double distance_between_nodes_meters_;
-    double angle_between_nodes_degrees_;
-    double temp_timestamp_;
-
-    double distance_between_nodes_meters_error_;
-    double angle_between_nodes_degrees_eror_;
-
-    double uwb_signal_quality_;
 
     uint8_t getEdgeId();
 
@@ -41,6 +29,7 @@ private:
 
     double getAngleBetweenNodesDegreesError();
 
+private:
     void setDistanceBetweenNodesMeters(double distance_between_nodes_meters_); // should be set by the graph object
 
     void setAngleBetweenNodesDegrees(double angle_between_nodes_degrees_); // should be set by the graph object
@@ -50,4 +39,17 @@ private:
     void setDistanceBetweenNodesMetersError(double distance_between_nodes_meters_error_); // should be set by the graph object
 
     void setAngleBetweenNodesDegreesError(double angle_between_nodes_degrees_eror_); // should be set by the graph object
+
+    uint8_t edge_id_;
+    uint8_t observer_id_;
+    uint8_t target_id_;
+
+    double distance_between_nodes_meters_;
+    double angle_between_nodes_degrees_;
+    double temp_timestamp_;
+
+    double distance_between_nodes_meters_error_;
+    double angle_between_nodes_degrees_eror_;
+
+    double uwb_signal_quality_;
 };
