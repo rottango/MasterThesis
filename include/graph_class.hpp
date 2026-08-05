@@ -35,7 +35,9 @@ public:
 
     uint8_t NumerOfNodes();
 
-    void addEdge();
+    void addEdge(uint8_t edge_id,
+                 uint8_t observer_id,
+                 uint8_t target_id_);
 
     void removeEdgeById();
 
@@ -58,7 +60,7 @@ private:
 
     uint8_t edgeIDGeneration();
 
-    bool edgeIDValidation();
+    bool edgeIDValidation(uint8_t edge_id);
 
     void removeAllNodeEdges();
 

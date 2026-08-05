@@ -76,8 +76,16 @@ bool Graph::DoesEdgeExist()
 {
 }
 
-void Graph::addEdge()
+void Graph::addEdge(uint8_t edge_id,
+                    uint8_t observer_id,
+                    uint8_t target_id_)
 {
+    uint8_t generated_edge_id;
+    do
+    {
+        generated_edge_id = edgeIDGeneration();
+
+    } while (!edgeIDValidation(generated_edge_id));
 }
 
 void Graph::removeEdgeById()
