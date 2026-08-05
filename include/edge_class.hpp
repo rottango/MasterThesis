@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include <reusable_calculations.hpp>
+
 class Edge
 {
 public:
@@ -43,19 +45,13 @@ private:
 
     double getAngleBetweenNodesDegreesError();
 
-    void setEdgeId(); // not to be used, because only constructor should create edge id, it shouldnt change
+    void setDistanceBetweenNodesMeters(double distance_between_nodes_meters_); // should be set by the graph object
 
-    void setObserverId(); // not to be used, because only constructor should create observer id, it shouldnt change, if should be changed, then it shoudl be deleted and a new edge created
+    void setAngleBetweenNodesDegrees(double angle_between_nodes_degrees_); // should be set by the graph object
 
-    void setTargetId(); // not to be used, because only constructor should create target id, it shouldnt change, if should be changed, then it shoudl be deleted and a new edge created
+    void setTempTimestamp(double temp_timestamp_); // should be set by the graph object
 
-    void setDistanceBetweenNodesMeters(double distance_between_nodes_meters_);
+    void setDistanceBetweenNodesMetersError(double distance_between_nodes_meters_error_); // should be set by the graph object
 
-    void setAngleBetweenNodesDegrees(double angle_between_nodes_degrees_);
-
-    void setTempTimestamp(double temp_timestamp_);
-
-    void setDistanceBetweenNodesMetersError(double distance_between_nodes_meters_error_);
-
-    void setAngleBetweenNodesDegreesError(double angle_between_nodes_degrees_eror_);
+    void setAngleBetweenNodesDegreesError(double angle_between_nodes_degrees_eror_); // should be set by the graph object
 };

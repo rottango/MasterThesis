@@ -51,13 +51,7 @@ double Edge::getAngleBetweenNodesDegreesError()
     return this->angle_between_nodes_degrees_eror_;
 }
 
-// void Edge::setEdgeId(); // not to be used, because only constructor should create edge id, it shouldnt change
-
-// void Edge::setObserverId(); // not to be used, because only constructor should create observer id, it shouldnt change, if should be changed, then it shoudl be deleted and a new edge created
-
-// void Edge::setTargetId(); // not to be used, because only constructor should create target id, it shouldnt change, if should be changed, then it shoudl be deleted and a new edge created
-
-void Edge::setDistanceBetweenNodesMeters(double distance_between_nodes_meters_)
+void Edge::setDistanceBetweenNodesMeters(double distance_between_nodes_meters_) // should be set by the graph object
 {
     this->distance_between_nodes_meters_ = distance_between_nodes_meters_;
 }

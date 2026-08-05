@@ -4,6 +4,8 @@
 #include <numbers>
 #include <opencv2/opencv.hpp>
 
+#include <reusable_calculations.hpp>
+
 constexpr int SCREEN_WIDTH = 1920;
 constexpr int SCREEN_HEIGHT = 1080;
 
