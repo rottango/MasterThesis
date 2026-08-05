@@ -23,10 +23,6 @@ private:
     double distance_between_nodes_meters_error_;
     double angle_between_nodes_degrees_eror_;
 
-    // bool is_active_;
-    // bool is_obstructed_;
-    // bool is_cross_group_connecting_;
-
     double uwb_signal_quality_;
 
     uint8_t getEdgeId();
