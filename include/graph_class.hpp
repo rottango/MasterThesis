@@ -29,7 +29,7 @@ public:
 
     void removeAllNodes();
 
-    Node findNodeById();
+    Node findNodeById(uint8_t node_id);
 
     bool DoesNodeExist();
 

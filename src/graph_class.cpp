@@ -44,12 +44,13 @@ void Graph::addNode(cv::Point2d cartesian_x_y_point_,
 
     } while (!nodeIDValidation(generated_node_id));
 
-    nodes_[generated_node_id] = Node(generated_node_id, cartesian_x_y_point_,
-                                     theta_rotation_degrees_,
-                                     vehicle_size_,
-                                     inner_,
-                                     measurment_error_cm_,
-                                     node_color_palet_);
+    nodes_.insert({generated_node_id,
+                   Node(generated_node_id, cartesian_x_y_point_,
+                        theta_rotation_degrees_,
+                        vehicle_size_,
+                        inner_,
+                        measurment_error_cm_,
+                        node_color_palet_)});
 }
 
 void Graph::removeNodeById()
@@ -60,8 +61,11 @@ void Graph::removeAllNodes()
 {
 }
 
-Node Graph::findNodeById()
+Node Graph::findNodeById(uint8_t node_id)
 {
+    auto it = this->nodes_.find(node_id);
+    // no clue how to now get thayt shit to the first element of
+    // return it[1];
 }
 
 Edge Graph::findEdgeById()
