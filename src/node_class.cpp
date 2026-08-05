@@ -1,4 +1,5 @@
 #include <node_class.hpp>
+#include <reusable_calculations.hpp>
 
 Node::Node(uint8_t node_id_,
            cv::Point2d cartesian_x_y_point_,
@@ -9,8 +10,8 @@ Node::Node(uint8_t node_id_,
            colorPalet node_color_palet_)
 {
     this->node_id_ = node_id_; // will not change ever.
-    setXYPoint(cartesian_x_y_point_);
     setThetaRotationDegrees(theta_rotation_degrees_);
+    setXYPoint(cartesian_x_y_point_);
     setVehicleSize(vehicle_size_);
     setInner(inner_);
     setMeasurmentErrorCm(measurment_error_cm_);
@@ -100,14 +101,18 @@ void Node::setXYPoint(cv::Point2d cartesian_x_y_point_) // done
 
 void Node::setXAxisPoint() // done
 {
-    this->cartesian_x_axis_point_.x = cartesian_x_y_point_.x + 100;
-    this->cartesian_x_axis_point_.y = cartesian_x_y_point_.y;
+    cv::Point2d new_cartesian_x_axis_point = calculatePointFromCenter(this->cartesian_x_y_point_,
+                                                                      this->theta_rotation_degrees_,
+                                                                      100);
+    this->cartesian_x_axis_point_ = new_cartesian_x_axis_point;
 }
 
 void Node::setYAxisPoint() // done
 {
-    this->cartesian_y_axis_point_.x = cartesian_x_y_point_.x;
-    this->cartesian_y_axis_point_.y = cartesian_x_y_point_.y + 100;
+    cv::Point2d new_cartesian_y_axis_point = calculatePointFromCenter(this->cartesian_x_y_point_,
+                                                                      this->theta_rotation_degrees_ + 90,
+                                                                      100);
+    this->cartesian_y_axis_point_ = new_cartesian_y_axis_point;
 }
 
 void Node::setAxisPoints() // done
@@ -118,15 +123,7 @@ void Node::setAxisPoints() // done
 
 void Node::setThetaRotationDegrees(double new_theta_rotation_degrees_) // not touching, was working before - // set an aboslute angle
 {
-    double remainder = this->theta_rotation_degrees_ + new_theta_rotation_degrees_;
-    remainder = std::fmod(remainder, 360.00f);
-    if (remainder >= 180)
-    {
-        remainder -= 360;
-    }
-    if (remainder < -180)
-    {
-        remainder += 360;
-    }
-    this->theta_rotation_degrees_ = remainder;
+    this->theta_rotation_degrees_ = normalizeAngleDegrees(new_theta_rotation_degrees_);
+
+    setAxisPoints();
 }
