@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <edge_class.hpp>
+#include <group_class.hpp>
 #include <grouping_manager_class.hpp>
 #include <node_class.hpp>
 
@@ -14,9 +15,15 @@ class Graph
 public:
     Graph(std::unordered_map<uint8_t, Node> nodes_,
           std::map<std::pair<uint8_t, uint8_t>, Edge> edges_,
-          std::unordered_map<uint8_t, GroupingManager> grouping_managers_);
+          std::unordered_map<uint8_t, GroupingManager> grouping_managers_,
+          std::unordered_map<uint8_t, Group> groups);
 
-    void addNode();
+    void addNode(cv::Point2d cartesian_x_y_point_,
+                 double theta_rotation_degrees_,
+                 uint8_t vehicle_size_,
+                 uint8_t inner_,
+                 uint8_t measurment_error_cm_,
+                 colorPalet node_color_palet_);
 
     void removeNodeById();
 
@@ -45,20 +52,21 @@ public:
     std::map<std::pair<uint8_t, uint8_t>, Edge> readOnlyEdges();
 
 private:
-    void nodeIDGeneration();
+    uint8_t nodeIDGeneration();
 
-    void nodeIDValidation();
+    bool nodeIDValidation(uint8_t node_id);
 
-    void edgeIDGeneration();
+    uint8_t edgeIDGeneration();
 
-    void edgeIDValidation();
+    bool edgeIDValidation();
 
     void removeAllNodeEdges();
 
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;
     std::unordered_map<uint8_t, GroupingManager> grouping_managers_;
+    std::unordered_map<uint8_t, Group> groups;
 
-    uint8_t next_node_id_;
-    uint8_t next_edge_id_;
+    uint8_t current_node_id_ = 0;
+    uint8_t current_edge_id_ = 0;
 };
