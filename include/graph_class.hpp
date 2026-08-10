@@ -25,33 +25,28 @@ public:
                  uint8_t measurment_error_cm_,
                  colorPalet node_color_palet_);
 
-    void removeNodeById();
+    void removeNodeById(uint8_t node_id);
 
     void removeAllNodes();
 
-    Node findNodeById(uint8_t node_id);
+    const Node &findNodeById(uint8_t node_id) const;
 
-    bool DoesNodeExist();
+    bool doesNodeExist();
 
-    uint8_t NumerOfNodes();
+    uint8_t numerOfNodes() const;
 
-    void addEdge(uint8_t edge_id,
-                 uint8_t observer_id,
+    void addEdge(uint8_t observer_id,
                  uint8_t target_id_);
 
-    void removeEdgeById();
+    void removeEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair);
 
-    void removeAlllEdges();
+    void removeAllEdges();
 
-    Edge findEdgeById();
+    const Edge &findEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair) const; // read-only reference to an existing object
 
-    bool DoesEdgeExist();
+    bool doesEdgeExist();
 
-    uint8_t NumerOfEdges();
-
-    std::unordered_map<uint8_t, Node> readOnlyNodes();
-
-    std::map<std::pair<uint8_t, uint8_t>, Edge> readOnlyEdges();
+    uint8_t numerOfEdges() const;
 
 private:
     uint8_t nodeIDGeneration();
@@ -61,8 +56,6 @@ private:
     uint8_t edgeIDGeneration();
 
     bool edgeIDValidation(uint8_t edge_id);
-
-    void removeAllNodeEdges();
 
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;

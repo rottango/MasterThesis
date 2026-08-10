@@ -8,5 +8,8 @@ public:
     Application();
 
 private:
-    uint8_t application_id;
+    uint8_t application_id_;
+    uint8_t graph_id_;
+    cv::Mat img;
+    uint8_t window_loop;
 };

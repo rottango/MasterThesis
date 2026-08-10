@@ -1,33 +1,15 @@
 
-#include <map>
-#include <unordered_map>
-#include <utility>
-
-#include <edge_class.hpp>
 #include <graph_class.hpp>
-#include <node_class.hpp>
 
 Graph::Graph(std::unordered_map<uint8_t, Node> nodes_,
              std::map<std::pair<uint8_t, uint8_t>, Edge> edges_,
              std::unordered_map<uint8_t, GroupingManager> grouping_managers_,
              std::unordered_map<uint8_t, Group> groups)
 {
-    if (!nodes_.empty())
-    {
-        this->nodes_ = nodes_;
-    }
-    if (!edges_.empty())
-    {
-        this->edges_ = edges_;
-    }
-    if (!grouping_managers_.empty())
-    {
-        this->grouping_managers_ = grouping_managers_;
-    }
-    if (!grouping_managers_.empty())
-    {
-        this->groups = groups;
-    }
+    this->nodes_ = nodes_;
+    this->edges_ = edges_;
+    this->grouping_managers_ = grouping_managers_;
+    this->groups = groups;
 }
 
 void Graph::addNode(cv::Point2d cartesian_x_y_point_,
@@ -44,44 +26,46 @@ void Graph::addNode(cv::Point2d cartesian_x_y_point_,
 
     } while (!nodeIDValidation(generated_node_id));
 
-    nodes_.insert({generated_node_id,
-                   Node(generated_node_id, cartesian_x_y_point_,
-                        theta_rotation_degrees_,
-                        vehicle_size_,
-                        inner_,
-                        measurment_error_cm_,
-                        node_color_palet_)});
+    this->nodes_.insert({generated_node_id,
+                         Node(generated_node_id, cartesian_x_y_point_,
+                              theta_rotation_degrees_,
+                              vehicle_size_,
+                              inner_,
+                              measurment_error_cm_,
+                              node_color_palet_)});
 }
 
-void Graph::removeNodeById()
+void Graph::removeNodeById(uint8_t node_id)
 {
+    this->nodes_.erase(node_id);
 }
 
 void Graph::removeAllNodes()
 {
+    this->nodes_.clear();
 }
 
-Node Graph::findNodeById(uint8_t node_id)
+const Node &Graph::findNodeById(uint8_t node_id) const // useful for inspecting the node.
 {
     auto it = this->nodes_.find(node_id);
-    // no clue how to now get thayt shit to the first element of
-    // return it[1];
+
+    if (it == nodes_.end())
+    {
+        std::cout << "The node with node_id: " << node_id << " does't exist.\n";
+    }
+    return it->second;
 }
 
-Edge Graph::findEdgeById()
+// bool Graph::doesNodeExist() // implemented in findNodeById
+// {
+// }
+
+uint8_t Graph::numerOfNodes() const
 {
+    return nodes_.size();
 }
 
-bool Graph::DoesNodeExist()
-{
-}
-
-bool Graph::DoesEdgeExist()
-{
-}
-
-void Graph::addEdge(uint8_t edge_id,
-                    uint8_t observer_id,
+void Graph::addEdge(uint8_t observer_id,
                     uint8_t target_id_)
 {
     uint8_t generated_edge_id;
@@ -90,10 +74,41 @@ void Graph::addEdge(uint8_t edge_id,
         generated_edge_id = edgeIDGeneration();
 
     } while (!edgeIDValidation(generated_edge_id));
+
+    this->edges_.insert({std::pair(observer_id, target_id_),
+                         Edge(generated_edge_id,
+                              observer_id,
+                              target_id_)});
 }
 
-void Graph::removeEdgeById()
+void Graph::removeEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair)
 {
+    edges_.erase(edge_pair);
+}
+
+void Graph::removeAllEdges()
+{
+    edges_.clear();
+}
+
+const Edge &Graph::findEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair) const // read-only reference to an existing object
+{
+    auto it = this->edges_.find(edge_pair);
+
+    if (it == edges_.end())
+    {
+        std::cout << "The edge between node_id: " << edge_pair.first << "and " << edge_pair.second << " does't exist.\n";
+    }
+    return it->second;
+}
+
+// bool Graph::doesEdgeExist() // implemented in findEdgeByNodeIds
+// {
+// }
+
+uint8_t Graph::numerOfEdges() const
+{
+    return edges_.size();
 }
 
 uint8_t Graph::nodeIDGeneration()
@@ -124,10 +139,5 @@ bool Graph::edgeIDValidation(uint8_t edge_id)
     if (this->edges_.empty())
     {
         return true;
-    }
-    // todo handle other logic
-}
-
-void Graph::removeAllNodeEdges()
-{
+    } // todo handle other logic
 }

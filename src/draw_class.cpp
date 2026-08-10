@@ -4,43 +4,78 @@
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 
-Draw::Draw(std::string windowName,
-           cv::WindowFlags flag,
-           cv::Size windowSize,
-           int rows,
-           int cols,
-           int makeTypeFlag,
-           cv::Scalar backgroundColor) : image{rows,
-                                               cols,
-                                               makeTypeFlag,
-                                               backgroundColor}
+Draw::Draw(const Graph &graph,
+           cv::Mat &img)
+{
+    this->graph_ = graph;
+    this->img_ = img;
+}
+
+// frame
+
+void Draw::drawFrame()
+{
+    drawGraph();
+}
+
+// graph
+
+void Draw::drawGraph()
+{
+    drawNodes();
+    drawNodeMeasurmentError();
+    drawNodeInner();
+    drawNodeAxis();
+
+    drawEdges();
+
+    drawTextOnScreen();
+}
+
+// node
+
+void Draw::drawNodes()
+{
+    // example use case for all nodes
+    do
+    {
+        drawNode();
+    } while (true);
+}
+
+void Draw::drawNode() {}
+
+void Draw::drawNodeAxis() {}
+
+void Draw::drawNodeMeasurmentError() {}
+
+void Draw::drawNodeInner() {}
+
+// edge
+
+void Draw::drawEdges() {}
+
+void Draw::drawConnectingLine()
 {
 }
 
-void Draw::drawElipse(cv::Mat &image, Node observer)
+void Draw::drawAngleElipse()
+{
+    // example use case for different observer -> target realtions for one node
+    do
+    {
+        drawAngleToTargetElipse();
+    } while (true);
+}
+
+void Draw::drawAngleToTargetElipse()
 {
 }
 
-void Draw::generateText(std::vector<Node> node_list)
-{
-}
+// text
 
-void Draw::drawTextOnScreen(cv::Mat &image, std::vector<Node> node_list)
-{
-}
+void Draw::drawTextOnScreen() {}
 
-void Draw::drawAxis(cv::Mat &image, Node node)
-{
-}
-
-void Draw::drawNode(cv::Mat image, Node node)
-{
-}
-
-void Draw::drawFrame(cv::Mat &image, std::vector<Node> node_list)
-{
-}
-
-void Draw::drawConnectingLine(cv::Mat &image, Node observer, Node target)
+void Draw::generateText()
 {
 }

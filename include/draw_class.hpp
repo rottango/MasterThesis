@@ -1,40 +1,52 @@
 #pragma once
 
-#include <node_class.hpp>
+#include <graph_class.hpp>
 #include <opencv2/opencv.hpp>
+#include <reusable_calculations.hpp>
 
 class Draw
 {
 public:
-    std::string distance_output;
-    std::string observer_pos_output;
-    std::string target_pos_output;
-    std::string measurment_error_output;
-    std::string angle_output_atan2;
+    Draw(const Graph &Graph,
+         cv::Mat &img);
 
-    cv::Point2d middle_of_angle_line;
-    cv::Point2d center_of_screen;
-    cv::Mat image;
+    // frame
 
-    Draw(std::string windowNameme,
-         cv::WindowFlags flag,
-         cv::Size windowSize,
-         int rows,
-         int cols,
-         int makeTypeFlag,
-         cv::Scalar backgroundColor);
+    void drawFrame();
 
-    void drawTextOnScreen(cv::Mat &image, std::vector<Node> node_list);
+    // graph
 
-    void drawAxis(cv::Mat &image, Node ugv);
+    void drawGraph();
 
-    void drawConnectingLine(cv::Mat &image, Node observer, Node target);
+    // node
 
-    void drawFrame(cv::Mat &image, std::vector<Node> node_list);
+    void drawNodes();
 
-    void generateText(std::vector<Node> node_list);
+    void drawNode();
 
-    void drawElipse(cv::Mat &image, Node observer);
+    void drawNodeAxis();
 
-    void drawNode(cv::Mat image, Node ugv);
+    void drawNodeMeasurmentError();
+
+    void drawNodeInner();
+
+    // edge
+
+    void drawEdges();
+
+    void drawConnectingLine();
+
+    void drawAngleElipse();
+
+    void drawAngleToTargetElipse();
+
+    // text
+
+    void drawTextOnScreen();
+
+    void generateText();
+
+private:
+    const Graph &graph_;
+    cv::Mat &img_;
 };
