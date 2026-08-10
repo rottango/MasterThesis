@@ -5,10 +5,8 @@
 #include <stdio.h>
 
 Draw::Draw(const Graph &graph,
-           cv::Mat &img)
+           cv::Mat &img) : graph_(graph), img_(img)
 {
-    this->graph_ = graph;
-    this->img_ = img;
 }
 
 // frame
@@ -23,52 +21,58 @@ void Draw::drawFrame()
 void Draw::drawGraph()
 {
     drawNodes();
-    drawNodeMeasurmentError();
-    drawNodeInner();
-    drawNodeAxis();
 
     drawEdges();
 
     drawTextOnScreen();
 }
-
 // node
 
 void Draw::drawNodes()
 {
-    // example use case for all nodes
-    do
+    for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
     {
-        drawNode();
-    } while (true);
+        drawNode(it->second);
+        drawNodeMeasurmentError(it->second);
+        drawNodeInner(it->second);
+        drawNodeAxis(it->second);
+    }
 }
 
-void Draw::drawNode() {}
+void Draw::drawNode(const Node &node) {}
 
-void Draw::drawNodeAxis() {}
+void Draw::drawNodeAxis(const Node &node) {}
 
-void Draw::drawNodeMeasurmentError() {}
+void Draw::drawNodeMeasurmentError(const Node &node) {}
 
-void Draw::drawNodeInner() {}
+void Draw::drawNodeInner(const Node &node) {}
 
 // edge
 
-void Draw::drawEdges() {}
+void Draw::drawEdges()
+{
 
-void Draw::drawConnectingLine()
+    for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
+    {
+        drawEdge(it->second);
+        drawAngleElipse(it->second);
+    }
+}
+
+void Draw::drawEdge(const Edge &edge)
 {
 }
 
-void Draw::drawAngleElipse()
+void Draw::drawAngleElipse(const Edge &edge)
 {
     // example use case for different observer -> target realtions for one node
     do
     {
-        drawAngleToTargetElipse();
+        drawAngleElipseToTarget(edge);
     } while (true);
 }
 
-void Draw::drawAngleToTargetElipse()
+void Draw::drawAngleElipseToTarget(const Edge &edge)
 {
 }
 

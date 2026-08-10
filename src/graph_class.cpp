@@ -111,6 +111,16 @@ uint8_t Graph::numerOfEdges() const
     return edges_.size();
 }
 
+const std::unordered_map<uint8_t, Node> &Graph::getNodes() const
+{
+    return this->nodes_;
+}
+
+const std::map<std::pair<uint8_t, uint8_t>, Edge> &Graph::getEdges() const
+{
+    this->edges_;
+}
+
 uint8_t Graph::nodeIDGeneration()
 {
     this->current_node_id_ += 1;

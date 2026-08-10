@@ -48,6 +48,10 @@ public:
 
     uint8_t numerOfEdges() const;
 
+    const std::unordered_map<uint8_t, Node> &getNodes() const;
+
+    const std::map<std::pair<uint8_t, uint8_t>, Edge> &getEdges() const;
+
 private:
     uint8_t nodeIDGeneration();
 
