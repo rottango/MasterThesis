@@ -48,7 +48,7 @@ double Edge::getDistanceBetweenNodesMetersError() const
 double Edge::getAngleBetweenNodesDegreesError() const
 {
 
-    return this->angle_between_nodes_degrees_eror_;
+    return this->angle_between_nodes_degrees_error_;
 }
 
 void Edge::setDistanceBetweenNodesMeters(double distance_between_nodes_meters_) // should be set by the graph object
@@ -71,7 +71,7 @@ void Edge::setDistanceBetweenNodesMetersError(double distance_between_nodes_mete
     this->distance_between_nodes_meters_error_ = distance_between_nodes_meters_error_;
 }
 
-void Edge::setAngleBetweenNodesDegreesError(double angle_between_nodes_degrees_eror_)
+void Edge::setAngleBetweenNodesDegreesError(double angle_between_nodes_degrees_error_)
 {
-    this->angle_between_nodes_degrees_eror_ = angle_between_nodes_degrees_eror_;
+    this->angle_between_nodes_degrees_error_ = angle_between_nodes_degrees_error_;
 }

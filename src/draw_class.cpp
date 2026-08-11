@@ -167,11 +167,53 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
 
 // text
 
-void Draw::drawTextOnScreen()
+void Draw::drawTextOnScreen() {}
+
+void Draw::generateNodesText() {}
+
+void Draw::generateNodeText(const Node &node)
 {
+
+    std::string node_id_text_ = "Node ID: ";
+    std::string cartesian_x_y_point_text_ = "Location (x,y): ";
+    std::string vehicle_size_text_ = "Vehicle size: ";
+    std::string inner_text_ = "Inner size: ";
+    std::string measurment_error_cm_text_ = "Measurment error [cm]: ";
+    std::string theta_rotation_degrees_text_ = "Theta rotation [degrees]: ";
+
+    nodes_generated_text.insert_or_assign(node.getNodeId(),
+                                          GeneratedTextNode{node_id_text_ + std::to_string(node.getNodeId()),
+                                                            cartesian_x_y_point_text_ + std::to_string(node.getXYPoint().x) + " " + std::to_string(node.getXYPoint().y),
+                                                            vehicle_size_text_ + std::to_string(node.getVehicleSize()),
+                                                            inner_text_ + std::to_string(node.getInner()),
+                                                            measurment_error_cm_text_ + std::to_string(node.getMeasurmentError()),
+                                                            theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees())});
 }
 
-void Draw::generateText() // use getTextSize()
+void Draw::generateEdgesText() {}
+
+void Draw::generateEdgeText(const Edge &edge)
 {
-    std::string node_id_text = "Node ID: ";
+
+    std::string edge_id_ = "Edge ID: ";
+    std::string observer_id = "Observer ID: ";
+    std::string target_id_ = "Target ID: ";
+    std::string distance_between_nodes_meters_ = "Distance [m]: ";
+    std::string angle_between_nodes_degrees_ = "Angle [degrees]: ";
+    std::string temp_timestamp_ = "Timestamp: ";
+    std::string distance_between_nodes_meters_error_ = "Distance error [m]: ";
+    std::string angle_between_nodes_degrees_error_ = "Angle error [degrees]: ";
+
+    edges_generated_text.insert_or_assign(std::pair(edge.getObserverId(),
+                                                    edge.getTargetId()),
+                                          GeneratedTextEdge{
+                                              edge_id_ + std::to_string(edge.getEdgeId()),
+                                              observer_id + std::to_string(edge.getObserverId()),
+                                              target_id_ + std::to_string(edge.getTargetId()),
+                                              distance_between_nodes_meters_ + std::to_string(edge.getDistanceBetweenNodesMeters()),
+                                              angle_between_nodes_degrees_ + std::to_string(edge.getAngleBetweenNodesDegrees()),
+                                              temp_timestamp_ + std::to_string(edge.getTempTimestamp()),
+                                              distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMeters()),
+                                              angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()),
+                                          });
 }
