@@ -4,12 +4,8 @@
 #include <numbers>
 #include <opencv2/opencv.hpp>
 
-constexpr int SCREEN_WIDTH = 1920;
-constexpr int SCREEN_HEIGHT = 1080;
-
-cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point);
-
-cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point);
+cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point, int screen_width, int screen_height);
+cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point, int screen_width, int screen_height);
 
 double degreesToRadians(double angle_degrees);
 

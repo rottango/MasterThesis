@@ -53,6 +53,11 @@ uint8_t Node::getMeasurmentError() const // done
     return this->measurment_error_cm_;
 }
 
+colorPalet Node::getColorPalet() const
+{
+    return this->node_color_palet_;
+}
+
 double Node::getThetaRotationDegrees() const // done
 {
     return this->theta_rotation_degrees_;

@@ -24,6 +24,8 @@ public:
 
     void drawNode(const Node &node);
 
+    void drawNodeVehicleSize(const Node &node) {}
+
     void drawNodeAxis(const Node &node);
 
     void drawNodeMeasurmentError(const Node &node);
@@ -54,4 +56,13 @@ private:
 
     std::unordered_map<uint8_t, Node> read_only_nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> read_only_edges_;
+
+    int screen_width_;
+    int screen_height_;
+    cv::Size size_;
+    int type_;
+
+    cv::Scalar x_axis_color_{(0, 0, 255)};
+    cv::Scalar y_axis_color_{(255, 0, 0)};
+    int axis_arrow_thickness_ = 5;
 };

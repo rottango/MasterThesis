@@ -2,14 +2,14 @@
 
 // each cartesian unit equals to one pixel for now.
 
-cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point)
+cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point, int screen_width, int screen_height)
 {
-    return cv::Point2d(opencv_point.x - SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - opencv_point.y);
+    return cv::Point2d(opencv_point.x - screen_width / 2, screen_height / 2 - opencv_point.y);
 }
 
-cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point)
+cv::Point2d cartesianPointToOpenCVPoint(cv::Point2d cartesian_point, int screen_width, int screen_height)
 {
-    return cv::Point2d(cartesian_point.x + SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - cartesian_point.y);
+    return cv::Point2d(cartesian_point.x + screen_width / 2, screen_height / 2 - cartesian_point.y);
 }
 
 double degreesToRadians(double angle_degrees)

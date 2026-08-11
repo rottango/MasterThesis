@@ -30,6 +30,8 @@ public:
 
     uint8_t getMeasurmentError() const;
 
+    colorPalet getColorPalet() const;
+
     double getThetaRotationDegrees() const;
 
     void changePosition(cv::Point2d cartesian_x_y_point);
@@ -66,5 +68,4 @@ private:
     uint8_t measurment_error_cm_ = 0;
     double theta_rotation_degrees_ = 0;
     colorPalet node_color_palet_;
-    // bool is_active_;
 };
