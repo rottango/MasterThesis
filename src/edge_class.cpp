@@ -9,43 +9,43 @@ Edge::Edge(uint8_t edge_id,
     this->target_id_ = target_id_;
 }
 
-uint8_t Edge::getEdgeId()
+uint8_t Edge::getEdgeId() const
 {
     return this->edge_id_;
 }
 
-uint8_t Edge::getObserverId()
+uint8_t Edge::getObserverId() const
 {
     return this->observer_id_;
 }
 
-uint8_t Edge::getTargetId()
+uint8_t Edge::getTargetId() const
 {
     return this->target_id_;
 }
 
-double Edge::getDistanceBetweenNodesMeters()
+double Edge::getDistanceBetweenNodesMeters() const
 {
     return this->distance_between_nodes_meters_;
 }
 
-double Edge::getAngleBetweenNodesDegrees()
+double Edge::getAngleBetweenNodesDegrees() const
 {
 
     return this->angle_between_nodes_degrees_;
 }
 
-double Edge::getTempTimestamp()
+double Edge::getTempTimestamp() const
 {
     return this->temp_timestamp_;
 }
 
-double Edge::getDistanceBetweenNodesMetersError()
+double Edge::getDistanceBetweenNodesMetersError() const
 {
     return this->distance_between_nodes_meters_error_;
 }
 
-double Edge::getAngleBetweenNodesDegreesError()
+double Edge::getAngleBetweenNodesDegreesError() const
 {
 
     return this->angle_between_nodes_degrees_eror_;

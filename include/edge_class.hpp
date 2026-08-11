@@ -13,21 +13,21 @@ public:
          uint8_t observer_id,
          uint8_t target_id_);
 
-    uint8_t getEdgeId();
+    uint8_t getEdgeId() const;
 
-    uint8_t getObserverId();
+    uint8_t getObserverId() const;
 
-    uint8_t getTargetId();
+    uint8_t getTargetId() const;
 
-    double getDistanceBetweenNodesMeters();
+    double getDistanceBetweenNodesMeters() const;
 
-    double getAngleBetweenNodesDegrees();
+    double getAngleBetweenNodesDegrees() const;
 
-    double getTempTimestamp();
+    double getTempTimestamp() const;
 
-    double getDistanceBetweenNodesMetersError();
+    double getDistanceBetweenNodesMetersError() const;
 
-    double getAngleBetweenNodesDegreesError();
+    double getAngleBetweenNodesDegreesError() const;
 
 private:
     void setDistanceBetweenNodesMeters(double distance_between_nodes_meters_); // should be set by the graph object

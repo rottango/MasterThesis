@@ -53,7 +53,7 @@ uint8_t Node::getMeasurmentError() const // done
     return this->measurment_error_cm_;
 }
 
-colorPalet Node::getColorPalet() const
+const colorPalet &Node::getColorPalet() const
 {
     return this->node_color_palet_;
 }

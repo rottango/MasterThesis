@@ -112,55 +112,66 @@ void Draw::drawNodeInner(const Node &node)
 
 // edge
 
-void Draw::drawEdges()
+void Draw::drawEdges() // correct
 {
 
     for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
     {
         drawEdge(it->second);
-        drawAngleElipse(it->second);
     }
 }
 
 void Draw::drawEdge(const Edge &edge)
 {
+    drawEdgeConnectingLine(edge);
+    drawEdgeAngleElipseToTarget(edge);
 }
 
-void Draw::drawAngleElipse(const Edge &edge)
+void Draw::drawEdgeConnectingLine(const Edge &edge)
 {
-    // example use case for different observer -> target realtions for one node
-    do
-    {
-        drawAngleElipseToTarget(edge);
-    } while (true);
+    const Node &observer = graph_.findNodeById(edge.getObserverId());
+    const Node &target = graph_.findNodeById(edge.getTargetId());
+    cv::arrowedLine(img_,
+                    cartesianPointToOpenCVPoint(observer.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    cartesianPointToOpenCVPoint(target.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    observer.getColorPalet().text_color,
+                    axis_arrow_thickness_);
 }
 
-void Draw::drawAngleElipseToTarget(const Edge &edge)
+void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
 {
-    Node observer = graph_.findNodeById().getXYPoint();
+    const Node &observer = graph_.findNodeById(edge.getObserverId());
     double angle = 0;
-    double start_angle = -observer.theta_rotation_degrees;
-    double end_angle = start_angle - observer.angle_output_atan2_to_target;
-    cv::Scalar color = observer.ugvColorPalet.text_color;
-    bool invert = 0;
+    double start_angle = -observer.getThetaRotationDegrees();
+    double end_angle = start_angle - edge.getAngleBetweenNodesDegrees();
 
-    cv::ellipse(img,                                                       // cv::InputOutputArray img,
-                cartesianPointToOpenCVPoint(observer.cartesian_x_y_point), // cv::Point center
-                cv::Size2d(100, 100),                                      // cv::Size axes
-                angle,                                                     // double angle STAYS 0, then its like i want it to be
-                start_angle,                                               // double startAngle
-                end_angle,                                                 // double endAngle
-                observer.ugvColorPalet.text_color,                         // const cv::Scalar &color
-                1,                                                         // int thickness
-                8,                                                         // int lineType = 8
-                0);                                                        // int shift = 0
+    cv::ellipse(img_, // cv::InputOutputArray img,
+                cartesianPointToOpenCVPoint(observer.getXYPoint(),
+                                            screen_width_,
+                                            screen_height_), // cv::Point center
+                cv::Size2d(angle_elipse_size_,
+                           angle_elipse_size_),      // cv::Size axes
+                angle,                               // double angle STAYS 0, then its like i want it to be
+                start_angle,                         // double startAngle
+                end_angle,                           // double endAngle
+                observer.getColorPalet().text_color, // const cv::Scalar &color
+                1,                                   // int thickness
+                8,                                   // int lineType = 8
+                0);                                  // int shift = 0
     std::cout << "end_angle: " << end_angle << "\n";
 }
 
 // text
 
-void Draw::drawTextOnScreen() {}
-
-void Draw::generateText()
+void Draw::drawTextOnScreen()
 {
+}
+
+void Draw::generateText() // use getTextSize()
+{
+    std::string node_id_text = "Node ID: ";
 }

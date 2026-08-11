@@ -30,7 +30,7 @@ public:
 
     uint8_t getMeasurmentError() const;
 
-    colorPalet getColorPalet() const;
+    const colorPalet &getColorPalet() const;
 
     double getThetaRotationDegrees() const;
 

@@ -14,6 +14,7 @@ public:
 
     void drawFrame();
 
+private:
     // graph
 
     void drawGraph();
@@ -38,11 +39,11 @@ public:
 
     void drawEdge(const Edge &edge); // this is the same as drawConnectingLine i believe
 
-    void drawConnectingLine(const Edge &edge);
+    void drawEdgeConnectingLine(const Edge &edge);
 
-    void drawAngleElipse(const Edge &edge); // every edge from observer to targets are drawn
+    void drawEdgeAngleElipse(const Edge &edge); // every edge from observer to targets are drawn
 
-    void drawAngleElipseToTarget(const Edge &edge); // single edge from observer to target is drawn
+    void drawEdgeAngleElipseToTarget(const Edge &edge); // single edge from observer to target is drawn
 
     // text
 
@@ -50,7 +51,6 @@ public:
 
     void generateText();
 
-private:
     const Graph &graph_;
     cv::Mat &img_;
 
@@ -65,4 +65,7 @@ private:
     cv::Scalar x_axis_color_{(0, 0, 255)};
     cv::Scalar y_axis_color_{(255, 0, 0)};
     int axis_arrow_thickness_ = 5;
+    int angle_elipse_size_ = 100;
+
+    std::vector<std::string> generated_text_;
 };
