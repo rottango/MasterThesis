@@ -242,4 +242,41 @@ void Draw::generateEdgeText(const Edge &edge)
 
 void Draw::layoutGeneratedText()
 {
+    // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
+    // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
+    // so i kinda need to rewrite this shi ;/
+
+    int node_info_rectangle_width_ = 0;
+    int node_info_rectangle_height_ = 0;
+    int edge_info_rectangle_width_ = 0;
+    int edge_info_rectangle_height_ = 0;
+    // calculate the rectangle of the node
+    for (auto it = nodes_generated_text.begin(); it != nodes_generated_text.end(); it++)
+    {
+        cv::Size text_size = cv::getTextSize("test",
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             baseline_);
+        if (text_size.width > node_info_rectangle_width_)
+        {
+            node_info_rectangle_width_ = text_size.width;
+        }
+        node_info_rectangle_height_ += text_size.height;
+    }
+
+    // calculate the rectangle of the edge
+    for (auto it = edges_generated_text.begin(); it != edges_generated_text.end(); it++)
+    {
+        cv::Size text_size = cv::getTextSize("test",
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             baseline_);
+        if (text_size.width > edge_info_rectangle_width_)
+        {
+            edge_info_rectangle_width_ = text_size.width;
+        }
+        edge_info_rectangle_height_ += text_size.height;
+    }
 }

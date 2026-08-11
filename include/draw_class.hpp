@@ -97,6 +97,11 @@ private:
     int axis_arrow_thickness_ = 5;
     int angle_elipse_size_ = 100;
 
+    int font_face_;
+    double font_scale_;
+    int font_thickness_;
+    int *baseline_;
+
     std::map<uint8_t, GeneratedTextNode> nodes_generated_text;
     std::map<std::pair<uint8_t, uint8_t>, GeneratedTextEdge> edges_generated_text;
 };
