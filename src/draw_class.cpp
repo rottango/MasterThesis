@@ -245,6 +245,7 @@ void Draw::layoutGeneratedText()
     // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
     // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
     // so i kinda need to rewrite this shi ;/
+    // 69
 
     int node_info_rectangle_width_ = 0;
     int node_info_rectangle_height_ = 0;
