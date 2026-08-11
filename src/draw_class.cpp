@@ -28,7 +28,7 @@ void Draw::drawGraph()
 
     drawEdges();
 
-    drawTextOnScreen();
+    drawText();
 }
 // node
 
@@ -167,9 +167,25 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
 
 // text
 
-void Draw::drawTextOnScreen() {}
+void Draw::drawText()
+{
+    generateText();
+    layoutGeneratedText();
+}
 
-void Draw::generateNodesText() {}
+void Draw::generateText()
+{
+    generateNodesText();
+    generateEdgesText();
+}
+
+void Draw::generateNodesText()
+{
+    for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
+    {
+        generateNodeText(it->second);
+    }
+}
 
 void Draw::generateNodeText(const Node &node)
 {
@@ -190,7 +206,13 @@ void Draw::generateNodeText(const Node &node)
                                                             theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees())});
 }
 
-void Draw::generateEdgesText() {}
+void Draw::generateEdgesText()
+{
+    for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
+    {
+        generateEdgeText(it->second);
+    }
+}
 
 void Draw::generateEdgeText(const Edge &edge)
 {
@@ -216,4 +238,8 @@ void Draw::generateEdgeText(const Edge &edge)
                                               distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMeters()),
                                               angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()),
                                           });
+}
+
+void Draw::layoutGeneratedText()
+{
 }

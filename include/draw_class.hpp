@@ -70,7 +70,9 @@ private:
 
     // text
 
-    void drawTextOnScreen();
+    void drawText();
+
+    void generateText();
 
     void generateNodesText();
 
@@ -79,6 +81,8 @@ private:
     void generateEdgesText();
 
     void generateEdgeText(const Edge &edge);
+
+    void layoutGeneratedText();
 
     const Graph &graph_;
     cv::Mat &img_;
@@ -95,11 +99,4 @@ private:
 
     std::map<uint8_t, GeneratedTextNode> nodes_generated_text;
     std::map<std::pair<uint8_t, uint8_t>, GeneratedTextEdge> edges_generated_text;
-
-    std::string node_id_text_ = "Node ID: ";
-    std::string cartesian_x_y_point_text_ = "Location (x,y): ";
-    std::string vehicle_size_text_ = "Vehicle size: ";
-    std::string inner_text_ = "Inner size: ";
-    std::string measurment_error_cm_text_ = "Measurment error [cm]: ";
-    std::string theta_rotation_degrees_text_ = "Theta rotation [degrees]: ";
 };
