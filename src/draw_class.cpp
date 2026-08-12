@@ -28,7 +28,7 @@ void Draw::drawGraph()
 
     drawEdges();
 
-    drawText();
+    /// drawText();
 }
 // node
 
@@ -170,7 +170,7 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
 void Draw::drawText()
 {
     generateText();
-    layoutGeneratedText();
+    // layoutGeneratedText();
 }
 
 void Draw::generateText()
@@ -190,20 +190,15 @@ void Draw::generateNodesText()
 void Draw::generateNodeText(const Node &node)
 {
 
-    std::string node_id_text_ = "Node ID: ";
-    std::string cartesian_x_y_point_text_ = "Location (x,y): ";
-    std::string vehicle_size_text_ = "Vehicle size: ";
-    std::string inner_text_ = "Inner size: ";
-    std::string measurment_error_cm_text_ = "Measurment error [cm]: ";
-    std::string theta_rotation_degrees_text_ = "Theta rotation [degrees]: ";
+    generated_text_node.clear();
 
-    nodes_generated_text.insert_or_assign(node.getNodeId(),
-                                          GeneratedTextNode{node_id_text_ + std::to_string(node.getNodeId()),
-                                                            cartesian_x_y_point_text_ + std::to_string(node.getXYPoint().x) + " " + std::to_string(node.getXYPoint().y),
-                                                            vehicle_size_text_ + std::to_string(node.getVehicleSize()),
-                                                            inner_text_ + std::to_string(node.getInner()),
-                                                            measurment_error_cm_text_ + std::to_string(node.getMeasurmentError()),
-                                                            theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees())});
+    generated_text_node.push_back(node_id_text_ + std::to_string(node.getNodeId()));
+    generated_text_node.push_back(cartesian_x_y_point_text_ + "(" + std::to_string(node.getXYPoint().x) +
+                                  "," + std::to_string(node.getXYPoint().y) + ")");
+    generated_text_node.push_back(vehicle_size_text_ + std::to_string(node.getVehicleSize()));
+    generated_text_node.push_back(inner_text_ + std::to_string(node.getInner()));
+    generated_text_node.push_back(measurment_error_cm_text_ + std::to_string(node.getMeasurmentError()));
+    generated_text_node.push_back(theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees()));
 }
 
 void Draw::generateEdgesText()
@@ -217,30 +212,19 @@ void Draw::generateEdgesText()
 void Draw::generateEdgeText(const Edge &edge)
 {
 
-    std::string edge_id_ = "Edge ID: ";
-    std::string observer_id = "Observer ID: ";
-    std::string target_id_ = "Target ID: ";
-    std::string distance_between_nodes_meters_ = "Distance [m]: ";
-    std::string angle_between_nodes_degrees_ = "Angle [degrees]: ";
-    std::string temp_timestamp_ = "Timestamp: ";
-    std::string distance_between_nodes_meters_error_ = "Distance error [m]: ";
-    std::string angle_between_nodes_degrees_error_ = "Angle error [degrees]: ";
+    generated_text_edge.clear();
 
-    edges_generated_text.insert_or_assign(std::pair(edge.getObserverId(),
-                                                    edge.getTargetId()),
-                                          GeneratedTextEdge{
-                                              edge_id_ + std::to_string(edge.getEdgeId()),
-                                              observer_id + std::to_string(edge.getObserverId()),
-                                              target_id_ + std::to_string(edge.getTargetId()),
-                                              distance_between_nodes_meters_ + std::to_string(edge.getDistanceBetweenNodesMeters()),
-                                              angle_between_nodes_degrees_ + std::to_string(edge.getAngleBetweenNodesDegrees()),
-                                              temp_timestamp_ + std::to_string(edge.getTempTimestamp()),
-                                              distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMeters()),
-                                              angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()),
-                                          });
+    generated_text_edge.push_back(edge_id_ + std::to_string(edge.getEdgeId()));
+    generated_text_edge.push_back(observer_id + std::to_string(edge.getObserverId()));
+    generated_text_edge.push_back(target_id_ + std::to_string(edge.getTargetId()));
+    generated_text_edge.push_back(distance_between_nodes_meters_ + std::to_string(edge.getDistanceBetweenNodesMeters()));
+    generated_text_edge.push_back(angle_between_nodes_degrees_ + std::to_string(edge.getAngleBetweenNodesDegrees()));
+    generated_text_edge.push_back(temp_timestamp_ + std::to_string(edge.getTempTimestamp()));
+    generated_text_edge.push_back(distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMetersError()));
+    generated_text_edge.push_back(angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()));
 }
 
-void Draw::layoutGeneratedText()
+void Draw::layoutGeneratedText(const Node &node, const Edge &edge)
 {
     // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
     // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
@@ -251,10 +235,32 @@ void Draw::layoutGeneratedText()
     int node_info_rectangle_height_ = 0;
     int edge_info_rectangle_width_ = 0;
     int edge_info_rectangle_height_ = 0;
-    // calculate the rectangle of the node
-    for (auto it = nodes_generated_text.begin(); it != nodes_generated_text.end(); it++)
+
+    int gap_size_pixels = 5;
+    int edge_text_gap;
+    int node_text_gap;
+    if (generated_text_edge.size() < 1)
     {
-        cv::Size text_size = cv::getTextSize("test",
+        edge_text_gap = 0;
+    }
+    else
+    {
+        edge_text_gap = (generated_text_edge.size() - 1) * gap_size_pixels;
+    }
+
+    if (generated_text_node.size() < 1)
+    {
+        node_text_gap = 0;
+    }
+    else
+    {
+        node_text_gap = (generated_text_node.size() - 1) * gap_size_pixels;
+    }
+
+    // calculate the rectangle of the node
+    for (auto it = generated_text_node.begin(); it != generated_text_node.end(); it++)
+    {
+        cv::Size text_size = cv::getTextSize(*it,
                                              font_face_,
                                              font_scale_,
                                              font_thickness_,
@@ -265,11 +271,10 @@ void Draw::layoutGeneratedText()
         }
         node_info_rectangle_height_ += text_size.height;
     }
-
     // calculate the rectangle of the edge
-    for (auto it = edges_generated_text.begin(); it != edges_generated_text.end(); it++)
+    for (auto it = generated_text_edge.begin(); it != generated_text_edge.end(); it++)
     {
-        cv::Size text_size = cv::getTextSize("test",
+        cv::Size text_size = cv::getTextSize(*it,
                                              font_face_,
                                              font_scale_,
                                              font_thickness_,

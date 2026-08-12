@@ -17,28 +17,6 @@ public:
 private:
     // graph
 
-    struct GeneratedTextNode
-    {
-        std::string node_id_text_;
-        std::string cartesian_x_y_point_text_;
-        std::string vehicle_size_text_;
-        std::string inner_text_;
-        std::string measurment_error_cm_text_;
-        std::string theta_rotation_degrees_text_;
-    };
-
-    struct GeneratedTextEdge
-    {
-        std::string edge_id_;
-        std::string observer_id;
-        std::string target_id_;
-        std::string distance_between_nodes_meters_;
-        std::string angle_between_nodes_degrees_;
-        std::string temp_timestamp_;
-        std::string distance_between_nodes_meters_error_;
-        std::string angle_between_nodes_degrees_error_;
-    };
-
     void
     drawGraph();
 
@@ -82,7 +60,7 @@ private:
 
     void generateEdgeText(const Edge &edge);
 
-    void layoutGeneratedText();
+    void layoutGeneratedText(const Node &node, const Edge &edge);
 
     const Graph &graph_;
     cv::Mat &img_;
@@ -102,6 +80,25 @@ private:
     int font_thickness_;
     int *baseline_;
 
-    std::map<uint8_t, GeneratedTextNode> nodes_generated_text;
-    std::map<std::pair<uint8_t, uint8_t>, GeneratedTextEdge> edges_generated_text;
+    std::vector<std::string> generated_text_node;
+    std::vector<std::string> generated_text_edge;
+
+    // node
+    std::string node_id_text_ = "Node ID: ";
+    std::string cartesian_x_y_point_text_ = "Location (x,y): ";
+    std::string vehicle_size_text_ = "Vehicle size: ";
+    std::string inner_text_ = "Inner size: ";
+    std::string measurment_error_cm_text_ = "Measurment error [cm]: ";
+    std::string theta_rotation_degrees_text_ = "Theta rotation [degrees]: ";
+
+    // edge
+
+    std::string edge_id_ = "Edge ID: ";
+    std::string observer_id = "Observer ID: ";
+    std::string target_id_ = "Target ID: ";
+    std::string distance_between_nodes_meters_ = "Distance [m]: ";
+    std::string angle_between_nodes_degrees_ = "Angle [degrees]: ";
+    std::string temp_timestamp_ = "Timestamp: ";
+    std::string distance_between_nodes_meters_error_ = "Distance error [m]: ";
+    std::string angle_between_nodes_degrees_error_ = "Angle error [degrees]: ";
 };
