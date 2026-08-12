@@ -13,10 +13,7 @@
 class Graph
 {
 public:
-    Graph(std::unordered_map<uint8_t, Node> nodes_,
-          std::map<std::pair<uint8_t, uint8_t>, Edge> edges_,
-          std::unordered_map<uint8_t, GroupingManager> grouping_managers_,
-          std::unordered_map<uint8_t, Group> groups);
+    Graph();
 
     void addNode(cv::Point2d cartesian_x_y_point_,
                  double theta_rotation_degrees_,

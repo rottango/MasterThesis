@@ -170,6 +170,7 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
 void Draw::drawText()
 {
     generateText();
+
     // layoutGeneratedText();
 }
 

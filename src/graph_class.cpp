@@ -1,15 +1,8 @@
 
 #include <graph_class.hpp>
 
-Graph::Graph(std::unordered_map<uint8_t, Node> nodes_,
-             std::map<std::pair<uint8_t, uint8_t>, Edge> edges_,
-             std::unordered_map<uint8_t, GroupingManager> grouping_managers_,
-             std::unordered_map<uint8_t, Group> groups)
+Graph::Graph()
 {
-    this->nodes_ = nodes_;
-    this->edges_ = edges_;
-    this->grouping_managers_ = grouping_managers_;
-    this->groups = groups;
 }
 
 void Graph::addNode(cv::Point2d cartesian_x_y_point_,
