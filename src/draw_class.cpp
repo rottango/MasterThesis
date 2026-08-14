@@ -129,8 +129,8 @@ void Draw::drawEdge(const Edge &edge)
 
 void Draw::drawEdgeConnectingLine(const Edge &edge)
 {
-    const Node &observer = graph_.findNodeById(edge.getObserverId());
-    const Node &target = graph_.findNodeById(edge.getTargetId());
+    const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
+    const Node &target = graph_.findNodeByIdReadOnly(edge.getTargetId());
     cv::arrowedLine(img_,
                     cartesianPointToOpenCVPoint(observer.getXYPoint(),
                                                 screen_width_,
@@ -144,7 +144,7 @@ void Draw::drawEdgeConnectingLine(const Edge &edge)
 
 void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
 {
-    const Node &observer = graph_.findNodeById(edge.getObserverId());
+    const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
     double angle = 0;
     double start_angle = -observer.getThetaRotationDegrees();
     double end_angle = start_angle - edge.getAngleBetweenNodesDegrees();

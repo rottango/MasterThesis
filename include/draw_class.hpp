@@ -26,7 +26,7 @@ private:
 
     void drawNode(const Node &node);
 
-    void drawNodeVehicleSize(const Node &node) {}
+    void drawNodeVehicleSize(const Node &node);
 
     void drawNodeAxis(const Node &node);
 

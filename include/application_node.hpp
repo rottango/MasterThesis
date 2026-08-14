@@ -12,18 +12,23 @@ class Application
 public:
     Application();
 
-    void run();
+    void start();
 
 private:
     cv::Mat img_;
     Graph graph_;
     Draw draw_;
     bool running_;
-    std::string namedWindowName;
+    std::string named_window_name_ = "Visualization";
     int screen_width_;
     int screen_height_;
     int make_type_flag_ = CV_8UC3;
+    int flag_ = cv::WindowFlags::WINDOW_NORMAL;
     cv::Scalar background_color_{87, 80, 73};
+    double position_step_size_ = 10;
+    double angle_step_size_ = 1;
+
+    void run();
 
     void initialUserInput();
 
@@ -31,11 +36,9 @@ private:
 
     void clearFrame();
 
-    void start();
-
     void end();
 
-    void update();
+    void update(char character);
 
     void render();
 
@@ -45,5 +48,5 @@ private:
 
     bool shutdown();
 
-    void createNamedWindow(std::string namedWindowName, int flag);
+    void createNamedWindow();
 };

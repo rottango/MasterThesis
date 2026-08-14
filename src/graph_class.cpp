@@ -38,7 +38,7 @@ void Graph::removeAllNodes()
     this->nodes_.clear();
 }
 
-const Node &Graph::findNodeById(uint8_t node_id) const // useful for inspecting the node.
+const Node &Graph::findNodeByIdReadOnly(uint8_t node_id) const // useful for inspecting the node.
 {
     auto it = this->nodes_.find(node_id);
 
@@ -49,7 +49,18 @@ const Node &Graph::findNodeById(uint8_t node_id) const // useful for inspecting 
     return it->second;
 }
 
-// bool Graph::doesNodeExist() // implemented in findNodeById
+Node &Graph::findNodeByIdReadWrite(uint8_t node_id)
+{
+    auto it = this->nodes_.find(node_id);
+
+    if (it == nodes_.end())
+    {
+        std::cout << "The node with node_id: " << node_id << " does't exist.\n";
+    }
+    return it->second;
+}
+
+// bool Graph::doesNodeExist() // implemented in findNodeByIdReadOnly
 // {
 // }
 
@@ -84,7 +95,7 @@ void Graph::removeAllEdges()
     edges_.clear();
 }
 
-const Edge &Graph::findEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair) const // read-only reference to an existing object
+const Edge &Graph::findEdgeByNodeIdsReadOnly(std::pair<uint8_t, uint8_t> edge_pair) const // read-only reference to an existing object
 {
     auto it = this->edges_.find(edge_pair);
 
@@ -95,7 +106,18 @@ const Edge &Graph::findEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair) cons
     return it->second;
 }
 
-// bool Graph::doesEdgeExist() // implemented in findEdgeByNodeIds
+Edge &Graph::findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t> edge_pair) // read-write reference to an existing object
+{
+    auto it = this->edges_.find(edge_pair);
+
+    if (it == edges_.end())
+    {
+        std::cout << "The edge between node_id: " << edge_pair.first << "and " << edge_pair.second << " does't exist.\n";
+    }
+    return it->second;
+}
+
+// bool Graph::doesEdgeExist() // implemented in findEdgeByNodeIdsReadOnly
 // {
 // }
 

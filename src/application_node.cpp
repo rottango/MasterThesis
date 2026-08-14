@@ -1,4 +1,5 @@
 #include <application_node.hpp>
+#include <color_palet_struct.hpp>
 
 Application::Application() : draw_{graph_, img_}
 {
@@ -25,24 +26,25 @@ void Application::initialUserInput()
 
 bool Application::initialize()
 {
-    createNamedWindow("Visualization", cv::WindowFlags::WINDOW_NORMAL);
+    createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
-    cv::Mat img_temp_{this->screen_height_, this->screen_width_, this->make_type_flag_, this->background_color_};
+    cv::Mat img_temp_{this->screen_height_,
+                      this->screen_width_,
+                      this->make_type_flag_,
+                      this->background_color_};
     img_ = img_temp_;
 
     running_ = true;
+
+    graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv1ColorPalet);
 
     return true;
 }
 
 void Application::clearFrame()
 {
-    cv::Mat img_temp_{this->screen_height_,
-                      this->screen_width_,
-                      this->make_type_flag_,
-                      this->background_color_};
-    this->img_ = img_temp_;
+    this->img_.setTo(background_color_);
 }
 
 void Application::start()
@@ -57,8 +59,33 @@ void Application::end()
     shutdown();
 }
 
-void Application::update()
+void Application::update(char character)
 {
+
+    Node &node = graph_.findNodeByIdReadWrite(0);
+    switch (character)
+    {
+    case 'a':
+        node.changePosition(cv::Point2d(node.getXYPoint().x - position_step_size_, node.getXYPoint().y));
+        break;
+    case 's':
+        node.changePosition(cv::Point2d(node.getXYPoint().x, node.getXYPoint().y - position_step_size_));
+        break;
+    case 'd':
+        node.changePosition(cv::Point2d(node.getXYPoint().x + position_step_size_, node.getXYPoint().y));
+        break;
+    case 'w':
+        node.changePosition(cv::Point2d(node.getXYPoint().x, node.getXYPoint().y + position_step_size_));
+        break;
+    case '[':
+        node.rotateNodesAxis(-angle_step_size_);
+        break;
+    case ']':
+        node.rotateNodesAxis(angle_step_size_);
+        break;
+    default:
+        break;
+    }
 }
 
 void Application::render()
@@ -68,7 +95,7 @@ void Application::render()
 
 void Application::presentFrame()
 {
-    cv::imshow(namedWindowName, img_);
+    cv::imshow(this->named_window_name_, this->img_);
 }
 
 void Application::processInput()
@@ -77,22 +104,25 @@ void Application::processInput()
     switch (pressedKey)
     {
     case 'w':
-        update();
+        update(pressedKey);
         break;
     case 'a':
-        update();
+        update(pressedKey);
         break;
     case 's':
-        update();
+        update(pressedKey);
         break;
     case 'd':
-        update();
+        update(pressedKey);
         break;
     case '[':
-        update();
+        update(pressedKey);
         break;
     case ']':
-        update();
+        update(pressedKey);
+        break;
+    case '.':
+        running_ = false;
         break;
     default:
         break;
@@ -101,13 +131,13 @@ void Application::processInput()
 
 bool Application::shutdown()
 {
-    cv::destroyWindow(namedWindowName);
+    cv::destroyWindow(this->named_window_name_);
 
     return true;
 }
 
-void Application::createNamedWindow(std::string namedWindowName, int flag)
+void Application::createNamedWindow()
 {
-    cv::namedWindow(namedWindowName, flag);
-    cv::resizeWindow(namedWindowName, cv::Size(screen_width_, screen_height_));
+    cv::namedWindow(this->named_window_name_, this->flag_);
+    cv::resizeWindow(this->named_window_name_, cv::Size(this->screen_width_, this->screen_height_));
 }

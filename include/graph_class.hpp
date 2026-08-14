@@ -26,7 +26,9 @@ public:
 
     void removeAllNodes();
 
-    const Node &findNodeById(uint8_t node_id) const;
+    const Node &findNodeByIdReadOnly(uint8_t node_id) const;
+
+    Node &findNodeByIdReadWrite(uint8_t node_id);
 
     bool doesNodeExist();
 
@@ -39,7 +41,9 @@ public:
 
     void removeAllEdges();
 
-    const Edge &findEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair) const; // read-only reference to an existing object
+    const Edge &findEdgeByNodeIdsReadOnly(std::pair<uint8_t, uint8_t> edge_pair) const; // read-only reference to an existing object
+
+    Edge &findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t> edge_pair); // read-write reference to an existing object
 
     bool doesEdgeExist();
 
