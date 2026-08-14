@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
  
  find_package(OpenCV REQUIRED)
+ find_package(spdlog CONFIG REQUIRED)
  
  #create a source variable with a link to all cpp files to compile
  
@@ -42,4 +43,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  animationLoopProject
  PRIVATE 
  ${OpenCV_LIBS}
+ spdlog::spdlog
  )
