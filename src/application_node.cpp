@@ -51,7 +51,10 @@ bool Application::initialize()
 
 void Application::clearFrame()
 {
+    spdlog::info("Entering Application::clearFrame()");
+
     this->img_.setTo(background_color_);
+    spdlog::info("Exiting Application::clearFrame()");
 }
 
 void Application::start()
@@ -119,7 +122,7 @@ void Application::processInput()
 {
     spdlog::info("Entering Application::processInput()");
 
-    char pressedKey = cv::pollKey();
+    char pressedKey = cv::waitKey();
     switch (pressedKey)
     {
     case 'w':
