@@ -22,11 +22,18 @@ private:
     std::string namedWindowName;
     int screen_width_;
     int screen_height_;
+    int make_type_flag_ = CV_8UC3;
+    cv::Scalar background_color_{87, 80, 73};
 
-    bool initialize(int screen_width_,
-                    int screen_height_);
+    void initialUserInput();
+
+    bool initialize();
 
     void clearFrame();
+
+    void start();
+
+    void end();
 
     void update();
 
