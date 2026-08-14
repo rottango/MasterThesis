@@ -1,8 +1,9 @@
-
 #include <graph_class.hpp>
 
 Graph::Graph()
 {
+    spdlog::info("Entering Graph::Graph()");
+    spdlog::info("Exiting Graph::Graph()");
 }
 
 void Graph::addNode(cv::Point2d cartesian_x_y_point_,
@@ -12,6 +13,8 @@ void Graph::addNode(cv::Point2d cartesian_x_y_point_,
                     uint8_t measurment_error_cm_,
                     colorPalet node_color_palet_)
 {
+    spdlog::info("Entering Graph::addNode()");
+
     uint8_t generated_node_id;
     do
     {
@@ -26,37 +29,51 @@ void Graph::addNode(cv::Point2d cartesian_x_y_point_,
                               inner_,
                               measurment_error_cm_,
                               node_color_palet_)});
+    spdlog::info("Exiting Graph::addNode()");
 }
 
 void Graph::removeNodeById(uint8_t node_id)
 {
+    spdlog::info("Entering Graph::removeNodeById()");
     this->nodes_.erase(node_id);
+    spdlog::info("Exiting Graph::removeNodeById()");
 }
 
 void Graph::removeAllNodes()
 {
+    spdlog::info("Entering Graph::removeAllNodes()");
     this->nodes_.clear();
+    spdlog::info("Exiting Graph::removeAllNodes()");
 }
 
 const Node &Graph::findNodeByIdReadOnly(uint8_t node_id) const // useful for inspecting the node.
 {
+    spdlog::info("Entering Graph::findNodeByIdReadOnly()");
+
     auto it = this->nodes_.find(node_id);
 
     if (it == nodes_.end())
     {
         std::cout << "The node with node_id: " << node_id << " does't exist.\n";
     }
+
+    spdlog::info("Exiting Graph::findNodeByIdReadOnly()");
+
     return it->second;
 }
 
 Node &Graph::findNodeByIdReadWrite(uint8_t node_id)
 {
+    spdlog::info("Entering Graph::findNodeByIdReadWrite()");
+
     auto it = this->nodes_.find(node_id);
 
     if (it == nodes_.end())
     {
         std::cout << "The node with node_id: " << static_cast<int>(node_id) << " does't exist.\n";
     }
+    spdlog::info("Exiting Graph::findNodeByIdReadWrite()");
+
     return it->second;
 }
 
@@ -66,12 +83,16 @@ Node &Graph::findNodeByIdReadWrite(uint8_t node_id)
 
 uint8_t Graph::numerOfNodes() const
 {
+    spdlog::info("Entering Graph::numerOfNodes()");
+    spdlog::info("Exiting Graph::numerOfNodes()");
     return nodes_.size();
 }
 
 void Graph::addEdge(uint8_t observer_id,
                     uint8_t target_id_)
 {
+    spdlog::info("Entering Graph::addEdge()");
+
     uint8_t generated_edge_id;
     do
     {
@@ -83,37 +104,54 @@ void Graph::addEdge(uint8_t observer_id,
                          Edge(generated_edge_id,
                               observer_id,
                               target_id_)});
+
+    spdlog::info("Exiting Graph::addEdge()");
 }
 
 void Graph::removeEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair)
 {
+    spdlog::info("Entering Graph::removeEdgeByNodeIds()");
+
     edges_.erase(edge_pair);
+    spdlog::info("Exiting Graph::removeEdgeByNodeIds()");
 }
 
 void Graph::removeAllEdges()
 {
+    spdlog::info("Entering Graph::removeAllEdges()");
+
     edges_.clear();
+    spdlog::info("Exiting Graph::removeAllEdges()");
 }
 
 const Edge &Graph::findEdgeByNodeIdsReadOnly(std::pair<uint8_t, uint8_t> edge_pair) const // read-only reference to an existing object
 {
+    spdlog::info("Entering Graph::findEdgeByNodeIdsReadOnly()");
+
     auto it = this->edges_.find(edge_pair);
 
     if (it == edges_.end())
     {
         std::cout << "The edge between node_id: " << edge_pair.first << "and " << edge_pair.second << " does't exist.\n";
     }
+
+    spdlog::info("Exiting Graph::findEdgeByNodeIdsReadOnly()");
+
     return it->second;
 }
 
 Edge &Graph::findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t> edge_pair) // read-write reference to an existing object
 {
+    spdlog::info("Entering Graph::findEdgeByNodeIdsReadWrite()");
+
     auto it = this->edges_.find(edge_pair);
 
     if (it == edges_.end())
     {
         std::cout << "The edge between node_id: " << edge_pair.first << "and " << edge_pair.second << " does't exist.\n";
     }
+    spdlog::info("Exiting Graph::findEdgeByNodeIdsReadWrite()");
+
     return it->second;
 }
 
@@ -123,46 +161,72 @@ Edge &Graph::findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t> edge_pair) /
 
 uint8_t Graph::numerOfEdges() const
 {
+    spdlog::info("Entering Graph::numerOfEdges()");
+    spdlog::info("Exiting Graph::numerOfEdges()");
+
     return edges_.size();
 }
 
 const std::unordered_map<uint8_t, Node> &Graph::getNodes() const
 {
+    spdlog::info("Entering Graph::getNodes()");
+    spdlog::info("Exiting Graph::getNodes()");
+
     return this->nodes_;
 }
 
 const std::map<std::pair<uint8_t, uint8_t>, Edge> &Graph::getEdges() const
 {
+    spdlog::info("Entering Graph::getEdges()");
+    spdlog::info("Exiting Graph::getEdges()");
+
     return this->edges_;
 }
 
 uint8_t Graph::nodeIDGeneration()
 {
+    spdlog::info("Entering Graph::nodeIDGeneration()");
+
     this->current_node_id_ += 1;
+    spdlog::info("Exiting Graph::nodeIDGeneration()");
+
     return this->current_node_id_;
 }
 
 bool Graph::nodeIDValidation(uint8_t node_id)
 {
+    spdlog::info("Entering Graph::nodeIDValidation()");
+
     // if no nodes are in the map, no node ids are taken.
     if (this->nodes_.empty())
     {
+        spdlog::info("Exiting Graph::nodeIDValidation() - empty");
+
         return true;
     }
+    spdlog::info("Exiting Graph::nodeIDValidation() - not empty");
     // todo handle other logic
 }
 
 uint8_t Graph::edgeIDGeneration()
 {
+    spdlog::info("Entering Graph::edgeIDGeneration()");
+
     this->current_edge_id_ += 1;
+    spdlog::info("Exiting Graph::edgeIDGeneration()");
+
     return this->current_edge_id_;
 }
 
 bool Graph::edgeIDValidation(uint8_t edge_id)
 {
+    spdlog::info("Entering Graph::edgeIDValidation()");
 
     if (this->edges_.empty())
     {
+        spdlog::info("Exiting Graph::edgeIDValidation() - empty");
+
         return true;
     } // todo handle other logic
+    spdlog::info("Exiting Graph::edgeIDValidation() - not empty");
 }

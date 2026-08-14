@@ -11,7 +11,7 @@ a middleman funciton ,taht calculates all cordinates to and from cartesian and o
 
 int main()
 {
-    spdlog::info("Hello, {}!", "World");
+    spdlog::info("Project ran");
 
     Application app;
     app.start();

@@ -6,6 +6,7 @@
 #include <node_class.hpp>
 
 #include <opencv2/opencv.hpp>
+#include <spdlog/spdlog.h>
 
 class Application
 {

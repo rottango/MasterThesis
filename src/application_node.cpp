@@ -3,10 +3,13 @@
 
 Application::Application() : draw_{graph_, img_}
 {
+    spdlog::info("Entering Application::Application()");
+    spdlog::info("Exiting Application::Application()");
 }
 
 void Application::run()
 {
+    spdlog::info("Entering Application::run()");
     while (this->running_)
     {
         clearFrame();
@@ -14,7 +17,8 @@ void Application::run()
         render();
         presentFrame();
     }
-    shutdown();
+    end();
+    spdlog::info("Exiting Application::run()");
 }
 void Application::initialUserInput()
 {
@@ -26,6 +30,8 @@ void Application::initialUserInput()
 
 bool Application::initialize()
 {
+    spdlog::info("Entering Application::initialize()");
+
     createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
@@ -39,6 +45,7 @@ bool Application::initialize()
 
     graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv1ColorPalet);
 
+    spdlog::info("Exiting Application::createNamedWindow()");
     return true;
 }
 
@@ -49,19 +56,24 @@ void Application::clearFrame()
 
 void Application::start()
 {
+    spdlog::info("Entering Application::start()");
+
     initialUserInput();
     initialize();
     run();
+    spdlog::info("Exiting Application::start()");
 }
 
 void Application::end()
 {
+    spdlog::info("Entering Application::end()");
     shutdown();
+    spdlog::info("Exiting Application::end()");
 }
 
 void Application::update(char character)
 {
-
+    spdlog::info("Entering Application::update()");
     Node &node = graph_.findNodeByIdReadWrite(1);
     switch (character)
     {
@@ -86,20 +98,27 @@ void Application::update(char character)
     default:
         break;
     }
+    spdlog::info("Exiting Application::update()");
 }
 
 void Application::render()
 {
+    spdlog::info("Entering Application::render()");
     draw_.drawFrame();
+    spdlog::info("Exitng Application::render()");
 }
 
 void Application::presentFrame()
 {
+    spdlog::info("Entering Application::presentFrame()");
     cv::imshow(this->named_window_name_, this->img_);
+    spdlog::info("Exiting Application::presentFrame()");
 }
 
 void Application::processInput()
 {
+    spdlog::info("Entering Application::processInput()");
+
     char pressedKey = cv::pollKey();
     switch (pressedKey)
     {
@@ -127,17 +146,25 @@ void Application::processInput()
     default:
         break;
     }
+    spdlog::info("Exiting Application::processInput()");
 }
 
 bool Application::shutdown()
 {
+    spdlog::info("Entering Application::shutdown()");
+
     cv::destroyWindow(this->named_window_name_);
+
+    spdlog::info("Exiting Application::shutdown()");
 
     return true;
 }
 
 void Application::createNamedWindow()
 {
+    spdlog::info("Entering Application::createNamedWindow()");
+
     cv::namedWindow(this->named_window_name_, this->flag_);
     cv::resizeWindow(this->named_window_name_, cv::Size(this->screen_width_, this->screen_height_));
+    spdlog::info("Exiting Application::createNamedWindow()");
 }

@@ -9,6 +9,7 @@
 #include <group_class.hpp>
 #include <grouping_manager_class.hpp>
 #include <node_class.hpp>
+#include <spdlog/spdlog.h>
 
 class Graph
 {
