@@ -55,7 +55,7 @@ Node &Graph::findNodeByIdReadWrite(uint8_t node_id)
 
     if (it == nodes_.end())
     {
-        std::cout << "The node with node_id: " << node_id << " does't exist.\n";
+        std::cout << "The node with node_id: " << static_cast<int>(node_id) << " does't exist.\n";
     }
     return it->second;
 }
@@ -133,7 +133,7 @@ const std::unordered_map<uint8_t, Node> &Graph::getNodes() const
 
 const std::map<std::pair<uint8_t, uint8_t>, Edge> &Graph::getEdges() const
 {
-    this->edges_;
+    return this->edges_;
 }
 
 uint8_t Graph::nodeIDGeneration()

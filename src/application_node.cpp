@@ -62,7 +62,7 @@ void Application::end()
 void Application::update(char character)
 {
 
-    Node &node = graph_.findNodeByIdReadWrite(0);
+    Node &node = graph_.findNodeByIdReadWrite(1);
     switch (character)
     {
     case 'a':
