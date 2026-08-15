@@ -20,7 +20,7 @@ void Graph::addNode(cv::Point2d cartesian_x_y_point_,
     {
         generated_node_id = nodeIDGeneration();
 
-    } while (!nodeIDValidation(generated_node_id));
+    } while (!isNodeIDValid(generated_node_id));
 
     this->nodes_.insert({generated_node_id,
                          Node(generated_node_id, cartesian_x_y_point_,
@@ -93,12 +93,17 @@ void Graph::addEdge(uint8_t observer_id,
 {
     spdlog::info("Entering Graph::addEdge()");
 
+    if (observer_id == target_id_)
+    {
+        return;
+    }
+
     uint8_t generated_edge_id;
     do
     {
         generated_edge_id = edgeIDGeneration();
 
-    } while (!edgeIDValidation(generated_edge_id));
+    } while (!isEdgeIDValid(generated_edge_id));
 
     this->edges_.insert({std::pair(observer_id, target_id_),
                          Edge(generated_edge_id,
@@ -193,18 +198,28 @@ uint8_t Graph::nodeIDGeneration()
     return this->current_node_id_;
 }
 
-bool Graph::nodeIDValidation(uint8_t node_id)
+bool Graph::isNodeIDValid(uint8_t node_id)
 {
-    spdlog::info("Entering Graph::nodeIDValidation()");
+    spdlog::info("Entering Graph::isNodeIDValid()");
 
     // if no nodes are in the map, no node ids are taken.
     if (this->nodes_.empty())
     {
-        spdlog::info("Exiting Graph::nodeIDValidation() - empty");
+        spdlog::info("Exiting Graph::isNodeIDValid() - empty");
 
         return true;
     }
-    spdlog::info("Exiting Graph::nodeIDValidation() - not empty");
+    else
+    {
+        spdlog::info("Exiting Graph::isNodeIDValid() - not empty");
+
+        if (this->nodes_.contains(node_id))
+        {
+            return false;
+        }
+        return true;
+    }
+
     // todo handle other logic
 }
 
@@ -218,15 +233,26 @@ uint8_t Graph::edgeIDGeneration()
     return this->current_edge_id_;
 }
 
-bool Graph::edgeIDValidation(uint8_t edge_id)
+bool Graph::isEdgeIDValid(uint8_t edge_id)
 {
-    spdlog::info("Entering Graph::edgeIDValidation()");
+    spdlog::info("Entering Graph::isEdgeIDValid()");
 
     if (this->edges_.empty())
     {
-        spdlog::info("Exiting Graph::edgeIDValidation() - empty");
+        spdlog::info("Exiting Graph::isEdgeIDValid() - empty");
 
         return true;
-    } // todo handle other logic
-    spdlog::info("Exiting Graph::edgeIDValidation() - not empty");
+    }
+
+    for (auto it = edges_.begin(); it != edges_.end(); it++)
+    {
+        if (it->second.getEdgeId() == edge_id)
+        {
+            return false;
+        }
+    }
+
+    spdlog::info("Exiting Graph::isEdgeIDValid() - not empty");
+    return true;
 }
+// todo handle other logic

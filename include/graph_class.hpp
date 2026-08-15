@@ -57,11 +57,11 @@ public:
 private:
     uint8_t nodeIDGeneration();
 
-    bool nodeIDValidation(uint8_t node_id);
+    bool isNodeIDValid(uint8_t node_id);
 
     uint8_t edgeIDGeneration();
 
-    bool edgeIDValidation(uint8_t edge_id);
+    bool isEdgeIDValid(uint8_t edge_id);
 
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;

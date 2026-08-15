@@ -17,3 +17,4 @@ struct colorPalet
 
 extern colorPalet ugv1ColorPalet;
 extern colorPalet ugv2ColorPalet;
+extern colorPalet ugv3ColorPalet;

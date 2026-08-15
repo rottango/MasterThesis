@@ -17,3 +17,12 @@ colorPalet ugv2ColorPalet = {{47, 15, 128},
                              cv::FILLED,
                              8,
                              0};
+
+colorPalet ugv3ColorPalet = {{0, 45, 110},
+                             {0, 60, 145},
+                             {0, 75, 180},
+                             {0, 100, 220},
+                             {40, 145, 255},
+                             cv::FILLED,
+                             8,
+                             0};

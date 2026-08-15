@@ -44,6 +44,8 @@ bool Application::initialize()
     running_ = true;
 
     graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv1ColorPalet);
+    graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv2ColorPalet);
+    graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv3ColorPalet);
 
     spdlog::info("Exiting Application::createNamedWindow()");
     return true;
@@ -77,7 +79,7 @@ void Application::end()
 void Application::update(char character)
 {
     spdlog::info("Entering Application::update()");
-    Node &node = graph_.findNodeByIdReadWrite(1);
+    Node &node = graph_.findNodeByIdReadWrite(movable_node_id_);
     switch (character)
     {
     case 'a':
@@ -98,6 +100,29 @@ void Application::update(char character)
     case ']':
         node.rotateNodesAxis(angle_step_size_);
         break;
+    case 'x':
+        min_difference_ = 255;
+        node_id_of_min_difference = movable_node_id_;
+        for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
+        {
+            int temp_result = it->second.getNodeId() - movable_node_id_;
+            if (it->second.getNodeId() > movable_node_id_ &&
+                temp_result < min_difference_)
+            {
+                min_difference_ = temp_result;
+                node_id_of_min_difference = it->second.getNodeId();
+            }
+        };
+        if (node_id_of_min_difference != movable_node_id_)
+        {
+            movable_node_id_ = node_id_of_min_difference;
+            spdlog::info("Switched movable_node_id");
+
+            break;
+        }
+
+        movable_node_id_ = 1;
+        spdlog::info("movable_node_id=1");
     default:
         break;
     }
@@ -141,6 +166,9 @@ void Application::processInput()
         update(pressedKey);
         break;
     case ']':
+        update(pressedKey);
+        break;
+    case 'x':
         update(pressedKey);
         break;
     case '.':
