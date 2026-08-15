@@ -1,143 +1,294 @@
 
-#include <calculate.hpp>
-#include <define.hpp>
 #include <draw_class.hpp>
 #include <node_class.hpp>
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 
-Draw::Draw(std::string windowName,
-           cv::WindowFlags flag,
-           cv::Size windowSize,
-           int rows,
-           int cols,
-           int makeTypeFlag,
-           cv::Scalar backgroundColor) : img{rows,
-                                             cols,
-                                             makeTypeFlag,
-                                             backgroundColor}
+Draw::Draw(const Graph &graph,
+           cv::Mat &img) : graph_(graph), img_(img)
 {
-    cv::namedWindow(windowName, flag);
-    cv::resizeWindow(windowName, windowSize);
+    this->screen_width_ = img_.cols;
+    this->screen_height_ = img_.rows;
+    this->size_ = img_.size();
+    this->type_ = img_.type();
 }
 
-void Draw::drawElipse(cv::Mat &img, Node observer)
-{
-    double angle = 0;
-    double start_angle = -observer.theta_rotation_degrees;
-    double end_angle = start_angle - observer.angle_output_atan2_to_target;
-    cv::Scalar color = observer.ugvColorPalet.text_color;
-    bool invert = 0;
+// frame
 
-    cv::ellipse(img,                                                       // cv::InputOutputArray img,
-                cartesianPointToOpenCVPoint(observer.cartesian_x_y_point), // cv::Point center
-                cv::Size2d(100, 100),                                      // cv::Size axes
-                angle,                                                     // double angle STAYS 0, then its like i want it to be
-                start_angle,                                               // double startAngle
-                end_angle,                                                 // double endAngle
-                observer.ugvColorPalet.text_color,                         // const cv::Scalar &color
-                1,                                                         // int thickness
-                8,                                                         // int lineType = 8
-                0);                                                        // int shift = 0
+void Draw::drawFrame()
+{
+    drawGraph();
+}
+
+// graph
+
+void Draw::drawGraph()
+{
+    drawNodes();
+
+    drawEdges();
+
+    /// drawText();
+}
+// node
+
+void Draw::drawNodes()
+{
+    for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
+    {
+        drawNode(it->second);
+    }
+}
+
+void Draw::drawNode(const Node &node)
+{
+    drawNodeVehicleSize(node);
+    drawNodeInner(node);
+    drawNodeMeasurmentError(node);
+    drawNodeAxis(node);
+}
+
+void Draw::drawNodeVehicleSize(const Node &node)
+{
+    cv::circle(this->img_,
+               cartesianPointToOpenCVPoint(node.getXYPoint(),
+                                           screen_width_,
+                                           screen_height_),
+               node.getVehicleSize(),
+               node.getColorPalet().vehicle_color,
+               node.getColorPalet().thickness,
+               node.getColorPalet().lineType,
+               node.getColorPalet().shift);
+}
+
+void Draw::drawNodeAxis(const Node &node)
+{
+    cv::arrowedLine(img_,
+                    cartesianPointToOpenCVPoint(node.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    cartesianPointToOpenCVPoint(node.getXAxisPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    x_axis_color_,
+                    axis_arrow_thickness_);
+
+    cv::arrowedLine(img_,
+                    cartesianPointToOpenCVPoint(node.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    cartesianPointToOpenCVPoint(node.getYAxisPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    y_axis_color_,
+                    axis_arrow_thickness_);
+}
+
+void Draw::drawNodeMeasurmentError(const Node &node)
+{
+    cv::circle(this->img_,
+               cartesianPointToOpenCVPoint(node.getXYPoint(),
+                                           screen_width_,
+                                           screen_height_),
+               node.getMeasurmentError(),
+               node.getColorPalet().measurment_error_color,
+               node.getColorPalet().thickness,
+               node.getColorPalet().lineType,
+               node.getColorPalet().shift);
+}
+
+void Draw::drawNodeInner(const Node &node)
+{
+    cv::circle(this->img_,
+               cartesianPointToOpenCVPoint(node.getXYPoint(),
+                                           screen_width_,
+                                           screen_height_),
+               node.getInner(),
+               node.getColorPalet().inner__color,
+               node.getColorPalet().thickness,
+               node.getColorPalet().lineType,
+               node.getColorPalet().shift);
+}
+
+// edge
+
+void Draw::drawEdges() // correct
+{
+    std::unordered_map<uint8_t, uint8_t> number_of_elipses_per_observer_id;
+    for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
+    {
+        uint8_t observer_id = it->second.getObserverId();
+        uint8_t &counter = number_of_elipses_per_observer_id[observer_id];
+        int radius = base_angle_elipse_size_ + counter * base_angle_elipse_spacing_;
+        drawEdge(it->second, radius);
+        counter++;
+    }
+}
+
+void Draw::drawEdge(const Edge &edge, int radius)
+{
+    drawEdgeConnectingLine(edge);
+    drawEdgeAngleElipseToTarget(edge, radius);
+}
+
+void Draw::drawEdgeConnectingLine(const Edge &edge)
+{
+    const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
+    const Node &target = graph_.findNodeByIdReadOnly(edge.getTargetId());
+    cv::arrowedLine(img_,
+                    cartesianPointToOpenCVPoint(observer.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    cartesianPointToOpenCVPoint(target.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_),
+                    observer.getColorPalet().text_color,
+                    axis_arrow_thickness_);
+}
+
+void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
+{
+    const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
+    double angle = 0;
+    double start_angle = -observer.getThetaRotationDegrees();
+    double normalized_angle = normalizeAngleDegrees(edge.getAngleBetweenNodesDegrees() - observer.getThetaRotationDegrees());
+    double end_angle = start_angle - normalized_angle;
+
+    cv::ellipse(img_, // cv::InputOutputArray img,
+                cartesianPointToOpenCVPoint(observer.getXYPoint(),
+                                            screen_width_,
+                                            screen_height_), // cv::Point center
+                cv::Size2d(radius,
+                           radius),                  // cv::Size axes
+                angle,                               // double angle STAYS 0, then its like i want it to be
+                start_angle,                         // double startAngle
+                end_angle,                           // double endAngle
+                observer.getColorPalet().text_color, // const cv::Scalar &color
+                1,                                   // int thickness
+                8,                                   // int lineType = 8
+                0);                                  // int shift = 0
     std::cout << "end_angle: " << end_angle << "\n";
 }
 
-void Draw::generateText(Node &observer, Node target)
-{
-    this->distance_output = "Distance: " + std::to_string(calculateDistanceBetweenPoints(observer.cartesian_x_y_point.x, target.cartesian_x_y_point.x, observer.cartesian_x_y_point.y, target.cartesian_x_y_point.y));
-    this->observer_pos_output = "observer (x,y) = (" + std::to_string(observer.cartesian_x_y_point.x) + "," + std::to_string(observer.cartesian_x_y_point.y) + ")";
-    this->target_pos_output = "target (x,y) = (" + std::to_string(target.cartesian_x_y_point.x) + "," + std::to_string(target.cartesian_x_y_point.y) + ")";
-    this->measurment_error_output = "+-" + std::to_string(observer.getMeasurmentError() + target.getMeasurmentError()) + "[pixels]";
+// text
 
-    observer.angle_output_atan2_to_target = cartesianCalculateAngle(observer, target);
-    this->angle_output_atan2 = "angle atan2: = " + std::to_string(observer.angle_output_atan2_to_target);
+void Draw::drawText()
+{
+    generateText();
+
+    // layoutGeneratedText();
 }
 
-void Draw::openCVDrawTextOnScreen(cv::Mat &img, Node observer, Node target)
+void Draw::generateText()
 {
-    cv::putText(img,
-                this->distance_output + this->measurment_error_output,
-                cv::Point2d(0, 1080 - 75),
-                cv::HersheyFonts::FONT_HERSHEY_PLAIN, 2,
-                observer.ugvColorPalet.text_color,
-                1,
-                7);
-    cv::putText(img,
-                this->observer_pos_output,
-                cv::Point2d(0, 1080 - 50),
-                cv::HersheyFonts::FONT_HERSHEY_PLAIN,
-                2,
-                observer.ugvColorPalet.text_color,
-                1,
-                7);
-    cv::putText(img,
-                this->target_pos_output,
-                cv::Point2d(0, 1080 - 25),
-                cv::HersheyFonts::FONT_HERSHEY_PLAIN,
-                2,
-                target.ugvColorPalet.text_color,
-                1,
-                7);
-    cv::putText(img,
-                angle_output_atan2,
-                this->middleOfAngleLine,
-                cv::HersheyFonts::FONT_HERSHEY_PLAIN,
-                0.75,
-                observer.ugvColorPalet.text_color,
-                1,
-                7);
+    generateNodesText();
+    generateEdgesText();
 }
 
-void Draw::openCVDrawAxis(cv::Mat &img, Node ugv)
+void Draw::generateNodesText()
 {
-    cv::Point2d temp_opencv_point_x_y = cartesianPointToOpenCVPoint(ugv.cartesian_x_y_point);
-    cv::Point2d temp_opencv_x_axis_point = cartesianPointToOpenCVPoint(ugv.cartesian_x_axis_point);
-    cv::Point2d temp_opencv_y_axis_point = cartesianPointToOpenCVPoint(ugv.cartesian_y_axis_point);
-
-    cv::arrowedLine(img,
-                    temp_opencv_point_x_y,
-                    temp_opencv_x_axis_point,
-                    cv::Scalar(0, 0, 255),
-                    5); // x axis red
-    cv::arrowedLine(img,
-                    temp_opencv_point_x_y,
-                    temp_opencv_y_axis_point,
-                    cv::Scalar(255, 0, 0),
-                    5); // y axis blue
+    for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
+    {
+        generateNodeText(it->second);
+    }
 }
 
-void Draw::drawNode(cv::Mat img, Node ugv)
+void Draw::generateNodeText(const Node &node)
 {
-    cv::Point2d temp_opencv_point_x_y = cartesianPointToOpenCVPoint(ugv.cartesian_x_y_point);
-    cv::circle(img, temp_opencv_point_x_y, ugv.getVehicleSize(), ugv.ugvColorPalet.vehicle_color, cv::FILLED, 8, 0);
-    cv::circle(img, temp_opencv_point_x_y, ugv.getInner(), ugv.ugvColorPalet.inner_color, 2, 8, 0);
-    cv::circle(img, temp_opencv_point_x_y, ugv.getMeasurmentError(), ugv.ugvColorPalet.measurment_error_color, 2, 8, 0);
+
+    generated_text_node.clear();
+
+    generated_text_node.push_back(node_id_text_ + std::to_string(node.getNodeId()));
+    generated_text_node.push_back(cartesian_x_y_point_text_ + "(" + std::to_string(node.getXYPoint().x) +
+                                  "," + std::to_string(node.getXYPoint().y) + ")");
+    generated_text_node.push_back(vehicle_size_text_ + std::to_string(node.getVehicleSize()));
+    generated_text_node.push_back(inner_text_ + std::to_string(node.getInner()));
+    generated_text_node.push_back(measurment_error_cm_text_ + std::to_string(node.getMeasurmentError()));
+    generated_text_node.push_back(theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees()));
 }
 
-void Draw::drawFrame(cv::Mat &img, Node ugv1, Node ugv2)
+void Draw::generateEdgesText()
 {
-    drawNode(img, ugv1);
-    drawNode(img, ugv2);
-    drawConnectingLine(img, ugv1, ugv2);
-    generateText(ugv1, ugv2);
-    openCVDrawTextOnScreen(img, ugv1, ugv2);
-    openCVDrawAxis(img, ugv1);
-    openCVDrawAxis(img, ugv2);
-    drawElipse(img, ugv1);
+    for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
+    {
+        generateEdgeText(it->second);
+    }
 }
 
-void Draw::drawConnectingLine(cv::Mat &img, Node observer, Node target)
+void Draw::generateEdgeText(const Edge &edge)
 {
-    cv::Point2d temp_observer_cartesian_x_y_point = cartesianPointToOpenCVPoint(observer.cartesian_x_y_point);
-    cv::Point2d temp_target_cartesian_x_y_point = cartesianPointToOpenCVPoint(target.cartesian_x_y_point);
 
-    cv::line(img,
-             temp_observer_cartesian_x_y_point,
-             temp_target_cartesian_x_y_point,
-             observer.ugvColorPalet.observer_line_color,
-             2,
-             cv::LineTypes::LINE_4,
-             0);
-    this->middleOfAngleLine = cv::Point2d((temp_observer_cartesian_x_y_point.x + temp_target_cartesian_x_y_point.x) / 2,
-                                          (temp_observer_cartesian_x_y_point.y + temp_target_cartesian_x_y_point.y) / 2);
+    generated_text_edge.clear();
+
+    generated_text_edge.push_back(edge_id_ + std::to_string(edge.getEdgeId()));
+    generated_text_edge.push_back(observer_id + std::to_string(edge.getObserverId()));
+    generated_text_edge.push_back(target_id_ + std::to_string(edge.getTargetId()));
+    generated_text_edge.push_back(distance_between_nodes_meters_ + std::to_string(edge.getDistanceBetweenNodesMeters()));
+    generated_text_edge.push_back(angle_between_nodes_degrees_ + std::to_string(edge.getAngleBetweenNodesDegrees()));
+    generated_text_edge.push_back(temp_timestamp_ + std::to_string(edge.getTempTimestamp()));
+    generated_text_edge.push_back(distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMetersError()));
+    generated_text_edge.push_back(angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()));
+}
+
+void Draw::layoutGeneratedText(const Node &node, const Edge &edge)
+{
+    // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
+    // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
+    // so i kinda need to rewrite this shi ;/
+    // 69
+
+    int node_info_rectangle_width_ = 0;
+    int node_info_rectangle_height_ = 0;
+    int edge_info_rectangle_width_ = 0;
+    int edge_info_rectangle_height_ = 0;
+
+    int gap_size_pixels = 5;
+    int edge_text_gap;
+    int node_text_gap;
+    if (generated_text_edge.size() < 1)
+    {
+        edge_text_gap = 0;
+    }
+    else
+    {
+        edge_text_gap = (generated_text_edge.size() - 1) * gap_size_pixels;
+    }
+
+    if (generated_text_node.size() < 1)
+    {
+        node_text_gap = 0;
+    }
+    else
+    {
+        node_text_gap = (generated_text_node.size() - 1) * gap_size_pixels;
+    }
+
+    // calculate the rectangle of the node
+    for (auto it = generated_text_node.begin(); it != generated_text_node.end(); it++)
+    {
+        cv::Size text_size = cv::getTextSize(*it,
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             baseline_);
+        if (text_size.width > node_info_rectangle_width_)
+        {
+            node_info_rectangle_width_ = text_size.width;
+        }
+        node_info_rectangle_height_ += text_size.height;
+    }
+    // calculate the rectangle of the edge
+    for (auto it = generated_text_edge.begin(); it != generated_text_edge.end(); it++)
+    {
+        cv::Size text_size = cv::getTextSize(*it,
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             baseline_);
+        if (text_size.width > edge_info_rectangle_width_)
+        {
+            edge_info_rectangle_width_ = text_size.width;
+        }
+        edge_info_rectangle_height_ += text_size.height;
+    }
 }

@@ -1,108 +1,134 @@
-
-#include <calculate.hpp>
 #include <node_class.hpp>
+#include <reusable_calculations.hpp>
 
-Node::Node(cv::Point2d cartesian_x_y_point,
-           double theta_rotation_degrees,
-           double vehicle_size,
-           double inner,
-           double measurment_error_CM,
-           colorPalet newUgvColorPalet)
+Node::Node(uint8_t node_id_,
+           cv::Point2d cartesian_x_y_point_,
+           double theta_rotation_degrees_,
+           uint8_t vehicle_size_,
+           uint8_t inner_,
+           uint8_t measurment_error_cm_,
+           colorPalet node_color_palet_)
 {
-    this->cartesian_x_y_point = cartesian_x_y_point;
-    this->cartesian_x_axis_point = cv::Point2d(cartesian_x_y_point.x + 100, cartesian_x_y_point.y);
-    this->cartesian_y_axis_point = cv::Point2d(cartesian_x_y_point.x, cartesian_x_y_point.y + 100);
-
-    this->theta_rotation_degrees = theta_rotation_degrees;
-
-    this->vehicle_size = vehicle_size;
-    this->inner = inner;
-    this->measurment_error_CM = measurment_error_CM;
-
-    this->ugvColorPalet = newUgvColorPalet;
+    this->node_id_ = node_id_; // will not change ever.
+    setThetaRotationDegrees(theta_rotation_degrees_);
+    setXYPoint(cartesian_x_y_point_);
+    setVehicleSize(vehicle_size_);
+    setInner(inner_);
+    setMeasurmentErrorCm(measurment_error_cm_);
+    assignColors(node_color_palet_);
 }
 
-void Node::change_theta_rotation_degrees(double new_theta_rotation_degrees)
+uint8_t Node::getNodeId() const // done
 {
-    double remainder = this->theta_rotation_degrees + new_theta_rotation_degrees;
-    remainder = std::fmod(remainder, 360.00f);
-    if (remainder >= 180)
-    {
-        remainder -= 360;
-    }
-    if (remainder < -180)
-    {
-        remainder += 360;
-    }
-    this->theta_rotation_degrees = remainder;
+    return this->node_id_;
 }
 
-void Node::assingColors()
+cv::Point2d Node::getXYPoint() const // done
 {
-    ugvColorPalet.vehicle_color[0] = 35;
-    ugvColorPalet.vehicle_color[1] = 75;
-    ugvColorPalet.vehicle_color[2] = 0;
-
-    ugvColorPalet.inner_color[0] = 0;
-    ugvColorPalet.inner_color[1] = 100;
-    ugvColorPalet.inner_color[2] = 0;
-
-    ugvColorPalet.measurment_error_color[0] = 0;
-    ugvColorPalet.measurment_error_color[1] = 114;
-    ugvColorPalet.measurment_error_color[2] = 0;
-
-    ugvColorPalet.observer_line_color[0] = 0;
-    ugvColorPalet.observer_line_color[1] = 128;
-    ugvColorPalet.observer_line_color[2] = 0;
-
-    ugvColorPalet.text_color[0] = 0;
-    ugvColorPalet.text_color[1] = 176;
-    ugvColorPalet.text_color[2] = 56;
+    return this->cartesian_x_y_point_;
 }
 
-void Node::openCVCartesianCalculateAngle(cv::Point2d new_cartesian_x_y_point)
+cv::Point2d Node::getXAxisPoint() const // done
 {
-    cv::Point2d opencv_x_y_delta_point(new_cartesian_x_y_point.x - this->cartesian_x_y_point.x,
-                                       new_cartesian_x_y_point.y - this->cartesian_x_y_point.y);
-    this->cartesian_x_y_point = new_cartesian_x_y_point;
-
-    changeAxisPoints(opencv_x_y_delta_point);
+    return this->cartesian_x_axis_point_;
 }
 
-void Node::changeAxisPoints(cv::Point2d new_cartesian_x_y_point)
+cv::Point2d Node::getYAxisPoint() const // done
 {
-    this->cartesian_y_axis_point.x = cartesian_y_axis_point.x + new_cartesian_x_y_point.x;
-    this->cartesian_y_axis_point.y = cartesian_y_axis_point.y + new_cartesian_x_y_point.y;
-    this->cartesian_x_axis_point.x = cartesian_x_axis_point.x + new_cartesian_x_y_point.x;
-    this->cartesian_x_axis_point.y = cartesian_x_axis_point.y + new_cartesian_x_y_point.y;
+    return this->cartesian_y_axis_point_;
 }
 
-void Node::setVehicleSize(double new_vehicle_size)
+uint8_t Node::getVehicleSize() const // done
 {
-    this->vehicle_size = new_vehicle_size;
+    return this->vehicle_size_;
 }
 
-void Node::setInner(double new_inner)
+uint8_t Node::getInner() const // done
 {
-    this->inner = new_inner;
+    return this->inner_;
 }
 
-void Node::setMeasurmentError(double new_measurment_error_CM)
+uint8_t Node::getMeasurmentError() const // done
 {
-    this->measurment_error_CM = new_measurment_error_CM;
+    return this->measurment_error_cm_;
 }
 
-double Node::getVehicleSize()
+const colorPalet &Node::getColorPalet() const
 {
-    return this->vehicle_size;
+    return this->node_color_palet_;
 }
 
-double Node::getInner()
+double Node::getThetaRotationDegrees() const // done
 {
-    return this->inner;
+    return this->theta_rotation_degrees_;
 }
 
-double Node::getMeasurmentError()
+void Node::changePosition(cv::Point2d new_cartesian_x_y_point_) // done
 {
-    return this->measurment_error_CM;
+    setXYPoint(new_cartesian_x_y_point_);
+}
+
+void Node::rotateNodesAxis(double theta_rotation_delta_degrees) // add a rotation delta
+{
+    // add logic to modify that dleta to and absolute angle
+    double new_theta_rotation_degrees =
+        this->theta_rotation_degrees_ +
+        theta_rotation_delta_degrees;
+
+    setThetaRotationDegrees(new_theta_rotation_degrees);
+}
+
+void Node::assignColors(colorPalet node_color_palet) // done
+{
+    this->node_color_palet_ = node_color_palet;
+}
+
+void Node::setVehicleSize(uint8_t new_vehicle_size_) // done
+{
+    this->vehicle_size_ = new_vehicle_size_;
+}
+
+void Node::setInner(uint8_t new_inner_) // done
+{
+    this->inner_ = new_inner_;
+}
+
+void Node::setMeasurmentErrorCm(uint8_t new_measurment_error_cm_) // done
+{
+    this->measurment_error_cm_ = new_measurment_error_cm_;
+}
+
+void Node::setXYPoint(cv::Point2d cartesian_x_y_point_) // done
+{
+    this->cartesian_x_y_point_ = cartesian_x_y_point_;
+    setAxisPoints();
+}
+
+void Node::setXAxisPoint() // done
+{
+    cv::Point2d new_cartesian_x_axis_point = calculatePointFromCenter(this->cartesian_x_y_point_,
+                                                                      this->theta_rotation_degrees_,
+                                                                      100);
+    this->cartesian_x_axis_point_ = new_cartesian_x_axis_point;
+}
+
+void Node::setYAxisPoint() // done
+{
+    cv::Point2d new_cartesian_y_axis_point = calculatePointFromCenter(this->cartesian_x_y_point_,
+                                                                      this->theta_rotation_degrees_ + 90,
+                                                                      100);
+    this->cartesian_y_axis_point_ = new_cartesian_y_axis_point;
+}
+
+void Node::setAxisPoints() // done
+{
+    setXAxisPoint();
+    setYAxisPoint();
+}
+
+void Node::setThetaRotationDegrees(double new_theta_rotation_degrees_) // not touching, was working before - // set an aboslute angle
+{
+    this->theta_rotation_degrees_ = normalizeAngleDegrees(new_theta_rotation_degrees_);
+
+    setAxisPoints();
 }
