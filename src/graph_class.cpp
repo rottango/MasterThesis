@@ -110,6 +110,8 @@ uint8_t Graph::addEdge(uint8_t observer_id,
                          Edge(generated_edge_id,
                               observer_id,
                               target_id_)});
+
+    this->findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t>(observer_id, target_id_)).setAngleBetweenNodesDegrees(bearingBetweenTwoPointsDegrees(this->findNodeByIdReadOnly(observer_id).getXYPoint(), this->findNodeByIdReadOnly(target_id_).getXYPoint()));
     return generated_edge_id;
     spdlog::info("Exiting Graph::addEdge()");
 }

@@ -40,14 +40,14 @@ public:
 
     void assignColors(colorPalet color_palet); // should be accessible publicly
 
-private:
-    void setNodeId(uint8_t node_id_);
-
     void setVehicleSize(uint8_t new_vehicle_size_);
 
     void setInner(uint8_t new_inner_);
 
     void setMeasurmentErrorCm(uint8_t new_measurment_error_cm_);
+
+private:
+    void setNodeId(uint8_t node_id_);
 
     void setXYPoint(cv::Point2d cartesian_x_y_point_); // to call after chanignPosition()
 

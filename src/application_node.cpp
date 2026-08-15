@@ -111,10 +111,10 @@ void Application::update(char character)
     case 'w':
         node.changePosition(cv::Point2d(node.getXYPoint().x, node.getXYPoint().y + position_step_size_));
         break;
-    case '[':
+    case 'l':
         node.rotateNodesAxis(-angle_step_size_);
         break;
-    case ']':
+    case 'r':
         node.rotateNodesAxis(angle_step_size_);
         break;
     case 'x':
@@ -140,6 +140,23 @@ void Application::update(char character)
 
         movable_node_id_ = 1;
         spdlog::info("movable_node_id=1");
+    case '=':
+        node.setMeasurmentErrorCm(node.getMeasurmentError() + 1);
+    case '-':
+        node.setMeasurmentErrorCm(node.getMeasurmentError() - 1);
+        break;
+    case ']':
+        node.setVehicleSize(node.getVehicleSize() + 1);
+        break;
+    case '[':
+        node.setVehicleSize(node.getVehicleSize() - 1);
+        break;
+    case '\'':
+        node.setInner(node.getInner() + 1);
+        break;
+    case ';':
+        node.setInner(node.getInner() - 1);
+        break;
     default:
         break;
     }
@@ -179,10 +196,10 @@ void Application::processInput()
     case 'd':
         update(pressedKey);
         break;
-    case '[':
+    case 'l':
         update(pressedKey);
         break;
-    case ']':
+    case 'r':
         update(pressedKey);
         break;
     case 'x':
@@ -190,6 +207,25 @@ void Application::processInput()
         break;
     case '.':
         running_ = false;
+        break;
+
+    case '=':
+        update(pressedKey);
+        break;
+    case '-':
+        update(pressedKey);
+        break;
+    case ']':
+        update(pressedKey);
+        break;
+    case '[':
+        update(pressedKey);
+        break;
+    case '\'':
+        update(pressedKey);
+        break;
+    case ';':
+        update(pressedKey);
         break;
     default:
         break;
