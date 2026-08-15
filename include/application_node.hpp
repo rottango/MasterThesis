@@ -43,13 +43,15 @@ private:
 
     void end();
 
-    void update(char character);
+    void exectuteInput(char character);
 
     void render();
 
     void presentFrame();
 
     void processInput();
+
+    void update();
 
     bool shutdown();
 

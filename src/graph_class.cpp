@@ -258,4 +258,42 @@ bool Graph::isEdgeIDValid(uint8_t edge_id)
     spdlog::info("Exiting Graph::isEdgeIDValid() - not empty");
     return true;
 }
+
+void Graph::updateNodesAndEdges()
+{
+    updateAllEdges();
+    // update everything else and all nodes?
+}
+
 // todo handle other logic
+void Graph::updateAllEdges()
+{
+    for (auto it = this->edges_.begin(); it != edges_.end(); it++)
+    {
+        updateEdge(it->second.getEdgeId(),
+                   it->second.getObserverId(),
+                   it->second.getTargetId());
+    }
+}
+
+void Graph::updateEdge(uint8_t edge_id,
+                       uint8_t observer_id,
+                       uint8_t target_id_)
+{
+    Edge &edge =
+        this->findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t>(observer_id, target_id_));
+    const Node &observer =
+        this->findNodeByIdReadWrite(observer_id);
+    const Node &target =
+        this->findNodeByIdReadWrite(target_id_);
+
+    // setDistanceBetweenNodesMeters
+    edge.setDistanceBetweenNodesMeters(distanceBetweenTwoPoints(observer.getXYPoint(), target.getXYPoint()));
+    // setAngleBetweenNodesDegrees
+    edge.setAngleBetweenNodesDegrees(bearingBetweenTwoPointsDegrees(observer.getXYPoint(), target.getXYPoint()));
+    // setTempTimestamp
+
+    // setDistanceBetweenNodesMetersError
+
+    // setAngleBetweenNodesDegreesError
+}

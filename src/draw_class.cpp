@@ -114,17 +114,21 @@ void Draw::drawNodeInner(const Node &node)
 
 void Draw::drawEdges() // correct
 {
-
+    std::unordered_map<uint8_t, uint8_t> number_of_elipses_per_observer_id;
     for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
     {
-        drawEdge(it->second);
+        uint8_t observer_id = it->second.getObserverId();
+        uint8_t &counter = number_of_elipses_per_observer_id[observer_id];
+        int radius = base_angle_elipse_size_ + counter * base_angle_elipse_spacing_;
+        drawEdge(it->second, radius);
+        counter++;
     }
 }
 
-void Draw::drawEdge(const Edge &edge)
+void Draw::drawEdge(const Edge &edge, int radius)
 {
     drawEdgeConnectingLine(edge);
-    drawEdgeAngleElipseToTarget(edge);
+    drawEdgeAngleElipseToTarget(edge, radius);
 }
 
 void Draw::drawEdgeConnectingLine(const Edge &edge)
@@ -142,7 +146,7 @@ void Draw::drawEdgeConnectingLine(const Edge &edge)
                     axis_arrow_thickness_);
 }
 
-void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
+void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
 {
     const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
     double angle = 0;
@@ -153,8 +157,8 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge)
                 cartesianPointToOpenCVPoint(observer.getXYPoint(),
                                             screen_width_,
                                             screen_height_), // cv::Point center
-                cv::Size2d(angle_elipse_size_,
-                           angle_elipse_size_),      // cv::Size axes
+                cv::Size2d(radius,
+                           radius),                  // cv::Size axes
                 angle,                               // double angle STAYS 0, then its like i want it to be
                 start_angle,                         // double startAngle
                 end_angle,                           // double endAngle
