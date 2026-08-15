@@ -16,12 +16,12 @@ class Graph
 public:
     Graph();
 
-    void addNode(cv::Point2d cartesian_x_y_point_,
-                 double theta_rotation_degrees_,
-                 uint8_t vehicle_size_,
-                 uint8_t inner_,
-                 uint8_t measurment_error_cm_,
-                 colorPalet node_color_palet_);
+    uint8_t addNode(cv::Point2d cartesian_x_y_point_,
+                    double theta_rotation_degrees_,
+                    uint8_t vehicle_size_,
+                    uint8_t inner_,
+                    uint8_t measurment_error_cm_,
+                    colorPalet node_color_palet_);
 
     void removeNodeById(uint8_t node_id);
 
@@ -35,8 +35,8 @@ public:
 
     uint8_t numerOfNodes() const;
 
-    void addEdge(uint8_t observer_id,
-                 uint8_t target_id_);
+    uint8_t addEdge(uint8_t observer_id,
+                    uint8_t target_id_);
 
     void removeEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair);
 

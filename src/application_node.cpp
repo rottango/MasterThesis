@@ -42,10 +42,27 @@ bool Application::initialize()
     img_ = img_temp_;
 
     running_ = true;
+    uint8_t node_id_1;
+    uint8_t node_id_2;
+    uint8_t node_id_3;
 
-    graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv1ColorPalet);
-    graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv2ColorPalet);
-    graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv3ColorPalet);
+    uint8_t edge_id_1;
+    uint8_t edge_id_2;
+    uint8_t edge_id_3;
+    uint8_t edge_id_4;
+    uint8_t edge_id_5;
+    uint8_t edge_id_6;
+
+    node_id_1 = graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv1ColorPalet);
+    node_id_2 = graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv2ColorPalet);
+    node_id_3 = graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv3ColorPalet);
+
+    edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
+    edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
+    edge_id_3 = graph_.addEdge(node_id_2, node_id_1);
+    edge_id_4 = graph_.addEdge(node_id_2, node_id_3);
+    edge_id_5 = graph_.addEdge(node_id_3, node_id_1);
+    edge_id_6 = graph_.addEdge(node_id_3, node_id_2);
 
     spdlog::info("Exiting Application::createNamedWindow()");
     return true;

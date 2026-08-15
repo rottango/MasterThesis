@@ -6,12 +6,12 @@ Graph::Graph()
     spdlog::info("Exiting Graph::Graph()");
 }
 
-void Graph::addNode(cv::Point2d cartesian_x_y_point_,
-                    double theta_rotation_degrees_,
-                    uint8_t vehicle_size_,
-                    uint8_t inner_,
-                    uint8_t measurment_error_cm_,
-                    colorPalet node_color_palet_)
+uint8_t Graph::addNode(cv::Point2d cartesian_x_y_point_,
+                       double theta_rotation_degrees_,
+                       uint8_t vehicle_size_,
+                       uint8_t inner_,
+                       uint8_t measurment_error_cm_,
+                       colorPalet node_color_palet_)
 {
     spdlog::info("Entering Graph::addNode()");
 
@@ -30,6 +30,7 @@ void Graph::addNode(cv::Point2d cartesian_x_y_point_,
                               measurment_error_cm_,
                               node_color_palet_)});
     spdlog::info("Exiting Graph::addNode()");
+    return generated_node_id;
 }
 
 void Graph::removeNodeById(uint8_t node_id)
@@ -88,14 +89,14 @@ uint8_t Graph::numerOfNodes() const
     return nodes_.size();
 }
 
-void Graph::addEdge(uint8_t observer_id,
-                    uint8_t target_id_)
+uint8_t Graph::addEdge(uint8_t observer_id,
+                       uint8_t target_id_)
 {
     spdlog::info("Entering Graph::addEdge()");
 
     if (observer_id == target_id_)
     {
-        return;
+        return 0;
     }
 
     uint8_t generated_edge_id;
@@ -109,7 +110,7 @@ void Graph::addEdge(uint8_t observer_id,
                          Edge(generated_edge_id,
                               observer_id,
                               target_id_)});
-
+    return generated_edge_id;
     spdlog::info("Exiting Graph::addEdge()");
 }
 
