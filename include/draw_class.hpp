@@ -38,13 +38,13 @@ private:
 
     void drawEdges();
 
-    void drawEdge(const Edge &edge); // this is the same as drawConnectingLine i believe
+    void drawEdge(const Edge &edge, int radius); // this is the same as drawConnectingLine i believe
 
     void drawEdgeConnectingLine(const Edge &edge);
 
     void drawEdgeAngleElipse(const Edge &edge); // every edge from observer to targets are drawn
 
-    void drawEdgeAngleElipseToTarget(const Edge &edge); // single edge from observer to target is drawn
+    void drawEdgeAngleElipseToTarget(const Edge &edge, int radius); // single edge from observer to target is drawn
 
     // text
 
@@ -79,6 +79,9 @@ private:
     double font_scale_;
     int font_thickness_;
     int *baseline_;
+
+    int base_angle_elipse_size_ = 75;
+    int base_angle_elipse_spacing_ = 25;
 
     std::vector<std::string> generated_text_node;
     std::vector<std::string> generated_text_edge;
