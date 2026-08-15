@@ -54,6 +54,8 @@ public:
 
     const std::map<std::pair<uint8_t, uint8_t>, Edge> &getEdges() const;
 
+    void updateNodesAndEdges();
+
 private:
     uint8_t nodeIDGeneration();
 
@@ -62,6 +64,12 @@ private:
     uint8_t edgeIDGeneration();
 
     bool isEdgeIDValid(uint8_t edge_id);
+
+    void updateAllEdges();
+
+    void updateEdge(uint8_t edge_id,
+                    uint8_t observer_id,
+                    uint8_t target_id_);
 
     std::unordered_map<uint8_t, Node> nodes_;
     std::map<std::pair<uint8_t, uint8_t>, Edge> edges_;

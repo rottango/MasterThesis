@@ -14,6 +14,7 @@ void Application::run()
     {
         clearFrame();
         processInput();
+        update();
         render();
         presentFrame();
     }
@@ -53,9 +54,9 @@ bool Application::initialize()
     uint8_t edge_id_5;
     uint8_t edge_id_6;
 
-    node_id_1 = graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv1ColorPalet);
-    node_id_2 = graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv2ColorPalet);
-    node_id_3 = graph_.addNode(cv::Point2d(0, 0), 0, 45, 55, 65, ugv3ColorPalet);
+    node_id_1 = graph_.addNode(cv::Point2d(200, 200), 0, 45, 55, 65, ugv1ColorPalet);
+    node_id_2 = graph_.addNode(cv::Point2d(200, -200), 0, 45, 55, 65, ugv2ColorPalet);
+    node_id_3 = graph_.addNode(cv::Point2d(-200, -200), 0, 45, 55, 65, ugv3ColorPalet);
 
     edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
     edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
@@ -93,9 +94,9 @@ void Application::end()
     spdlog::info("Exiting Application::end()");
 }
 
-void Application::update(char character)
+void Application::exectuteInput(char character)
 {
-    spdlog::info("Entering Application::update()");
+    spdlog::info("Entering Application::exectuteInput()");
     Node &node = graph_.findNodeByIdReadWrite(movable_node_id_);
     switch (character)
     {
@@ -160,7 +161,7 @@ void Application::update(char character)
     default:
         break;
     }
-    spdlog::info("Exiting Application::update()");
+    spdlog::info("Exiting Application::exectuteInput()");
 }
 
 void Application::render()
@@ -185,47 +186,47 @@ void Application::processInput()
     switch (pressedKey)
     {
     case 'w':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case 'a':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case 's':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case 'd':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case 'l':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case 'r':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case 'x':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case '.':
         running_ = false;
         break;
 
     case '=':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case '-':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case ']':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case '[':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case '\'':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     case ';':
-        update(pressedKey);
+        exectuteInput(pressedKey);
         break;
     default:
         break;
@@ -242,6 +243,11 @@ bool Application::shutdown()
     spdlog::info("Exiting Application::shutdown()");
 
     return true;
+}
+
+void Application::update()
+{
+    graph_.updateNodesAndEdges();
 }
 
 void Application::createNamedWindow()
