@@ -151,7 +151,8 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
     const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
     double angle = 0;
     double start_angle = -observer.getThetaRotationDegrees();
-    double end_angle = start_angle - edge.getAngleBetweenNodesDegrees();
+    double normalized_angle = normalizeAngleDegrees(edge.getAngleBetweenNodesDegrees() - observer.getThetaRotationDegrees());
+    double end_angle = start_angle - normalized_angle;
 
     cv::ellipse(img_, // cv::InputOutputArray img,
                 cartesianPointToOpenCVPoint(observer.getXYPoint(),
