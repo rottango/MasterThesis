@@ -15,20 +15,20 @@ Draw::Draw(const Graph &graph,
 
 // frame
 
-void Draw::drawFrame()
+void Draw::drawFrame(const int movable_node_id_)
 {
-    drawGraph();
+    drawGraph(movable_node_id_);
 }
 
 // graph
 
-void Draw::drawGraph()
+void Draw::drawGraph(const int movable_node_id_)
 {
     drawNodes();
 
     drawEdges();
 
-    /// drawText();
+    drawText(movable_node_id_);
 }
 // node
 
@@ -172,26 +172,27 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
 
 // text
 
-void Draw::drawText()
+void Draw::drawText(const int movable_node_id_)
 {
-    generateText();
+    generateText(movable_node_id_);
 
-    // layoutGeneratedText();
+    layoutGeneratedText(movable_node_id_);
 }
 
-void Draw::generateText()
+void Draw::generateText(const int movable_node_id_)
 {
-    generateNodesText();
-    generateEdgesText();
+    generated_text_edge.clear();
+    generateNodeText(graph_.findNodeByIdReadOnly(movable_node_id_));
+    generateEdgesText(movable_node_id_);
 }
 
-void Draw::generateNodesText()
-{
-    for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
-    {
-        generateNodeText(it->second);
-    }
-}
+// void Draw::generateNodesText()
+// {
+//     for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
+//     {
+//         generateNodeText(it->second);
+//     }
+// }
 
 void Draw::generateNodeText(const Node &node)
 {
@@ -207,19 +208,19 @@ void Draw::generateNodeText(const Node &node)
     generated_text_node.push_back(theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees()));
 }
 
-void Draw::generateEdgesText()
+void Draw::generateEdgesText(const int movable_node_id_)
 {
     for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
     {
-        generateEdgeText(it->second);
+        if (it->second.getObserverId() == movable_node_id_)
+        {
+            generateEdgeText(it->second);
+        }
     }
 }
 
 void Draw::generateEdgeText(const Edge &edge)
 {
-
-    generated_text_edge.clear();
-
     generated_text_edge.push_back(edge_id_ + std::to_string(edge.getEdgeId()));
     generated_text_edge.push_back(observer_id + std::to_string(edge.getObserverId()));
     generated_text_edge.push_back(target_id_ + std::to_string(edge.getTargetId()));
@@ -230,12 +231,13 @@ void Draw::generateEdgeText(const Edge &edge)
     generated_text_edge.push_back(angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()));
 }
 
-void Draw::layoutGeneratedText(const Node &node, const Edge &edge)
+void Draw::layoutGeneratedText(const int movable_node_id_)
 {
     // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
     // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
     // so i kinda need to rewrite this shi ;/
     // 69
+    const Node &node = graph_.findNodeByIdReadOnly(movable_node_id_);
 
     int node_info_rectangle_width_ = 0;
     int node_info_rectangle_height_ = 0;
@@ -245,6 +247,7 @@ void Draw::layoutGeneratedText(const Node &node, const Edge &edge)
     int gap_size_pixels = 5;
     int edge_text_gap;
     int node_text_gap;
+
     if (generated_text_edge.size() < 1)
     {
         edge_text_gap = 0;
@@ -290,5 +293,25 @@ void Draw::layoutGeneratedText(const Node &node, const Edge &edge)
             edge_info_rectangle_width_ = text_size.width;
         }
         edge_info_rectangle_height_ += text_size.height;
+    }
+
+    // check whether node text fits on screen
+    if (node_info_rectangle_height_ > screen_height_ ||
+        node_info_rectangle_width_ > screen_width_)
+    {
+        spdlog::warn("The node text will not fit on the screen without additional formatin");
+    }
+    else
+    {
+        // draw the nodes text on the left
+    }
+    if (edge_info_rectangle_height_ > screen_height_ ||
+        edge_info_rectangle_width_ > screen_width_)
+    {
+        spdlog::warn("The edges text will not fit on the screen without additional formatin");
+    }
+    else
+    {
+        // draw the edges text on the right
     }
 }

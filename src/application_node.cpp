@@ -167,7 +167,7 @@ void Application::exectuteInput(char character)
 void Application::render()
 {
     spdlog::info("Entering Application::render()");
-    draw_.drawFrame();
+    draw_.drawFrame(movable_node_id_);
     spdlog::info("Exitng Application::render()");
 }
 

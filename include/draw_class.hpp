@@ -12,13 +12,13 @@ public:
 
     // frame
 
-    void drawFrame();
+    void drawFrame(const int movable_node_id_);
 
 private:
     // graph
 
     void
-    drawGraph();
+    drawGraph(const int movable_node_id_);
 
     // node
 
@@ -48,19 +48,21 @@ private:
 
     // text
 
-    void drawText();
+    void drawText(const int movable_node_id_);
 
-    void generateText();
+    void generateText(const int movable_node_id_);
 
-    void generateNodesText();
+    // void generateNodesText(const int movable_node_id_);
 
     void generateNodeText(const Node &node);
 
-    void generateEdgesText();
+    void generateEdgesText(const int movable_node_id_);
 
     void generateEdgeText(const Edge &edge);
 
-    void layoutGeneratedText(const Node &node, const Edge &edge);
+    void layoutGeneratedText(const int movable_node_id_);
+
+    void drawGeneratedText();
 
     const Graph &graph_;
     cv::Mat &img_;
