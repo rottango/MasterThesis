@@ -28,7 +28,7 @@ void Draw::drawGraph(const int movable_node_id_)
 
     drawEdges();
 
-    drawText(movable_node_id_);
+    // drawText(movable_node_id_);
 }
 // node
 
@@ -319,3 +319,5 @@ bool Draw::doesTextFitOnScreen(cv::Size rectangle)
 
     return true;
 }
+
+cv::Point2d Draw::layoutText(cv::Size rectangleObjectText) {}
