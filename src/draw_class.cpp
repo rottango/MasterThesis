@@ -176,7 +176,7 @@ void Draw::drawText(const int movable_node_id_)
 {
     generateText(movable_node_id_);
 
-    layoutGeneratedText(movable_node_id_);
+    decideMaxSizeOfNodeAndEdgeText(movable_node_id_);
 }
 
 void Draw::generateText(const int movable_node_id_)
@@ -231,7 +231,8 @@ void Draw::generateEdgeText(const Edge &edge)
     generated_text_edge.push_back(angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()));
 }
 
-void Draw::layoutGeneratedText(const int movable_node_id_)
+// all of this stuff shouldnt really be inside this fucntion, it should be handled probably in differnect funcitons,because names dont resemble resposibility here
+void Draw::decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_)
 {
     // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
     // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
@@ -244,62 +245,44 @@ void Draw::layoutGeneratedText(const int movable_node_id_)
     int edge_info_rectangle_width_ = 0;
     int edge_info_rectangle_height_ = 0;
 
-<<<<<<< HEAD
-    int gap_size_pixels = 5;
-    int edge_text_gap;
-    int node_text_gap;
-
-    if (generated_text_edge.size() < 1)
-=======
     int node_text_gap = textGapSum(generated_text_node);
     int edge_text_gap = textGapSum(generated_text_edge);
 
     cv::Size rectangleNodeText = rectangleOfTextSize(generated_text_node);
     cv::Size rectangleEdgeText = rectangleOfTextSize(generated_text_edge);
 
-    drawGeneratedText(cv::Point2d(10, 10),
-                      cv::Size(node_info_rectangle_width_, node_info_rectangle_height_),
-                      cv::Point2d(screen_width_ - 10 - edge_info_rectangle_width_, 10),
-                      cv::Size(edge_info_rectangle_width_, edge_info_rectangle_height_), );
+    // now a function needed to decide the localization of where the text is to be drawn BEFORE drawGeneratedText()
+    // it needs to return the org pos
+
+    // also the function of the layout generated text function is now:
+    //-getMaxSizeofText()
+    // Its no longer laying out generated text.
+
+    // the next fucnton i want to call, which would get the origin pos of text
+    //  is the laoutGeneratedText, and THEN i call draw generatedTExt();
+
+    cv::Point2d node_text_origin_point = layoutText(rectangleNodeText);
+    cv::Point2d edge_text_origin_point = layoutText(rectangleEdgeText);
+
+    drawGeneratedText(node_text_origin_point);
+    drawGeneratedText(edge_text_origin_point);
 }
 
-void Draw::drawGeneratedText(const cv::Point2d node_text_rectangle_origin_point,
-                             const cv::Size node_text_rectangle_size,
-                             const cv::Point2d edge_text_rectangle_origin_point,
-                             const cv::Size edge_text_rectangle_size)
+// recieve origin point, then in this function i decide the logic of drawing on each level differnet vector of generated_edge_text/node positions.
+
+void Draw::drawGeneratedText(cv::Point2d origin_point)
 {
 }
 
 int Draw::textGapSum(std::vector<cv::String> generated_text)
 {
     if (generated_text.size() < 1)
->>>>>>> 8ef7285 (refactor: i had problems with the layout function so i split it into multiple one objective functions)
     {
         return 0;
     }
     else
     {
         return ((generated_text.size() - 1) * gap_size_pixels_);
-    }
-
-    // check whether node text fits on screen
-    if (node_info_rectangle_height_ > screen_height_ ||
-        node_info_rectangle_width_ > screen_width_)
-    {
-        spdlog::warn("The node text will not fit on the screen without additional formatin");
-    }
-    else
-    {
-        // draw the nodes text on the left
-    }
-    if (edge_info_rectangle_height_ > screen_height_ ||
-        edge_info_rectangle_width_ > screen_width_)
-    {
-        spdlog::warn("The edges text will not fit on the screen without additional formatin");
-    }
-    else
-    {
-        // draw the edges text on the right
     }
 }
 

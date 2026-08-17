@@ -60,11 +60,8 @@ private:
 
     void generateEdgeText(const Edge &edge);
 
-    void layoutGeneratedText(const int movable_node_id_);
+    void decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_);
 
-<<<<<<< HEAD
-    void drawGeneratedText();
-=======
     void drawGeneratedText(const cv::Point2d node_text_rectangle_origin_point,
                            const cv::Size node_text_rectangle_size,
                            const cv::Point2d edge_text_rectangle_origin_point,
@@ -77,7 +74,10 @@ private:
     cv::Size rectangleOfTextSize(std::vector<cv::String> generated_text);
 
     bool doesTextFitOnScreen(cv::Size rectangle);
->>>>>>> 8ef7285 (refactor: i had problems with the layout function so i split it into multiple one objective functions)
+
+    cv::Point2d layoutText(cv::Size rectangleObjectText);
+
+    void drawGeneratedText(cv::Point2d origin_point);
 
     const Graph &graph_;
     cv::Mat &img_;
