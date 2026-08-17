@@ -244,55 +244,42 @@ void Draw::layoutGeneratedText(const int movable_node_id_)
     int edge_info_rectangle_width_ = 0;
     int edge_info_rectangle_height_ = 0;
 
+<<<<<<< HEAD
     int gap_size_pixels = 5;
     int edge_text_gap;
     int node_text_gap;
 
     if (generated_text_edge.size() < 1)
+=======
+    int node_text_gap = textGapSum(generated_text_node);
+    int edge_text_gap = textGapSum(generated_text_edge);
+
+    cv::Size rectangleNodeText = rectangleOfTextSize(generated_text_node);
+    cv::Size rectangleEdgeText = rectangleOfTextSize(generated_text_edge);
+
+    drawGeneratedText(cv::Point2d(10, 10),
+                      cv::Size(node_info_rectangle_width_, node_info_rectangle_height_),
+                      cv::Point2d(screen_width_ - 10 - edge_info_rectangle_width_, 10),
+                      cv::Size(edge_info_rectangle_width_, edge_info_rectangle_height_), );
+}
+
+void Draw::drawGeneratedText(const cv::Point2d node_text_rectangle_origin_point,
+                             const cv::Size node_text_rectangle_size,
+                             const cv::Point2d edge_text_rectangle_origin_point,
+                             const cv::Size edge_text_rectangle_size)
+{
+}
+
+int Draw::textGapSum(std::vector<cv::String> generated_text)
+{
+    if (generated_text.size() < 1)
+>>>>>>> 8ef7285 (refactor: i had problems with the layout function so i split it into multiple one objective functions)
     {
-        edge_text_gap = 0;
+        return 0;
     }
     else
     {
-        edge_text_gap = (generated_text_edge.size() - 1) * gap_size_pixels;
-    }
-
-    if (generated_text_node.size() < 1)
-    {
-        node_text_gap = 0;
-    }
-    else
-    {
-        node_text_gap = (generated_text_node.size() - 1) * gap_size_pixels;
-    }
-
-    // calculate the rectangle of the node
-    for (auto it = generated_text_node.begin(); it != generated_text_node.end(); it++)
-    {
-        cv::Size text_size = cv::getTextSize(*it,
-                                             font_face_,
-                                             font_scale_,
-                                             font_thickness_,
-                                             baseline_);
-        if (text_size.width > node_info_rectangle_width_)
-        {
-            node_info_rectangle_width_ = text_size.width;
-        }
-        node_info_rectangle_height_ += text_size.height;
-    }
-    // calculate the rectangle of the edge
-    for (auto it = generated_text_edge.begin(); it != generated_text_edge.end(); it++)
-    {
-        cv::Size text_size = cv::getTextSize(*it,
-                                             font_face_,
-                                             font_scale_,
-                                             font_thickness_,
-                                             baseline_);
-        if (text_size.width > edge_info_rectangle_width_)
-        {
-            edge_info_rectangle_width_ = text_size.width;
-        }
-        edge_info_rectangle_height_ += text_size.height;
+        return ((generated_text.size() - 1) * gap_size_pixels_);
     }
 
     // check whether node text fits on screen
@@ -314,4 +301,38 @@ void Draw::layoutGeneratedText(const int movable_node_id_)
     {
         // draw the edges text on the right
     }
+}
+
+cv::Size Draw::rectangleOfTextSize(std::vector<cv::String> generated_text)
+{
+    int rectangle_width_ = 0;
+    int rectangle_height_ = 0;
+    // calculate the rectangle of the node
+    for (auto it = generated_text.begin(); it != generated_text.end(); it++)
+    {
+        cv::Size text_size = cv::getTextSize(*it,
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             &baseline_);
+        if (text_size.width > rectangle_width_)
+        {
+            rectangle_width_ = text_size.width;
+        }
+        rectangle_height_ += text_size.height + baseline_ + font_thickness_ + rectangle_height_;
+    }
+    return cv::Size(rectangle_width_, rectangle_height_);
+}
+
+bool Draw::doesTextFitOnScreen(cv::Size rectangle)
+{
+    // check whether node text fits on screen
+    if (rectangle.height > screen_height_ ||
+        rectangle.width > screen_width_)
+    {
+        spdlog::warn("The text of size ({},{})  will not fit on the screen without additional formating", rectangle.width, rectangle.height);
+        return false;
+    }
+
+    return true;
 }

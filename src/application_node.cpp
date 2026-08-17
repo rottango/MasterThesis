@@ -36,6 +36,9 @@ bool Application::initialize()
     createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
+    // rows = hieght
+    // cols = width
+
     cv::Mat img_temp_{this->screen_height_,
                       this->screen_width_,
                       this->make_type_flag_,

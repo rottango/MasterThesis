@@ -62,7 +62,22 @@ private:
 
     void layoutGeneratedText(const int movable_node_id_);
 
+<<<<<<< HEAD
     void drawGeneratedText();
+=======
+    void drawGeneratedText(const cv::Point2d node_text_rectangle_origin_point,
+                           const cv::Size node_text_rectangle_size,
+                           const cv::Point2d edge_text_rectangle_origin_point,
+                           const cv::Size edge_text_rectangle_size);
+
+    // debloatyfing the layout function:
+
+    int textGapSum(std::vector<cv::String> generated_text);
+
+    cv::Size rectangleOfTextSize(std::vector<cv::String> generated_text);
+
+    bool doesTextFitOnScreen(cv::Size rectangle);
+>>>>>>> 8ef7285 (refactor: i had problems with the layout function so i split it into multiple one objective functions)
 
     const Graph &graph_;
     cv::Mat &img_;
@@ -77,13 +92,15 @@ private:
     int axis_arrow_thickness_ = 5;
     int angle_elipse_size_ = 100;
 
-    int font_face_;
-    double font_scale_;
-    int font_thickness_;
-    int *baseline_;
+    int font_face_ = cv::FONT_HERSHEY_PLAIN;
+    double font_scale_ = 1;
+    int font_thickness_ = 1;
+    int baseline_;
 
     int base_angle_elipse_size_ = 75;
     int base_angle_elipse_spacing_ = 25;
+
+    int gap_size_pixels_ = 5;
 
     std::vector<std::string> generated_text_node;
     std::vector<std::string> generated_text_edge;
