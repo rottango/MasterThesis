@@ -36,6 +36,9 @@ bool Application::initialize()
     createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
+    // rows = hieght
+    // cols = width
+
     cv::Mat img_temp_{this->screen_height_,
                       this->screen_width_,
                       this->make_type_flag_,
@@ -167,7 +170,7 @@ void Application::exectuteInput(char character)
 void Application::render()
 {
     spdlog::info("Entering Application::render()");
-    draw_.drawFrame();
+    draw_.drawFrame(movable_node_id_);
     spdlog::info("Exitng Application::render()");
 }
 
