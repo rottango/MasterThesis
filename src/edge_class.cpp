@@ -56,9 +56,10 @@ void Edge::setDistanceBetweenNodesMeters(double distance_between_nodes_meters_) 
     this->distance_between_nodes_meters_ = distance_between_nodes_meters_;
 }
 
-void Edge::setAngleBetweenNodesDegrees(double angle_between_nodes_degrees_)
+void Edge::setAngleBetweenNodesDegrees(double angle_between_nodes_degrees, double theta_rotation)
 {
-    this->angle_between_nodes_degrees_ = angle_between_nodes_degrees_;
+
+    this->angle_between_nodes_degrees_ = normalizeAngleDegrees(angle_between_nodes_degrees - theta_rotation);
 }
 
 void Edge::setTempTimestamp(double temp_timestamp_)

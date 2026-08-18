@@ -111,7 +111,7 @@ uint8_t Graph::addEdge(uint8_t observer_id,
                               observer_id,
                               target_id_)});
 
-    this->findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t>(observer_id, target_id_)).setAngleBetweenNodesDegrees(bearingBetweenTwoPointsDegrees(this->findNodeByIdReadOnly(observer_id).getXYPoint(), this->findNodeByIdReadOnly(target_id_).getXYPoint()));
+    this->findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t>(observer_id, target_id_)).setAngleBetweenNodesDegrees(bearingBetweenTwoPointsDegrees(this->findNodeByIdReadOnly(observer_id).getXYPoint(), this->findNodeByIdReadOnly(target_id_).getXYPoint()), findNodeByIdReadOnly(observer_id).getThetaRotationDegrees());
     return generated_edge_id;
     spdlog::info("Exiting Graph::addEdge()");
 }
@@ -290,7 +290,7 @@ void Graph::updateEdge(uint8_t edge_id,
     // setDistanceBetweenNodesMeters
     edge.setDistanceBetweenNodesMeters(distanceBetweenTwoPoints(observer.getXYPoint(), target.getXYPoint()));
     // setAngleBetweenNodesDegrees
-    edge.setAngleBetweenNodesDegrees(bearingBetweenTwoPointsDegrees(observer.getXYPoint(), target.getXYPoint()));
+    edge.setAngleBetweenNodesDegrees(bearingBetweenTwoPointsDegrees(observer.getXYPoint(), target.getXYPoint()), observer.getThetaRotationDegrees());
     // setTempTimestamp
 
     // setDistanceBetweenNodesMetersError

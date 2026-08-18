@@ -155,7 +155,7 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
     const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
     double angle = 0;
     double start_angle = -observer.getThetaRotationDegrees();
-    double normalized_angle = normalizeAngleDegrees(edge.getAngleBetweenNodesDegrees() - observer.getThetaRotationDegrees());
+    double normalized_angle = edge.getAngleBetweenNodesDegrees();
     double end_angle = start_angle - normalized_angle;
 
     cv::ellipse(img_, // cv::InputOutputArray img,
@@ -209,6 +209,7 @@ void Draw::generateNodeText(const Node &node)
     generated_text_node.push_back(inner_text_ + std::to_string(node.getInner()));
     generated_text_node.push_back(measurment_error_cm_text_ + std::to_string(node.getMeasurmentError()));
     generated_text_node.push_back(theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees()));
+    generated_text_node.push_back("===================");
 }
 
 void Draw::generateEdgesText(const int movable_node_id_)
@@ -233,6 +234,7 @@ void Draw::generateEdgeText(const Edge &edge)
     generated_text_edge.push_back(temp_timestamp_ + std::to_string(edge.getTempTimestamp()));
     generated_text_edge.push_back(distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMetersError()));
     generated_text_edge.push_back(angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()));
+    generated_text_edge.push_back("===================");
 }
 
 // all of this stuff shouldnt really be inside this fucntion, it should be handled probably in differnect funcitons,because names dont resemble resposibility here
