@@ -17,6 +17,10 @@ Draw::Draw(const Graph &graph,
 
 void Draw::drawFrame(const int movable_node_id_)
 {
+    this->screen_width_ = img_.cols;
+    this->screen_height_ = img_.rows;
+    this->size_ = img_.size();
+    this->type_ = img_.type();
     drawGraph(movable_node_id_);
 }
 
@@ -286,7 +290,7 @@ void Draw::drawGeneratedText(cv::Point2d origin_point,
                     font_scale_,
                     graph_.findNodeByIdReadOnly(movable_node_id_).getColorPalet().text_color,
                     font_thickness_);
-
+        spdlog::warn("text_size.height ({}), gap_size_pixels_ ({}), baseline_ ({})  ", text_size.height, gap_size_pixels_, baseline_);
         origin_point.y -= (text_size.height + gap_size_pixels_ + baseline_);
     }
 }
@@ -319,7 +323,7 @@ cv::Size Draw::rectangleOfTextSize(std::vector<cv::String> generated_text)
         {
             rectangle_width_ = text_size.width;
         }
-        rectangle_height_ += text_size.height + baseline_ + font_thickness_ + rectangle_height_;
+        rectangle_height_ += text_size.height + baseline_ + gap_size_pixels_;
     }
     return cv::Size(rectangle_width_, rectangle_height_);
 }
@@ -340,6 +344,9 @@ bool Draw::doesTextFitOnScreen(cv::Size rectangle)
 std::pair<cv::Point2d, cv::Point2d> Draw::layoutNodeAndEdgeText(cv::Size rectangleNodeText,
                                                                 cv::Size rectangleEdgeText)
 {
+    spdlog::warn("screen_width_ ({}), screen_height_({})", screen_width_, screen_height_);
+    spdlog::warn("1rectangle_width_ ({}), rectangle_height_({})", rectangleNodeText.width, rectangleNodeText.height);
+    spdlog::warn("2rectangle_width_ ({}), rectangle_height_({})", rectangleEdgeText.width, rectangleEdgeText.height);
     cv::Point2d node_text_origin_point;
     cv::Point2d edge_text_origin_point;
 
