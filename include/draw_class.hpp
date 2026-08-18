@@ -75,7 +75,8 @@ private:
 
     bool doesTextFitOnScreen(cv::Size rectangle);
 
-    cv::Point2d layoutText(cv::Size rectangleObjectText);
+    std::pair<cv::Point2d, cv::Point2d> layoutNodeAndEdgeText(cv::Size rectangleNodeText,
+                                                              cv::Size rectangleEdgeText);
 
     void drawGeneratedText(cv::Point2d origin_point);
 
@@ -101,6 +102,7 @@ private:
     int base_angle_elipse_spacing_ = 25;
 
     int gap_size_pixels_ = 5;
+    int margin_from_edge_ = 10;
 
     std::vector<std::string> generated_text_node;
     std::vector<std::string> generated_text_edge;

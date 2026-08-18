@@ -234,10 +234,6 @@ void Draw::generateEdgeText(const Edge &edge)
 // all of this stuff shouldnt really be inside this fucntion, it should be handled probably in differnect funcitons,because names dont resemble resposibility here
 void Draw::decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_)
 {
-    // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
-    // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
-    // so i kinda need to rewrite this shi ;/
-    // 69
     const Node &node = graph_.findNodeByIdReadOnly(movable_node_id_);
 
     int node_info_rectangle_width_ = 0;
@@ -261,14 +257,15 @@ void Draw::decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_)
     // the next fucnton i want to call, which would get the origin pos of text
     //  is the laoutGeneratedText, and THEN i call draw generatedTExt();
 
-    cv::Point2d node_text_origin_point = layoutText(rectangleNodeText);
-    cv::Point2d edge_text_origin_point = layoutText(rectangleEdgeText);
+    cv::Point2d node_node_text_origin_point = layoutNodeAndEdgeText(rectangleNodeText);
+    cv::Point2d edge_node_text_origin_point = layoutNodeAndEdgeText(rectangleEdgeText);
 
-    drawGeneratedText(node_text_origin_point);
-    drawGeneratedText(edge_text_origin_point);
+    drawGeneratedText(node_node_text_origin_point);
+    drawGeneratedText(edge_node_text_origin_point);
 }
 
-// recieve origin point, then in this function i decide the logic of drawing on each level differnet vector of generated_edge_text/node positions.
+// recieve origin point, then in this function i decide
+// the logic of drawing on each level differnet vector of generated_edge_text/node positions.
 
 void Draw::drawGeneratedText(cv::Point2d origin_point)
 {
@@ -320,4 +317,26 @@ bool Draw::doesTextFitOnScreen(cv::Size rectangle)
     return true;
 }
 
-cv::Point2d Draw::layoutText(cv::Size rectangleObjectText) {}
+std::pair<cv::Point2d, cv::Point2d> Draw::layoutNodeAndEdgeText(cv::Size rectangleNodeText,
+                                                                cv::Size rectangleEdgeText)
+{
+    cv::Point2d node_text_origin_point;
+    cv::Point2d edge_text_origin_point;
+
+    if (!doesTextFitOnScreen(rectangleNodeText))
+    {
+        // do formatting algorithm and return something
+    }
+    if (!doesTextFitOnScreen(rectangleEdgeText))
+    {
+        // do formatting algorithm and return something
+    }
+
+    node_text_origin_point.x = margin_from_edge_;
+    node_text_origin_point.y = margin_from_edge_ + rectangleNodeText.height;
+
+    edge_text_origin_point.x = screen_width_ - margin_from_edge_ - rectangleEdgeText.width;
+    edge_text_origin_point.y = margin_from_edge_ + rectangleEdgeText.height;
+
+    return std::pair<cv::Point2d, cv::Point2d>(node_text_origin_point, edge_text_origin_point);
+}
