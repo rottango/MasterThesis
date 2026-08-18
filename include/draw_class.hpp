@@ -62,10 +62,9 @@ private:
 
     void decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_);
 
-    void drawGeneratedText(const cv::Point2d node_text_rectangle_origin_point,
-                           const cv::Size node_text_rectangle_size,
-                           const cv::Point2d edge_text_rectangle_origin_point,
-                           const cv::Size edge_text_rectangle_size);
+    void drawGeneratedText(const cv::Point2d origin_point,
+                           std::vector<std::string> generated_text,
+                           int movable_node_id);
 
     // debloatyfing the layout function:
 
@@ -78,7 +77,7 @@ private:
     std::pair<cv::Point2d, cv::Point2d> layoutNodeAndEdgeText(cv::Size rectangleNodeText,
                                                               cv::Size rectangleEdgeText);
 
-    void drawGeneratedText(cv::Point2d origin_point);
+    void drawGeneratedText(cv::Point2d origin_point, std::vector<std::string> generated_text_node);
 
     const Graph &graph_;
     cv::Mat &img_;

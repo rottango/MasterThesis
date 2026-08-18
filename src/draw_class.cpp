@@ -28,7 +28,7 @@ void Draw::drawGraph(const int movable_node_id_)
 
     drawEdges();
 
-    // drawText(movable_node_id_);
+    drawText(movable_node_id_);
 }
 // node
 
@@ -181,7 +181,6 @@ void Draw::drawText(const int movable_node_id_)
 
 void Draw::generateText(const int movable_node_id_)
 {
-    generated_text_edge.clear();
     generateNodeText(graph_.findNodeByIdReadOnly(movable_node_id_));
     generateEdgesText(movable_node_id_);
 }
@@ -210,6 +209,7 @@ void Draw::generateNodeText(const Node &node)
 
 void Draw::generateEdgesText(const int movable_node_id_)
 {
+    generated_text_edge.clear();
     for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
     {
         if (it->second.getObserverId() == movable_node_id_)
@@ -257,18 +257,38 @@ void Draw::decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_)
     // the next fucnton i want to call, which would get the origin pos of text
     //  is the laoutGeneratedText, and THEN i call draw generatedTExt();
 
-    cv::Point2d node_node_text_origin_point = layoutNodeAndEdgeText(rectangleNodeText);
-    cv::Point2d edge_node_text_origin_point = layoutNodeAndEdgeText(rectangleEdgeText);
+    std::pair<cv::Point2d, cv::Point2d> textOriginPoints = layoutNodeAndEdgeText(rectangleNodeText, rectangleEdgeText);
 
-    drawGeneratedText(node_node_text_origin_point);
-    drawGeneratedText(edge_node_text_origin_point);
+    drawGeneratedText(textOriginPoints.first, generated_text_node, movable_node_id_);
+    drawGeneratedText(textOriginPoints.second, generated_text_edge, movable_node_id_);
 }
 
 // recieve origin point, then in this function i decide
 // the logic of drawing on each level differnet vector of generated_edge_text/node positions.
 
-void Draw::drawGeneratedText(cv::Point2d origin_point)
+void Draw::drawGeneratedText(cv::Point2d origin_point,
+                             std::vector<std::string> generated_text,
+                             int movable_node_id_)
 {
+    for (auto it = generated_text.rbegin(); it != generated_text.rend(); it++)
+    {
+        spdlog::warn("Origin point of drawnText ({},{})  ", origin_point.x, origin_point.y);
+        cv::Size text_size = cv::getTextSize(*it,
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             &baseline_);
+
+        cv::putText(img_,
+                    *it,
+                    origin_point,
+                    font_face_,
+                    font_scale_,
+                    graph_.findNodeByIdReadOnly(movable_node_id_).getColorPalet().text_color,
+                    font_thickness_);
+
+        origin_point.y -= (text_size.height + gap_size_pixels_ + baseline_);
+    }
 }
 
 int Draw::textGapSum(std::vector<cv::String> generated_text)
