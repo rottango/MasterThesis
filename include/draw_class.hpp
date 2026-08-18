@@ -87,9 +87,9 @@ private:
     cv::Size size_;
     int type_;
 
-    cv::Scalar x_axis_color_{(0, 0, 255)};
-    cv::Scalar y_axis_color_{(255, 0, 0)};
-    int axis_arrow_thickness_ = 5;
+    cv::Scalar x_axis_color_{0, 0, 255};
+    cv::Scalar y_axis_color_{255, 0, 0};
+    int axis_arrow_thickness_ = 3;
     int angle_elipse_size_ = 100;
 
     int font_face_ = cv::FONT_HERSHEY_PLAIN;

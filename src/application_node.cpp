@@ -36,7 +36,7 @@ bool Application::initialize()
     createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
-    // rows = hieght
+    // rows = height
     // cols = width
 
     cv::Mat img_temp_{this->screen_height_,
@@ -86,6 +86,7 @@ void Application::clearFrame()
     spdlog::info("Entering Application::clearFrame()");
 
     this->img_.setTo(background_color_);
+
     spdlog::info("Exiting Application::clearFrame()");
 }
 
@@ -96,19 +97,23 @@ void Application::start()
     initialUserInput();
     initialize();
     run();
+
     spdlog::info("Exiting Application::start()");
 }
 
 void Application::end()
 {
     spdlog::info("Entering Application::end()");
+
     shutdown();
+
     spdlog::info("Exiting Application::end()");
 }
 
 void Application::exectuteInput(char character)
 {
     spdlog::info("Entering Application::exectuteInput()");
+
     Node &node = graph_.findNodeByIdReadWrite(movable_node_id_);
     switch (character)
     {
@@ -146,8 +151,8 @@ void Application::exectuteInput(char character)
         if (node_id_of_min_difference != movable_node_id_)
         {
             movable_node_id_ = node_id_of_min_difference;
-            spdlog::info("Switched movable_node_id");
 
+            spdlog::info("Switched movable_node_id");
             break;
         }
 
@@ -173,20 +178,25 @@ void Application::exectuteInput(char character)
     default:
         break;
     }
+
     spdlog::info("Exiting Application::exectuteInput()");
 }
 
 void Application::render()
 {
     spdlog::info("Entering Application::render()");
+
     draw_.drawFrame(movable_node_id_);
+
     spdlog::info("Exitng Application::render()");
 }
 
 void Application::presentFrame()
 {
     spdlog::info("Entering Application::presentFrame()");
+
     cv::imshow(this->named_window_name_, this->img_);
+
     spdlog::info("Exiting Application::presentFrame()");
 }
 
@@ -221,7 +231,6 @@ void Application::processInput()
     case '.':
         running_ = false;
         break;
-
     case '=':
         exectuteInput(pressedKey);
         break;
@@ -243,6 +252,7 @@ void Application::processInput()
     default:
         break;
     }
+
     spdlog::info("Exiting Application::processInput()");
 }
 
@@ -268,5 +278,6 @@ void Application::createNamedWindow()
 
     cv::namedWindow(this->named_window_name_, this->flag_);
     cv::resizeWindow(this->named_window_name_, cv::Size(this->screen_width_, this->screen_height_));
+
     spdlog::info("Exiting Application::createNamedWindow()");
 }

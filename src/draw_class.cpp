@@ -147,7 +147,10 @@ void Draw::drawEdgeConnectingLine(const Edge &edge)
                                                 screen_width_,
                                                 screen_height_),
                     observer.getColorPalet().text_color,
-                    axis_arrow_thickness_);
+                    axis_arrow_thickness_,
+                    8,
+                    0,
+                    30 / distanceBetweenTwoPoints(observer.getXYPoint(), target.getXYPoint()));
 }
 
 void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
@@ -171,7 +174,6 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
                 1,                                   // int thickness
                 8,                                   // int lineType = 8
                 0);                                  // int shift = 0
-    std::cout << "end_angle: " << end_angle << "\n";
 }
 
 // text
@@ -189,17 +191,8 @@ void Draw::generateText(const int movable_node_id_)
     generateEdgesText(movable_node_id_);
 }
 
-// void Draw::generateNodesText()
-// {
-//     for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
-//     {
-//         generateNodeText(it->second);
-//     }
-// }
-
 void Draw::generateNodeText(const Node &node)
 {
-
     generated_text_node.clear();
 
     generated_text_node.push_back(node_id_text_ + std::to_string(node.getNodeId()));
@@ -279,6 +272,7 @@ void Draw::drawGeneratedText(cv::Point2d origin_point,
     for (auto it = generated_text.rbegin(); it != generated_text.rend(); it++)
     {
         spdlog::warn("Origin point of drawnText ({},{})  ", origin_point.x, origin_point.y);
+
         cv::Size text_size = cv::getTextSize(*it,
                                              font_face_,
                                              font_scale_,
@@ -292,7 +286,9 @@ void Draw::drawGeneratedText(cv::Point2d origin_point,
                     font_scale_,
                     graph_.findNodeByIdReadOnly(movable_node_id_).getColorPalet().text_color,
                     font_thickness_);
+
         spdlog::warn("text_size.height ({}), gap_size_pixels_ ({}), baseline_ ({})  ", text_size.height, gap_size_pixels_, baseline_);
+
         origin_point.y -= (text_size.height + gap_size_pixels_ + baseline_);
     }
 }
@@ -332,7 +328,6 @@ cv::Size Draw::rectangleOfTextSize(std::vector<cv::String> generated_text)
 
 bool Draw::doesTextFitOnScreen(cv::Size rectangle)
 {
-    // check whether node text fits on screen
     if (rectangle.height > screen_height_ ||
         rectangle.width > screen_width_)
     {
