@@ -12,13 +12,13 @@ public:
 
     // frame
 
-    void drawFrame();
+    void drawFrame(const int movable_node_id_);
 
 private:
     // graph
 
     void
-    drawGraph();
+    drawGraph(const int movable_node_id_);
 
     // node
 
@@ -48,19 +48,36 @@ private:
 
     // text
 
-    void drawText();
+    void drawText(const int movable_node_id_);
 
-    void generateText();
+    void generateText(const int movable_node_id_);
 
-    void generateNodesText();
+    // void generateNodesText(const int movable_node_id_);
 
     void generateNodeText(const Node &node);
 
-    void generateEdgesText();
+    void generateEdgesText(const int movable_node_id_);
 
     void generateEdgeText(const Edge &edge);
 
-    void layoutGeneratedText(const Node &node, const Edge &edge);
+    void decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_);
+
+    void drawGeneratedText(const cv::Point2d origin_point,
+                           std::vector<std::string> generated_text,
+                           int movable_node_id);
+
+    // debloatyfing the layout function:
+
+    int textGapSum(std::vector<cv::String> generated_text);
+
+    cv::Size rectangleOfTextSize(std::vector<cv::String> generated_text);
+
+    bool doesTextFitOnScreen(cv::Size rectangle);
+
+    std::pair<cv::Point2d, cv::Point2d> layoutNodeAndEdgeText(cv::Size rectangleNodeText,
+                                                              cv::Size rectangleEdgeText);
+
+    void drawGeneratedText(cv::Point2d origin_point, std::vector<std::string> generated_text_node);
 
     const Graph &graph_;
     cv::Mat &img_;
@@ -70,18 +87,21 @@ private:
     cv::Size size_;
     int type_;
 
-    cv::Scalar x_axis_color_{(0, 0, 255)};
-    cv::Scalar y_axis_color_{(255, 0, 0)};
-    int axis_arrow_thickness_ = 5;
+    cv::Scalar x_axis_color_{0, 0, 255};
+    cv::Scalar y_axis_color_{255, 0, 0};
+    int axis_arrow_thickness_ = 3;
     int angle_elipse_size_ = 100;
 
-    int font_face_;
-    double font_scale_;
-    int font_thickness_;
-    int *baseline_;
+    int font_face_ = cv::FONT_HERSHEY_PLAIN;
+    double font_scale_ = 1;
+    int font_thickness_ = 1;
+    int baseline_;
 
     int base_angle_elipse_size_ = 75;
     int base_angle_elipse_spacing_ = 25;
+
+    int gap_size_pixels_ = 5;
+    int margin_from_edge_ = 10;
 
     std::vector<std::string> generated_text_node;
     std::vector<std::string> generated_text_edge;

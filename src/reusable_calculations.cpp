@@ -1,9 +1,27 @@
 #include <reusable_calculations.hpp>
+#include <spdlog/spdlog.h>
 
 // each cartesian unit equals to one pixel for now.
-
+// this logging is naievee and wrong, focus on error handling
 cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point, int screen_width, int screen_height)
 {
+    if (0 > opencv_point.x || opencv_point.x < screen_width)
+    {
+        spdlog::warn("OpenCV x value of the point is off screen [openCVPointToCartesianPoint]");
+    }
+    if (0 > opencv_point.y || opencv_point.y < screen_height)
+    {
+        spdlog::warn("OpenCV y value of the point is off screen [openCVPointToCartesianPoint]");
+    }
+    if (screen_width < 0)
+    {
+        spdlog::warn("screen_width parameter passed is less then 0");
+    }
+    if (screen_height < 0)
+    {
+        spdlog::warn("screen_height parameter passed is less then 0");
+    }
+
     return cv::Point2d(opencv_point.x - screen_width / 2, screen_height / 2 - opencv_point.y);
 }
 

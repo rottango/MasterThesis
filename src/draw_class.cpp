@@ -15,20 +15,24 @@ Draw::Draw(const Graph &graph,
 
 // frame
 
-void Draw::drawFrame()
+void Draw::drawFrame(const int movable_node_id_)
 {
-    drawGraph();
+    this->screen_width_ = img_.cols;
+    this->screen_height_ = img_.rows;
+    this->size_ = img_.size();
+    this->type_ = img_.type();
+    drawGraph(movable_node_id_);
 }
 
 // graph
 
-void Draw::drawGraph()
+void Draw::drawGraph(const int movable_node_id_)
 {
     drawNodes();
 
     drawEdges();
 
-    /// drawText();
+    drawText(movable_node_id_);
 }
 // node
 
@@ -143,7 +147,10 @@ void Draw::drawEdgeConnectingLine(const Edge &edge)
                                                 screen_width_,
                                                 screen_height_),
                     observer.getColorPalet().text_color,
-                    axis_arrow_thickness_);
+                    axis_arrow_thickness_,
+                    8,
+                    0,
+                    30 / distanceBetweenTwoPoints(observer.getXYPoint(), target.getXYPoint()));
 }
 
 void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
@@ -151,7 +158,7 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
     const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
     double angle = 0;
     double start_angle = -observer.getThetaRotationDegrees();
-    double normalized_angle = normalizeAngleDegrees(edge.getAngleBetweenNodesDegrees() - observer.getThetaRotationDegrees());
+    double normalized_angle = edge.getAngleBetweenNodesDegrees();
     double end_angle = start_angle - normalized_angle;
 
     cv::ellipse(img_, // cv::InputOutputArray img,
@@ -167,35 +174,25 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
                 1,                                   // int thickness
                 8,                                   // int lineType = 8
                 0);                                  // int shift = 0
-    std::cout << "end_angle: " << end_angle << "\n";
 }
 
 // text
 
-void Draw::drawText()
+void Draw::drawText(const int movable_node_id_)
 {
-    generateText();
+    generateText(movable_node_id_);
 
-    // layoutGeneratedText();
+    decideMaxSizeOfNodeAndEdgeText(movable_node_id_);
 }
 
-void Draw::generateText()
+void Draw::generateText(const int movable_node_id_)
 {
-    generateNodesText();
-    generateEdgesText();
-}
-
-void Draw::generateNodesText()
-{
-    for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
-    {
-        generateNodeText(it->second);
-    }
+    generateNodeText(graph_.findNodeByIdReadOnly(movable_node_id_));
+    generateEdgesText(movable_node_id_);
 }
 
 void Draw::generateNodeText(const Node &node)
 {
-
     generated_text_node.clear();
 
     generated_text_node.push_back(node_id_text_ + std::to_string(node.getNodeId()));
@@ -205,21 +202,23 @@ void Draw::generateNodeText(const Node &node)
     generated_text_node.push_back(inner_text_ + std::to_string(node.getInner()));
     generated_text_node.push_back(measurment_error_cm_text_ + std::to_string(node.getMeasurmentError()));
     generated_text_node.push_back(theta_rotation_degrees_text_ + std::to_string(node.getThetaRotationDegrees()));
+    generated_text_node.push_back("===================");
 }
 
-void Draw::generateEdgesText()
+void Draw::generateEdgesText(const int movable_node_id_)
 {
+    generated_text_edge.clear();
     for (auto it = graph_.getEdges().begin(); it != graph_.getEdges().end(); it++)
     {
-        generateEdgeText(it->second);
+        if (it->second.getObserverId() == movable_node_id_)
+        {
+            generateEdgeText(it->second);
+        }
     }
 }
 
 void Draw::generateEdgeText(const Edge &edge)
 {
-
-    generated_text_edge.clear();
-
     generated_text_edge.push_back(edge_id_ + std::to_string(edge.getEdgeId()));
     generated_text_edge.push_back(observer_id + std::to_string(edge.getObserverId()));
     generated_text_edge.push_back(target_id_ + std::to_string(edge.getTargetId()));
@@ -228,67 +227,140 @@ void Draw::generateEdgeText(const Edge &edge)
     generated_text_edge.push_back(temp_timestamp_ + std::to_string(edge.getTempTimestamp()));
     generated_text_edge.push_back(distance_between_nodes_meters_error_ + std::to_string(edge.getDistanceBetweenNodesMetersError()));
     generated_text_edge.push_back(angle_between_nodes_degrees_error_ + std::to_string(edge.getAngleBetweenNodesDegreesError()));
+    generated_text_edge.push_back("===================");
 }
 
-void Draw::layoutGeneratedText(const Node &node, const Edge &edge)
+// all of this stuff shouldnt really be inside this fucntion, it should be handled probably in differnect funcitons,because names dont resemble resposibility here
+void Draw::decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_)
 {
-    // i did it kinda wrong, because this is the rectangle that would contain all the info of all the nodes,
-    // so i actually need to just get a node or an edge passed that i want to render, and measure its stuff.
-    // so i kinda need to rewrite this shi ;/
-    // 69
+    const Node &node = graph_.findNodeByIdReadOnly(movable_node_id_);
 
     int node_info_rectangle_width_ = 0;
     int node_info_rectangle_height_ = 0;
     int edge_info_rectangle_width_ = 0;
     int edge_info_rectangle_height_ = 0;
 
-    int gap_size_pixels = 5;
-    int edge_text_gap;
-    int node_text_gap;
-    if (generated_text_edge.size() < 1)
+    int node_text_gap = textGapSum(generated_text_node);
+    int edge_text_gap = textGapSum(generated_text_edge);
+
+    cv::Size rectangleNodeText = rectangleOfTextSize(generated_text_node);
+    cv::Size rectangleEdgeText = rectangleOfTextSize(generated_text_edge);
+
+    // now a function needed to decide the localization of where the text is to be drawn BEFORE drawGeneratedText()
+    // it needs to return the org pos
+
+    // also the function of the layout generated text function is now:
+    //-getMaxSizeofText()
+    // Its no longer laying out generated text.
+
+    // the next fucnton i want to call, which would get the origin pos of text
+    //  is the laoutGeneratedText, and THEN i call draw generatedTExt();
+
+    std::pair<cv::Point2d, cv::Point2d> textOriginPoints = layoutNodeAndEdgeText(rectangleNodeText, rectangleEdgeText);
+
+    drawGeneratedText(textOriginPoints.first, generated_text_node, movable_node_id_);
+    drawGeneratedText(textOriginPoints.second, generated_text_edge, movable_node_id_);
+}
+
+// recieve origin point, then in this function i decide
+// the logic of drawing on each level differnet vector of generated_edge_text/node positions.
+
+void Draw::drawGeneratedText(cv::Point2d origin_point,
+                             std::vector<std::string> generated_text,
+                             int movable_node_id_)
+{
+    for (auto it = generated_text.rbegin(); it != generated_text.rend(); it++)
     {
-        edge_text_gap = 0;
+        spdlog::warn("Origin point of drawnText ({},{})  ", origin_point.x, origin_point.y);
+
+        cv::Size text_size = cv::getTextSize(*it,
+                                             font_face_,
+                                             font_scale_,
+                                             font_thickness_,
+                                             &baseline_);
+
+        cv::putText(img_,
+                    *it,
+                    origin_point,
+                    font_face_,
+                    font_scale_,
+                    graph_.findNodeByIdReadOnly(movable_node_id_).getColorPalet().text_color,
+                    font_thickness_);
+
+        spdlog::warn("text_size.height ({}), gap_size_pixels_ ({}), baseline_ ({})  ", text_size.height, gap_size_pixels_, baseline_);
+
+        origin_point.y -= (text_size.height + gap_size_pixels_ + baseline_);
+    }
+}
+
+int Draw::textGapSum(std::vector<cv::String> generated_text)
+{
+    if (generated_text.size() < 1)
+    {
+        return 0;
     }
     else
     {
-        edge_text_gap = (generated_text_edge.size() - 1) * gap_size_pixels;
+        return ((generated_text.size() - 1) * gap_size_pixels_);
     }
+}
 
-    if (generated_text_node.size() < 1)
-    {
-        node_text_gap = 0;
-    }
-    else
-    {
-        node_text_gap = (generated_text_node.size() - 1) * gap_size_pixels;
-    }
-
+cv::Size Draw::rectangleOfTextSize(std::vector<cv::String> generated_text)
+{
+    int rectangle_width_ = 0;
+    int rectangle_height_ = 0;
     // calculate the rectangle of the node
-    for (auto it = generated_text_node.begin(); it != generated_text_node.end(); it++)
+    for (auto it = generated_text.begin(); it != generated_text.end(); it++)
     {
         cv::Size text_size = cv::getTextSize(*it,
                                              font_face_,
                                              font_scale_,
                                              font_thickness_,
-                                             baseline_);
-        if (text_size.width > node_info_rectangle_width_)
+                                             &baseline_);
+        if (text_size.width > rectangle_width_)
         {
-            node_info_rectangle_width_ = text_size.width;
+            rectangle_width_ = text_size.width;
         }
-        node_info_rectangle_height_ += text_size.height;
+        rectangle_height_ += text_size.height + baseline_ + gap_size_pixels_;
     }
-    // calculate the rectangle of the edge
-    for (auto it = generated_text_edge.begin(); it != generated_text_edge.end(); it++)
+    return cv::Size(rectangle_width_, rectangle_height_);
+}
+
+bool Draw::doesTextFitOnScreen(cv::Size rectangle)
+{
+    if (rectangle.height > screen_height_ ||
+        rectangle.width > screen_width_)
     {
-        cv::Size text_size = cv::getTextSize(*it,
-                                             font_face_,
-                                             font_scale_,
-                                             font_thickness_,
-                                             baseline_);
-        if (text_size.width > edge_info_rectangle_width_)
-        {
-            edge_info_rectangle_width_ = text_size.width;
-        }
-        edge_info_rectangle_height_ += text_size.height;
+        spdlog::warn("The text of size ({},{})  will not fit on the screen without additional formating", rectangle.width, rectangle.height);
+        return false;
     }
+
+    return true;
+}
+
+std::pair<cv::Point2d, cv::Point2d> Draw::layoutNodeAndEdgeText(cv::Size rectangleNodeText,
+                                                                cv::Size rectangleEdgeText)
+{
+    spdlog::warn("screen_width_ ({}), screen_height_({})", screen_width_, screen_height_);
+    spdlog::warn("1rectangle_width_ ({}), rectangle_height_({})", rectangleNodeText.width, rectangleNodeText.height);
+    spdlog::warn("2rectangle_width_ ({}), rectangle_height_({})", rectangleEdgeText.width, rectangleEdgeText.height);
+    cv::Point2d node_text_origin_point;
+    cv::Point2d edge_text_origin_point;
+
+    if (!doesTextFitOnScreen(rectangleNodeText))
+    {
+        // do formatting algorithm and return something
+    }
+    if (!doesTextFitOnScreen(rectangleEdgeText))
+    {
+        // do formatting algorithm and return something
+    }
+
+    node_text_origin_point.x = margin_from_edge_;
+    node_text_origin_point.y = margin_from_edge_ + rectangleNodeText.height;
+
+    edge_text_origin_point.x = screen_width_ - margin_from_edge_ - rectangleEdgeText.width;
+    edge_text_origin_point.y = margin_from_edge_ + rectangleEdgeText.height;
+
+    return std::pair<cv::Point2d, cv::Point2d>(node_text_origin_point, edge_text_origin_point);
 }

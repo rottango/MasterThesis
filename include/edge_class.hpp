@@ -32,7 +32,7 @@ public:
 private:
     void setDistanceBetweenNodesMeters(double distance_between_nodes_meters_); // should be set by the graph object
 
-    void setAngleBetweenNodesDegrees(double angle_between_nodes_degrees_); // should be set by the graph object
+    void setAngleBetweenNodesDegrees(double angle_between_nodes_degrees, double theta_rotation); // should be set by the graph object
 
     void setTempTimestamp(double temp_timestamp_); // should be set by the graph object
 
