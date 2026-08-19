@@ -103,6 +103,8 @@ private:
     int gap_size_pixels_ = 5;
     int margin_from_edge_ = 10;
 
+    double desired_tip_length_ = 30;
+
     std::vector<std::string> generated_text_node;
     std::vector<std::string> generated_text_edge;
 

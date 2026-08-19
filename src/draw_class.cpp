@@ -139,18 +139,31 @@ void Draw::drawEdgeConnectingLine(const Edge &edge)
 {
     const Node &observer = graph_.findNodeByIdReadOnly(edge.getObserverId());
     const Node &target = graph_.findNodeByIdReadOnly(edge.getTargetId());
-    cv::arrowedLine(img_,
-                    cartesianPointToOpenCVPoint(observer.getXYPoint(),
-                                                screen_width_,
-                                                screen_height_),
-                    cartesianPointToOpenCVPoint(target.getXYPoint(),
-                                                screen_width_,
-                                                screen_height_),
-                    observer.getColorPalet().text_color,
-                    axis_arrow_thickness_,
-                    8,
-                    0,
-                    30 / distanceBetweenTwoPoints(observer.getXYPoint(), target.getXYPoint()));
+    double tip_length = desired_tip_length_ / distanceBetweenTwoPoints(observer.getXYPoint(), target.getXYPoint());
+    if (tip_length <= 0.0 || tip_length > 1.0)
+    {
+        spdlog::warn("tip_length of cv::arrowedLine is out of range, value = {}", tip_length);
+        tip_length = 0.5;
+    }
+    try
+    {
+        cv::arrowedLine(img_,
+                        cartesianPointToOpenCVPoint(observer.getXYPoint(),
+                                                    screen_width_,
+                                                    screen_height_),
+                        cartesianPointToOpenCVPoint(target.getXYPoint(),
+                                                    screen_width_,
+                                                    screen_height_),
+                        observer.getColorPalet().text_color,
+                        axis_arrow_thickness_,
+                        8,
+                        0,
+                        tip_length);
+    }
+    catch (cv::Exception &e)
+    {
+        spdlog::warn("{}", e.what());
+    }
 }
 
 void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
@@ -160,20 +173,44 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
     double start_angle = -observer.getThetaRotationDegrees();
     double normalized_angle = edge.getAngleBetweenNodesDegrees();
     double end_angle = start_angle - normalized_angle;
-
-    cv::ellipse(img_, // cv::InputOutputArray img,
-                cartesianPointToOpenCVPoint(observer.getXYPoint(),
-                                            screen_width_,
-                                            screen_height_), // cv::Point center
-                cv::Size2d(radius,
-                           radius),                  // cv::Size axes
-                angle,                               // double angle STAYS 0, then its like i want it to be
-                start_angle,                         // double startAngle
-                end_angle,                           // double endAngle
-                observer.getColorPalet().text_color, // const cv::Scalar &color
-                1,                                   // int thickness
-                8,                                   // int lineType = 8
-                0);                                  // int shift = 0
+    int thickness = 1;
+    int line_type = 8;
+    int shift = 0;
+    if (radius < 0)
+    {
+        spdlog::warn("radius of cv::ellipse is negative, value = {}", radius);
+        radius = 100;
+    }
+    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    {
+        spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
+        thickness = 1;
+    }
+    if (shift < 0 || shift > 16) // XY_SHIFT from drawing.cpp source file.
+    {
+        spdlog::warn("shift of cv::ellipse is out of range, value = {}", shift);
+        shift = 0;
+    }
+    try
+    {
+        cv::ellipse(img_, // cv::InputOutputArray img,
+                    cartesianPointToOpenCVPoint(observer.getXYPoint(),
+                                                screen_width_,
+                                                screen_height_), // cv::Point center
+                    cv::Size2d(radius,
+                               radius),                  // cv::Size axes
+                    angle,                               // double angle STAYS 0, then its like i want it to be
+                    start_angle,                         // double startAngle
+                    end_angle,                           // double endAngle
+                    observer.getColorPalet().text_color, // const cv::Scalar &color
+                    1,                                   // int thickness
+                    8,                                   // int lineType = 8
+                    0);                                  // int shift = 0
+    }
+    catch (cv::Exception &e)
+    {
+        spdlog::warn("{}", e.what());
+    }
 }
 
 // text
