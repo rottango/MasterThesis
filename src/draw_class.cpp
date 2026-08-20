@@ -54,19 +54,38 @@ void Draw::drawNode(const Node &node)
 
 void Draw::drawNodeVehicleSize(const Node &node)
 {
+    uint8_t radius = node.getVehicleSize();
+    int thickness = node.getColorPalet().thickness;
+    int shift = node.getColorPalet().shift;
+    if (radius < 0)
+    {
+        spdlog::warn("radius of cv::circle is out of range, value = {}", radius);
+        radius = 55;
+    }
+    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    {
+        spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
+        thickness = 2;
+    }
+    if (shift < 0 || shift > 16) // XY_SHIFT from drawing.cpp source file.
+    {
+        spdlog::warn("shift of cv::ellipse is out of range, value = {}", shift);
+        shift = 0;
+    }
     cv::circle(this->img_,
                cartesianPointToOpenCVPoint(node.getXYPoint(),
                                            screen_width_,
                                            screen_height_),
-               node.getVehicleSize(),
+               radius,
                node.getColorPalet().vehicle_color,
-               node.getColorPalet().thickness,
+               thickness,
                node.getColorPalet().lineType,
-               node.getColorPalet().shift);
+               shift);
 }
 
 void Draw::drawNodeAxis(const Node &node)
 {
+    // no assertions used here, so no error handling required
     cv::arrowedLine(img_,
                     cartesianPointToOpenCVPoint(node.getXYPoint(),
                                                 screen_width_,
@@ -90,28 +109,64 @@ void Draw::drawNodeAxis(const Node &node)
 
 void Draw::drawNodeMeasurmentError(const Node &node)
 {
+    uint8_t radius = node.getMeasurmentError();
+    int thickness = node.getColorPalet().thickness;
+    int shift = node.getColorPalet().shift;
+    if (radius < 0)
+    {
+        spdlog::warn("radius of cv::circle is out of range, value = {}", radius);
+        radius = 77;
+    }
+    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    {
+        spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
+        thickness = 2;
+    }
+    if (shift < 0 || shift > 16) // XY_SHIFT from drawing.cpp source file.
+    {
+        spdlog::warn("shift of cv::ellipse is out of range, value = {}", shift);
+        shift = 0;
+    }
     cv::circle(this->img_,
                cartesianPointToOpenCVPoint(node.getXYPoint(),
                                            screen_width_,
                                            screen_height_),
-               node.getMeasurmentError(),
+               radius,
                node.getColorPalet().measurment_error_color,
-               node.getColorPalet().thickness,
+               thickness,
                node.getColorPalet().lineType,
-               node.getColorPalet().shift);
+               shift);
 }
 
 void Draw::drawNodeInner(const Node &node)
 {
+    uint8_t radius = node.getInner();
+    int thickness = node.getColorPalet().thickness;
+    int shift = node.getColorPalet().shift;
+    if (radius < 0)
+    {
+        spdlog::warn("radius of cv::circle is out of range, value = {}", radius);
+        radius = 66;
+    }
+    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    {
+        spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
+        thickness = 2;
+    }
+    if (shift < 0 || shift > 16) // XY_SHIFT from drawing.cpp source file.
+    {
+        spdlog::warn("shift of cv::ellipse is out of range, value = {}", shift);
+        shift = 0;
+    }
     cv::circle(this->img_,
                cartesianPointToOpenCVPoint(node.getXYPoint(),
                                            screen_width_,
                                            screen_height_),
-               node.getInner(),
+               radius,
                node.getColorPalet().inner__color,
-               node.getColorPalet().thickness,
+               thickness,
                node.getColorPalet().lineType,
-               node.getColorPalet().shift);
+               shift);
 }
 
 // edge
@@ -184,7 +239,7 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
     if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
     {
         spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
-        thickness = 1;
+        thickness = 2;
     }
     if (shift < 0 || shift > 16) // XY_SHIFT from drawing.cpp source file.
     {
@@ -310,6 +365,16 @@ void Draw::drawGeneratedText(cv::Point2d origin_point,
     {
         spdlog::warn("Origin point of drawnText ({},{})  ", origin_point.x, origin_point.y);
 
+        if ((*it).length() == 0)
+        {
+            spdlog::warn("text of generated_text is empty");
+            *it == "ERROR, NO TEXT";
+        }
+        if (font_face_ == 0)
+        {
+            spdlog::warn("font_face_ of class is equal to zero");
+            font_face_ = cv::FONT_HERSHEY_PLAIN;
+        }
         cv::Size text_size = cv::getTextSize(*it,
                                              font_face_,
                                              font_scale_,
@@ -349,6 +414,17 @@ cv::Size Draw::rectangleOfTextSize(std::vector<cv::String> generated_text)
     // calculate the rectangle of the node
     for (auto it = generated_text.begin(); it != generated_text.end(); it++)
     {
+        if ((*it).length() == 0)
+        {
+            spdlog::warn("text of generated_text is empty");
+            *it == "ERROR, NO TEXT";
+        }
+        if (font_face_ == 0)
+        {
+            spdlog::warn("font_face_ of class is equal to zero");
+            font_face_ = cv::FONT_HERSHEY_PLAIN;
+        }
+
         cv::Size text_size = cv::getTextSize(*it,
                                              font_face_,
                                              font_scale_,
