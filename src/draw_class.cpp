@@ -62,7 +62,7 @@ void Draw::drawNodeVehicleSize(const Node &node)
         spdlog::warn("radius of cv::circle is out of range, value = {}", radius);
         radius = 55;
     }
-    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    if (thickness > 32767) // MAX_THICKNESS from drawing.cpp source file.
     {
         spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
         thickness = 2;
@@ -117,7 +117,7 @@ void Draw::drawNodeMeasurmentError(const Node &node)
         spdlog::warn("radius of cv::circle is out of range, value = {}", radius);
         radius = 77;
     }
-    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    if (thickness > 32767) // MAX_THICKNESS from drawing.cpp source file.
     {
         spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
         thickness = 2;
@@ -148,7 +148,7 @@ void Draw::drawNodeInner(const Node &node)
         spdlog::warn("radius of cv::circle is out of range, value = {}", radius);
         radius = 66;
     }
-    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    if (thickness > 32767) // MAX_THICKNESS from drawing.cpp source file.
     {
         spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
         thickness = 2;
@@ -236,7 +236,7 @@ void Draw::drawEdgeAngleElipseToTarget(const Edge &edge, int radius)
         spdlog::warn("radius of cv::ellipse is negative, value = {}", radius);
         radius = 100;
     }
-    if (thickness <= 32767) // MAX_THICKNESS from drawing.cpp source file.
+    if (thickness > 32767) // MAX_THICKNESS from drawing.cpp source file.
     {
         spdlog::warn("thickness of cv::ellipse is too big, value = {}", thickness);
         thickness = 2;

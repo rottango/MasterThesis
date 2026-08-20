@@ -33,6 +33,9 @@ private:
     int node_id_of_min_difference = 1;
     int min_difference_;
 
+    std::vector<uint8_t> node_id_list_;
+    std::vector<uint8_t> edge_id_list_;
+
     void run();
 
     void initialUserInput();

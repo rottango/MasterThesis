@@ -46,36 +46,37 @@ bool Application::initialize()
     img_ = img_temp_;
 
     running_ = true;
-    uint8_t node_id_1;
-    uint8_t node_id_2;
-    uint8_t node_id_3;
-    uint8_t node_id_4;
 
-    uint8_t edge_id_1;
-    uint8_t edge_id_2;
-    uint8_t edge_id_3;
-    uint8_t edge_id_4;
-    uint8_t edge_id_5;
-    uint8_t edge_id_6;
-    uint8_t edge_id_7;
-    uint8_t edge_id_8;
-    uint8_t edge_id_9;
+    // uint8_t node_id_1;
+    // uint8_t node_id_2;
+    // uint8_t node_id_3;
+    // uint8_t node_id_4;
 
-    node_id_1 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, ugv1ColorPalet);
-    node_id_2 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 3 / 6, screen_height_ * 2 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv2ColorPalet);
-    node_id_3 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 5 / 6, screen_height_ * 1 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
-    node_id_4 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 2, screen_height_ * 1 / 2), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
+    // uint8_t edge_id_1;
+    // uint8_t edge_id_2;
+    // uint8_t edge_id_3;
+    // uint8_t edge_id_4;
+    // uint8_t edge_id_5;
+    // uint8_t edge_id_6;
+    // uint8_t edge_id_7;
+    // uint8_t edge_id_8;
+    // uint8_t edge_id_9;
 
-    edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
-    edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
-    edge_id_3 = graph_.addEdge(node_id_2, node_id_1);
-    edge_id_4 = graph_.addEdge(node_id_2, node_id_3);
-    edge_id_5 = graph_.addEdge(node_id_3, node_id_1);
-    edge_id_6 = graph_.addEdge(node_id_3, node_id_2);
+    // node_id_1 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, ugv1ColorPalet);
+    // node_id_2 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 3 / 6, screen_height_ * 2 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv2ColorPalet);
+    // node_id_3 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 5 / 6, screen_height_ * 1 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
+    // node_id_4 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 2, screen_height_ * 1 / 2), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
 
-    edge_id_7 = graph_.addEdge(node_id_4, node_id_1);
-    edge_id_8 = graph_.addEdge(node_id_4, node_id_2);
-    edge_id_9 = graph_.addEdge(node_id_4, node_id_3);
+    // edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
+    // edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
+    // edge_id_3 = graph_.addEdge(node_id_2, node_id_1);
+    // edge_id_4 = graph_.addEdge(node_id_2, node_id_3);
+    // edge_id_5 = graph_.addEdge(node_id_3, node_id_1);
+    // edge_id_6 = graph_.addEdge(node_id_3, node_id_2);
+
+    // edge_id_7 = graph_.addEdge(node_id_4, node_id_1);
+    // edge_id_8 = graph_.addEdge(node_id_4, node_id_2);
+    // edge_id_9 = graph_.addEdge(node_id_4, node_id_3);
 
     spdlog::info("Exiting Application::createNamedWindow()");
     return true;
@@ -175,6 +176,22 @@ void Application::exectuteInput(char character)
     case ';':
         node.setInner(node.getInner() - 1);
         break;
+    case 'e':
+        uint8_t observer_id_temp;
+        uint8_t target_id_temp;
+
+        std::cout << "Provide observer_id: ";
+        std::cin >> observer_id_temp;
+        std::cout << "Provide target_id: ";
+        std::cin >> target_id_temp;
+
+        static_cast<int>(observer_id_temp);
+        static_cast<int>(target_id_temp);
+        edge_id_list_.push_back(graph_.addEdge(observer_id_temp, target_id_temp));
+        break;
+    case 'n':
+        node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, ugv1ColorPalet));
+        break;
     default:
         break;
     }
@@ -247,6 +264,12 @@ void Application::processInput()
         exectuteInput(pressedKey);
         break;
     case ';':
+        exectuteInput(pressedKey);
+        break;
+    case 'e':
+        exectuteInput(pressedKey);
+        break;
+    case 'n':
         exectuteInput(pressedKey);
         break;
     default:
