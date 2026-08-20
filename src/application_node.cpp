@@ -177,17 +177,12 @@ void Application::exectuteInput(char character)
         node.setInner(node.getInner() - 1);
         break;
     case 'e':
-        uint8_t observer_id_temp;
-        uint8_t target_id_temp;
+        int target_id_temp;
 
-        std::cout << "Provide observer_id: ";
-        std::cin >> observer_id_temp;
         std::cout << "Provide target_id: ";
         std::cin >> target_id_temp;
 
-        static_cast<int>(observer_id_temp);
-        static_cast<int>(target_id_temp);
-        edge_id_list_.push_back(graph_.addEdge(observer_id_temp, target_id_temp));
+        edge_id_list_.push_back(graph_.addEdge(movable_node_id_, static_cast<uint8_t>(target_id_temp)));
         break;
     case 'n':
         node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, ugv1ColorPalet));
