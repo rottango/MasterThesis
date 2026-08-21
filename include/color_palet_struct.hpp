@@ -78,8 +78,6 @@ cv::Scalar colors[] = {
     cv::Scalar(190, 94, 232)   // #E85EBE
 };
 
-colorPalet generateColorPalet(uint8_t node_id);
+colorPalet generateColorPalet();
 
-extern colorPalet ugv1ColorPalet;
-extern colorPalet ugv2ColorPalet;
-extern colorPalet ugv3ColorPalet;
+int color_positon_ = 0;
