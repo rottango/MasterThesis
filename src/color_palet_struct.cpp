@@ -117,5 +117,9 @@ colorPalet generateColorPalet(int &color_positon)
     generated_color_palet.observer_line_color = cv::Scalar(bgr_vec_observer_line.val[0], bgr_vec_observer_line.val[1], bgr_vec_observer_line.val[2]);
     generated_color_palet.text_color = cv::Scalar(bgr_vec_text.val[0], bgr_vec_text.val[1], bgr_vec_text.val[2]);
 
+    generated_color_palet.thickness = 2;
+    generated_color_palet.lineType = 8;
+    generated_color_palet.shift = 0;
+
     return generated_color_palet;
 }
