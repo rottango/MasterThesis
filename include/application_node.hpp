@@ -29,6 +29,8 @@ private:
     double position_step_size_ = 10;
     double angle_step_size_ = 1;
 
+    int color_positon_ = 0;
+
     int movable_node_id_ = 1;
     int node_id_of_min_difference = 1;
     int min_difference_;
