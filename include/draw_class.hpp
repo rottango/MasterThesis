@@ -111,7 +111,7 @@ private:
     // node
     std::string node_id_text_ = "Node ID: ";
     std::string cartesian_x_y_point_text_ = "Location (x,y): ";
-    std::string vehicle_size_text_ = "Vehicle size: ";
+    std::string vehicle_size_text_ = "bgr_vehicle_color size: ";
     std::string inner_text_ = "Inner size: ";
     std::string measurment_error_cm_text_ = "Measurment error [cm]: ";
     std::string theta_rotation_degrees_text_ = "Theta rotation [degrees]: ";

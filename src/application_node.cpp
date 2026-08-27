@@ -185,7 +185,7 @@ void Application::exectuteInput(char character)
         edge_id_list_.push_back(graph_.addEdge(movable_node_id_, static_cast<uint8_t>(target_id_temp)));
         break;
     case 'n':
-        node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, ugv1ColorPalet));
+        node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_)));
         break;
     default:
         break;
