@@ -30,7 +30,11 @@ The project has the following tasks I have to fulfill in order to consider the p
 ## Roadmap
 
 - Doxygen comments on develop. - Anticipate a lot of modification on other branches - they are not worth documenting
-- B
+- Physical Hardware Configuration and basic tests. - Not yet relevant to the Master Thesis, but just a check if the hardware works at its core.
+- Code for getting the data off the UWB Device for processing.
+- Configuration of the devices for the communication between two nodes such so they satisfy the tasks. (They localize each other).
+- Code for processing of the raw data, such so i calculate the atan2 (the relative bearing between nodes).
+- Scripts for automating the configuration of the devices to shorten the time between non-operational to operational.
 
 ## Contributing
 
