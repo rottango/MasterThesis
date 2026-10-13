@@ -7,76 +7,199 @@
 class Draw
 {
 public:
-    Draw(const Graph &Graph,
-         cv::Mat &img);
 
-    // frame
+    /**
+     * @brief Construct a new Draw object
+     * 
+     * @param Graph 
+     * @param img 
+     */
+    Draw(const Graph &Graph, cv::Mat &img);
 
+    /**
+     * @brief 
+     * 
+     * @param movable_node_id_ 
+     */
     void drawFrame(const int movable_node_id_);
 
 private:
-    // graph
 
-    void
-    drawGraph(const int movable_node_id_);
+    /**
+     * @brief 
+     * 
+     * @param movable_node_id_ 
+     */
+    void drawGraph(const int movable_node_id_);
 
-    // node
-
+    /**
+     * @brief 
+     * 
+     */
     void drawNodes();
 
+    /**
+     * @brief 
+     * 
+     * @param node 
+     */
     void drawNode(const Node &node);
 
+    /**
+     * @brief 
+     * 
+     * @param node 
+     */
     void drawNodeVehicleSize(const Node &node);
 
+    /**
+     * @brief 
+     * 
+     * @param node 
+     */
     void drawNodeAxis(const Node &node);
 
+    /**
+     * @brief 
+     * 
+     * @param node 
+     */
     void drawNodeMeasurmentError(const Node &node);
 
+    /**
+     * @brief 
+     * 
+     * @param node 
+     */
     void drawNodeInner(const Node &node);
 
-    // edge
-
+    /**
+     * @brief 
+     * 
+     */
     void drawEdges();
 
+    /**
+     * @brief 
+     * 
+     * @param edge 
+     * @param radius 
+     */
     void drawEdge(const Edge &edge, int radius); // this is the same as drawConnectingLine i believe
 
+    /**
+     * @brief 
+     * 
+     * @param edge 
+     */
     void drawEdgeConnectingLine(const Edge &edge);
 
+    /**
+     * @brief 
+     * 
+     * @param edge 
+     */
     void drawEdgeAngleElipse(const Edge &edge); // every edge from observer to targets are drawn
 
+    /**
+     * @brief 
+     * 
+     * @param edge 
+     * @param radius 
+     */
     void drawEdgeAngleElipseToTarget(const Edge &edge, int radius); // single edge from observer to target is drawn
 
-    // text
-
+    /**
+     * @brief 
+     * 
+     * @param movable_node_id_ 
+     */
     void drawText(const int movable_node_id_);
 
+    /**
+     * @brief 
+     * 
+     * @param movable_node_id_ 
+     */
     void generateText(const int movable_node_id_);
 
-    // void generateNodesText(const int movable_node_id_);
-
+    /**
+     * @brief 
+     * 
+     * @param node 
+     */
     void generateNodeText(const Node &node);
 
+    /**
+     * @brief 
+     * 
+     * @param movable_node_id_ 
+     */
     void generateEdgesText(const int movable_node_id_);
 
+    /**
+     * @brief 
+     * 
+     * @param edge 
+     */
     void generateEdgeText(const Edge &edge);
 
+    /**
+     * @brief 
+     * 
+     * @param movable_node_id_ 
+     */
     void decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_);
 
-    void drawGeneratedText(const cv::Point2d origin_point,
-                           std::vector<std::string> generated_text,
-                           int movable_node_id);
+    /**
+     * @brief 
+     * 
+     * @param origin_point 
+     * @param generated_text 
+     * @param movable_node_id 
+     */
+    void drawGeneratedText(const cv::Point2d origin_point, std::vector<std::string> generated_text, int movable_node_id);
 
-    // debloatyfing the layout function:
-
+    /**
+     * @brief 
+     * 
+     * @param generated_text 
+     * @return int 
+     */
     int textGapSum(std::vector<cv::String> generated_text);
 
+    /**
+     * @brief 
+     * 
+     * @param generated_text 
+     * @return cv::Size 
+     */
     cv::Size rectangleOfTextSize(std::vector<cv::String> generated_text);
 
+    /**
+     * @brief 
+     * 
+     * @param rectangle 
+     * @return true 
+     * @return false 
+     */
     bool doesTextFitOnScreen(cv::Size rectangle);
 
-    std::pair<cv::Point2d, cv::Point2d> layoutNodeAndEdgeText(cv::Size rectangleNodeText,
-                                                              cv::Size rectangleEdgeText);
+    /**
+     * @brief 
+     * 
+     * @param rectangleNodeText 
+     * @param rectangleEdgeText 
+     * @return std::pair<cv::Point2d, cv::Point2d> 
+     */
+    std::pair<cv::Point2d, cv::Point2d> layoutNodeAndEdgeText(cv::Size rectangleNodeText, cv::Size rectangleEdgeText);
 
+    /**
+     * @brief 
+     * 
+     * @param origin_point 
+     * @param generated_text_node 
+     */
     void drawGeneratedText(cv::Point2d origin_point, std::vector<std::string> generated_text_node);
 
     const Graph &graph_;
@@ -117,7 +240,6 @@ private:
     std::string theta_rotation_degrees_text_ = "Theta rotation [degrees]: ";
 
     // edge
-
     std::string edge_id_ = "Edge ID: ";
     std::string observer_id = "Observer ID: ";
     std::string target_id_ = "Target ID: ";
