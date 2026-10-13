@@ -11,8 +11,16 @@
 class Application
 {
 public:
+    /**
+     * @brief Construct a new Application object
+     * 
+     */
     Application();
 
+    /**
+     * @brief 
+     * 
+     */
     void start();
 
 private:
@@ -38,27 +46,80 @@ private:
     std::vector<uint8_t> node_id_list_;
     std::vector<uint8_t> edge_id_list_;
 
+    /**
+     * @brief 
+     * 
+     */
     void run();
 
+    /**
+     * @brief 
+     * 
+     */
     void initialUserInput();
 
+    /**
+     * @brief 
+     * 
+     * @return true 
+     * @return false 
+     */
     bool initialize();
 
+    /**
+     * @brief 
+     * 
+     */
     void clearFrame();
 
+    /**
+     * @brief 
+     * 
+     */
     void end();
 
+    /**
+     * @brief 
+     * 
+     * @param character 
+     */
     void exectuteInput(char character);
 
+    /**
+     * @brief 
+     * 
+     */
     void render();
 
+    /**
+     * @brief 
+     * 
+     */
     void presentFrame();
 
+    /**
+     * @brief 
+     * 
+     */
     void processInput();
 
+    /**
+     * @brief 
+     * 
+     */
     void update();
 
+    /**
+     * @brief 
+     * 
+     * @return true 
+     * @return false 
+     */
     bool shutdown();
 
+    /**
+     * @brief Create a Named Window object
+     * 
+     */
     void createNamedWindow();
 };
