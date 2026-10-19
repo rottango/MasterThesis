@@ -32,21 +32,21 @@ public:
     uint8_t getNodeId() const;
 
     /**
-     * @brief 
+     * @brief Get the cv::Point2d that represents the center of the node in Cartesian space
      * 
      * @return cv::Point2d 
      */
     cv::Point2d getXYPoint() const;
 
     /**
-     * @brief 
+     * @brief Get the cv::Point2d that represents the center of the X-Axis point in Cartesian space
      * 
      * @return cv::Point2d 
      */
     cv::Point2d getXAxisPoint() const;
 
     /**
-     * @brief 
+     * @brief Get the cv::Point2d that represents the center of the Y-Axis point in Cartesian space
      * 
      * @return cv::Point2d 
      */
@@ -88,21 +88,21 @@ public:
     double getThetaRotationDegrees() const;
 
     /**
-     * @brief 
+     * @brief Change the position of the node to the new one, passed inside the parameter to the function
      * 
      * @param cartesian_x_y_point 
      */
     void changePosition(cv::Point2d cartesian_x_y_point);
 
     /**
-     * @brief 
+     * @brief change rotation by small increment, then call setThetaRotationDegrees
      * 
      * @param theta_rotation_degrees_ 
      */
-    void rotateNodesAxis(double theta_rotation_degrees_); // inside call changeThetaRotationDegrees
+    void rotateNodesAxis(double theta_rotation_degrees_);
 
     /**
-     * @brief 
+     * @brief Set the Color palet of the node
      * 
      * @param color_palet 
      */
@@ -139,32 +139,31 @@ private:
     void setNodeId(uint8_t node_id_);
 
     /**
-     * @brief 
+     * @brief Set the cv::Point2d that represents the center of the node to the value passed inside the argument list. After that, call setAxisPoints()
      * 
      * @param cartesian_x_y_point_ 
      */
-    void setXYPoint(cv::Point2d cartesian_x_y_point_); // to call after chanignPosition()
+    void setXYPoint(cv::Point2d cartesian_x_y_point_);
 
     /**
-     * @brief 
-     * 
+     * @brief Calculate the new YAxisPoint and set it 
      */
     void setXAxisPoint(); // helper function to the setAxisPoints
 
     /**
-     * @brief 
+     * @brief Calculate the new YAxisPoint and set it 
      * 
      */
     void setYAxisPoint(); // helper function to the setAxisPoints
 
     /**
-     * @brief Set the Axis Points object
+     * @brief Call setXAxisPoint and setXAxisPoint
      * 
      */
     void setAxisPoints(); // to call after changix position()
 
     /**
-     * @brief Set the Theta Rotation Degrees object
+     * @brief Set the Theta Rotation Degrees, normalize the resulting degrees to <-180;180)
      * 
      * @param new_theta_rotation_degrees 
      */
