@@ -1,4 +1,4 @@
-#include <application_node.hpp>
+#include <application_class.hpp>
 #include <color_palet_struct.hpp>
 
 Application::Application() : draw_{graph_, img_}

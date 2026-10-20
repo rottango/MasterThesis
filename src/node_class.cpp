@@ -70,7 +70,7 @@ void Node::changePosition(cv::Point2d new_cartesian_x_y_point_) // done
 
 void Node::rotateNodesAxis(double theta_rotation_delta_degrees) // add a rotation delta
 {
-    // add logic to modify that dleta to and absolute angle
+    // add logic to modify that delta to and absolute angle
     double new_theta_rotation_degrees =
         this->theta_rotation_degrees_ +
         theta_rotation_delta_degrees;

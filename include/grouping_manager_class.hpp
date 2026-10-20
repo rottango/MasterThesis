@@ -5,17 +5,48 @@
 #include <group_class.hpp>
 #include <unordered_map>
 
+/**
+* @file grouping_manager_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the grouping manager class,  which is not yet implemented, as its not necessary for basic functionality. It will be necessary when I will want to generalize this solution to N:N
+*/
+
+
 class GroupingManager
 {
 public:
+
+    /**
+     * @brief Construct a new Grouping Manager object
+     * 
+     * @param group_size_param_ 
+     * @param proximity_param_ 
+     * @param hysteresis_param_ 
+     */
     GroupingManager(uint8_t group_size_param_,
                     uint8_t proximity_param_,
                     uint8_t hysteresis_param_);
 
+    /**
+     * @brief 
+     * 
+     */
     void addGroup();
 
+    /**
+     * @brief 
+     * 
+     */
     void removeGroup();
 
+    /**
+     * @brief Get the Group Id object
+     * 
+     * @return uint8_t 
+     */
     uint8_t getGroupId();
 
 private:
@@ -28,11 +59,32 @@ private:
     std::vector<uint8_t> list_of_node_ids;
     std::unordered_map<uint8_t, Group> groups_;
 
+    /**
+     * @brief 
+     * 
+     * @return uint8_t 
+     */
     uint8_t groupIdWhereNodeIdIs();
 
+    /**
+     * @brief 
+     * 
+     * @return std::vector<uint8_t> 
+     */
     std::vector<uint8_t> nodeIdsInGroupByGroupId();
 
+    /**
+     * @brief 
+     * 
+     * @return uint8_t 
+     */
     uint8_t groupIDGeneration();
 
+    /**
+     * @brief 
+     * 
+     * @return true 
+     * @return false 
+     */
     bool groupIDValidation();
 };

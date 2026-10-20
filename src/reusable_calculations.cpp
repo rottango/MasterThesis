@@ -72,26 +72,6 @@ double bearingBetweenTwoPointsDegrees(cv::Point2d point_observer, cv::Point2d po
     return normalizeAngleDegrees(result);
 }
 
-cv::Point2d rotatePointAroundCenterPoint(cv::Point2d point_to_rotate, cv::Point2d rotation_center, double theta_rotation_degrees) // 0 degrees is at the x axis, positive angles go counterclockwise, negative go clockwise
-{
-    // make sure we are rotating arount the center point
-    double x_pos_normalized_to_the_cartesian_axis_origin = point_to_rotate.x - rotation_center.x;
-    double y_pos_normalized_to_the_cartesian_axis_origin = point_to_rotate.y - rotation_center.y;
-
-    double temp_x = x_pos_normalized_to_the_cartesian_axis_origin;
-    double temp_y = y_pos_normalized_to_the_cartesian_axis_origin;
-    double theta_rotation_radians = degreesToRadians(theta_rotation_degrees);
-
-    double normalized_new_x = temp_x * std::cos(theta_rotation_radians) - temp_y * std::sin(theta_rotation_radians);
-    double normalized_new_y = temp_x * std::sin(theta_rotation_radians) + temp_y * std::cos(theta_rotation_radians);
-
-    double new_x = normalized_new_x + rotation_center.x;
-    double new_y = normalized_new_y + rotation_center.y;
-
-    return cv::Point2d(new_x,
-                       new_y);
-}
-
 cv::Point2d calculatePointFromCenter(cv::Point2d center_point, double theta_rotation_degrees, double distance)
 {
 
