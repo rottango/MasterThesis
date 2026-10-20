@@ -66,18 +66,7 @@ double distanceBetweenTwoPoints(cv::Point2d point_1, cv::Point2d point_2);
 double bearingBetweenTwoPointsDegrees(cv::Point2d point_observer, cv::Point2d point_target); // this is the standard bearing calculations, that souhldbe dispalyed
 
 /**
- * @brief 
- * 
- * @param point_to_rotate 
- * @param rotation_center 
- * @param theta_rotation_degrees 
- * @return cv::Point2d 
- * when already have a point and rortate it around the center that is another point
- */
-cv::Point2d rotatePointAroundCenterPoint(cv::Point2d point_to_rotate, cv::Point2d rotation_center, double theta_rotation_degrees); // uses rotationMatrix in it
-
-/**
- * @brief 
+ * @brief Calculate, using polar coordinates, a new point rotated by
  * 
  * @param center_point 
  * @param theta_rotation_degrees 
