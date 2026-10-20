@@ -8,7 +8,7 @@
 /**
 * @file node_class.hpp
 * @author rottango
-* @date 13.10.2026
+* @date 20.10.2026
 * @see ‘‘ OpenCV2 ’’ 
 *
 * @brief Header file for the node, that the software representation of a UGV.
@@ -106,7 +106,7 @@ public:
      * 
      * @param color_palet 
      */
-    void assignColors(colorPalet color_palet); // should be accessible publicly
+    void assignColors(colorPalet color_palet);
 
     /**
      * @brief Set the Vehicle Size object
@@ -148,19 +148,19 @@ private:
     /**
      * @brief Calculate the new YAxisPoint and set it 
      */
-    void setXAxisPoint(); // helper function to the setAxisPoints
+    void setXAxisPoint(); 
 
     /**
      * @brief Calculate the new YAxisPoint and set it 
      * 
      */
-    void setYAxisPoint(); // helper function to the setAxisPoints
+    void setYAxisPoint();
 
     /**
      * @brief Call setXAxisPoint and setXAxisPoint
      * 
      */
-    void setAxisPoints(); // to call after changix position()
+    void setAxisPoints();
 
     /**
      * @brief Set the Theta Rotation Degrees, normalize the resulting degrees to <-180;180)
@@ -169,7 +169,7 @@ private:
      */
     void setThetaRotationDegrees(double new_theta_rotation_degrees);
 
-    uint8_t node_id_; // no need to have a setter for the future
+    uint8_t node_id_; 
     cv::Point2d cartesian_x_y_point_{0, 0};
     cv::Point2d cartesian_x_axis_point_{100, 0};
     cv::Point2d cartesian_y_axis_point_{0, 100};
