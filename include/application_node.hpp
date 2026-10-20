@@ -18,7 +18,7 @@ public:
     Application();
 
     /**
-     * @brief 
+     * @brief This function begins application, starting with initalization, and then calling the looped run function
      * 
      */
     void start();
@@ -47,19 +47,19 @@ private:
     std::vector<uint8_t> edge_id_list_;
 
     /**
-     * @brief 
+     * @brief This function is responsible for handling each user input, and thus starting the cascade of all function calls, until the running flag is not false. 
      * 
      */
     void run();
 
     /**
-     * @brief 
+     * @brief Get the size of the screen from the user
      * 
      */
     void initialUserInput();
 
     /**
-     * @brief 
+     * @brief Start up the program, create the window and rise the running_ flag
      * 
      * @return true 
      * @return false 
@@ -67,50 +67,50 @@ private:
     bool initialize();
 
     /**
-     * @brief 
+     * @brief Reset the image to a single solid color
      * 
      */
     void clearFrame();
 
     /**
-     * @brief 
+     * @brief Call the shutdown function
      * 
      */
     void end();
 
     /**
-     * @brief 
+     * @brief Based on the input from the processInput function, exectute differ functions in the run step
      * 
      * @param character 
      */
     void exectuteInput(char character);
 
     /**
-     * @brief 
+     * @brief Call the draw's main function - drawFrame() for the currently active node
      * 
      */
     void render();
 
     /**
-     * @brief 
+     * @brief Display the drawn image by the Draw object
      * 
      */
     void presentFrame();
 
     /**
-     * @brief 
+     * @brief Based on the input, refer the program exectution to differ functions in the run step
      * 
      */
     void processInput();
 
     /**
-     * @brief 
+     * @brief Call the graph's updateNodesAndEdges
      * 
      */
     void update();
 
     /**
-     * @brief 
+     * @brief ToDo: Free all objects here
      * 
      * @return true 
      * @return false 
@@ -118,7 +118,7 @@ private:
     bool shutdown();
 
     /**
-     * @brief Create a Named Window object
+     * @brief Create a Named Window object and resize it to the user inputed screen width and height
      * 
      */
     void createNamedWindow();
