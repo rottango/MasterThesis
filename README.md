@@ -23,6 +23,31 @@ The project has the following tasks I have to fulfill in order to consider the p
 
 ## Instalation
 
+## Android Studio, Device Manager, Bumble (not the dating app)
+
+In order to use MDEK1001 (DWM1001C) with the DRTLS_Manager, you **need** to have an Android Device. The app was made for Android 6.0 / 7.0 (around api 24). I do not have such a device, therefore I am using Android Studio Device Manager to use that app. BUT ROTTANGO I HEAR YOU ASK, does Android studio (by default) use your laptops/computer/SBC "hardware" bluetooth? **NO**. It ?simulates? its own virutal bluetooth?. Anyways, the solution is [bumble](https://google.github.io/bumble/platforms/android.html). Using it, we can create, how I understand, a bridge between the emulator and the physcial hardware. MOREOVER, Android studio doesn't support bluetooth on emulated devices bellow API 31. ask me how I know. It seems to me right now - 20.10.2026 - that The DRTLS works on API 34, certainly i has been downloaded and installed and run by me, however i have not yet connected it to UWBs, so i will update this later. Anyways, running older software on new APIs seem to work to some extend, of course, security is an issue, but lets just quietly and knowingly skip that, becase i am NOT developing an andorid app to work with uwb, thats hella to much work.
+
+This are the commands that - after downloading neccesary packages - run the emulated device with bluetooth on.
+
+```
+sudo systemctl stop bluetooth.service
+sudo hciconfig hci0 down
+pgrep -af '[b]umble-hci-bridge'
+
+sudo env BUMBLE*LOGLEVEL=DEBUG
+~/bumble-test/venv/bin/bumble-hci-bridge \
+ android-netsim:*:8877,mode=controller \
+ hci-socket:0
+```
+
+Open another terminal and type this command:
+
+```
+~/Android/Sdk/emulator/emulator -avd Medium_Phone_API_37.0 -packet-streamer-endpoint localhost:8877 -no-snapshot-load
+```
+
+Phone's bluetooth address should change if it worked
+
 ## Usage
 
 ## Support
