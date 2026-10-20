@@ -182,7 +182,7 @@ private:
     void decideMaxSizeOfNodeAndEdgeText(const int movable_node_id_);
 
     /**
-     * @brief draw
+     * @brief Draw the generated text of the current node while maintaining the correct sizing and offseting.
      * 
      * @param origin_point 
      * @param generated_text 
@@ -191,7 +191,7 @@ private:
     void drawGeneratedText(const cv::Point2d origin_point, std::vector<std::string> generated_text, int movable_node_id);
 
     /**
-     * @brief 
+     * @brief Based on the ammount of rows of text to print from a std::vector , calculate the cummulative sum of gap
      * 
      * @param generated_text 
      * @return int 
@@ -199,7 +199,7 @@ private:
     int textGapSum(std::vector<cv::String> generated_text);
 
     /**
-     * @brief 
+     * @brief Calculate the rectange width and height in which the text from std::vector fits
      * 
      * @param generated_text 
      * @return cv::Size 
@@ -207,7 +207,7 @@ private:
     cv::Size rectangleOfTextSize(std::vector<cv::String> generated_text);
 
     /**
-     * @brief 
+     * @brief Check if the calculated minimum rectangle in which the text of std::vector fits, also fits on the screen. // i think this shit does NOT work, because it prob should throw false if it extends outisde screen, which it doesnt rn...
      * 
      * @param rectangle 
      * @return true 
@@ -223,14 +223,6 @@ private:
      * @return std::pair<cv::Point2d, cv::Point2d> 
      */
     std::pair<cv::Point2d, cv::Point2d> layoutNodeAndEdgeText(cv::Size rectangleNodeText, cv::Size rectangleEdgeText);
-
-    /**
-     * @brief 
-     * 
-     * @param origin_point 
-     * @param generated_text_node 
-     */
-    void drawGeneratedText(cv::Point2d origin_point, std::vector<std::string> generated_text_node);
 
     const Graph &graph_;
     cv::Mat &img_;
