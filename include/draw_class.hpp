@@ -17,7 +17,7 @@ public:
     Draw(const Graph &Graph, cv::Mat &img);
 
     /**
-     * @brief 
+     * @brief Ensure the currenct screen width and heigh has not been changed, alongside with the size of the image and the type of the image - then call drawFrame 
      * 
      * @param movable_node_id_ 
      */
@@ -26,20 +26,20 @@ public:
 private:
 
     /**
-     * @brief 
+     * @brief Call drawNodes, drawEdges, and drawText on the currently active node
      * 
      * @param movable_node_id_ 
      */
     void drawGraph(const int movable_node_id_);
 
     /**
-     * @brief 
+     * @brief  Call drawNode for each node in the graph
      * 
      */
     void drawNodes();
 
     /**
-     * @brief 
+     * @brief Call drawNodeVehicleSize, drawNodeInner, drawNodeMeasurmentError and drawNodeAxis on the passed node
      * 
      * @param node 
      */
