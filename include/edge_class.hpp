@@ -4,6 +4,15 @@
 
 #include <reusable_calculations.hpp>
 
+/**
+* @file edge_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the edge class, thats the representation of a "relation of measuring" between two nodes - the source: observer, and the end node: target
+*/
+
 class Edge
 {
     friend class Graph;

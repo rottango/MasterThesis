@@ -5,6 +5,16 @@
 #include <group_class.hpp>
 #include <unordered_map>
 
+/**
+* @file grouping_manager_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the grouping manager class,  which is not yet implemented, as its not necessary for basic functionality. It will be necessary when I will want to generalize this solution to N:N
+*/
+
+
 class GroupingManager
 {
 public:

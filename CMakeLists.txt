@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  
  set(
  SOURCES
- src/application_node.cpp
+ src/application_class.cpp
  src/color_palet_struct.cpp
  src/draw_class.cpp
  src/edge_class.cpp

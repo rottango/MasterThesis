@@ -4,6 +4,15 @@
 #include <opencv2/opencv.hpp>
 #include <reusable_calculations.hpp>
 
+/**
+* @file draw_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the draw class, thats the class responsible for putting pixels on the image, that will later be shown on the screen
+*/
+
 class Draw
 {
 public:

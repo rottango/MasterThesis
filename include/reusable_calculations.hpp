@@ -57,7 +57,7 @@ double normalizeAngleDegrees(double angle_degrees);
 double distanceBetweenTwoPoints(cv::Point2d point_1, cv::Point2d point_2);
 
 /**
- * @brief Calculate the angle between two points and then normalize the results to the normalized rangesolution provided by the one and only - gf
+ * @brief Calculate the angle between two points and then normalize the results to the normalized range solution provided by the one and only - gf
  * 
  * @param point_observer 
  * @param point_target 

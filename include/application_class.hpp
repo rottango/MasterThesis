@@ -8,6 +8,15 @@
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
 
+/**
+* @file application_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the application class, thats the main coordinator of all tasks
+*/
+
 class Application
 {
 public:

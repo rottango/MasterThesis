@@ -3,6 +3,15 @@
 #include <cstdint>
 #include <vector>
 
+/**
+* @file group_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the group class, which is not yet implemented, as its not necessary for basic functionality. It will be necessary when I will want to generalize this solution to N:N
+*/
+
 class Group
 {
 public:

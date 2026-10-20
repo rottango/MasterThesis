@@ -11,7 +11,7 @@
 * @date 20.10.2026
 * @see ‘‘ OpenCV2 ’’ 
 *
-* @brief Header file for the node, that the software representation of a UGV.
+* @brief Header file for the node class, that the software representation of a UGV.
 */
 class Node
 {

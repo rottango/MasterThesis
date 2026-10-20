@@ -11,6 +11,16 @@
 #include <node_class.hpp>
 #include <spdlog/spdlog.h>
 
+
+/**
+* @file graph_class.hpp
+* @author rottango
+* @date 20.10.2026
+* @see ‘‘ OpenCV2 ’’ 
+*
+* @brief Header file for the graph class, thats the grouping of all nodes and edges and in real life - thats the single usage of the UWB measuring application.
+*/
+
 class Graph
 {
 public:
