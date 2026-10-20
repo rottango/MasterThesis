@@ -21,7 +21,7 @@ public:
     Graph();
 
     /**
-     * @brief 
+     * @brief Add a node to the graph, giving it a unique node id
      * 
      * @param cartesian_x_y_point_ 
      * @param theta_rotation_degrees_ 
@@ -39,20 +39,20 @@ public:
                     colorPalet node_color_palet_);
 
     /**
-     * @brief 
+     * @brief Remove a node from the graph based on the node id
      * 
      * @param node_id 
      */
     void removeNodeById(uint8_t node_id);
 
     /**
-     * @brief 
+     * @brief Remove all nodes from a graph
      * 
      */
     void removeAllNodes();
 
     /**
-     * @brief 
+     * @brief Return a non modifiable read-only reference to a node object based on the node id  
      * 
      * @param node_id 
      * @return const Node& 
@@ -60,7 +60,7 @@ public:
     const Node &findNodeByIdReadOnly(uint8_t node_id) const;
 
     /**
-     * @brief 
+     * @brief Return a modifiable read-write reference of a node object  based on the node id  
      * 
      * @param node_id 
      * @return Node& 
@@ -68,22 +68,14 @@ public:
     Node &findNodeByIdReadWrite(uint8_t node_id);
 
     /**
-     * @brief 
-     * 
-     * @return true 
-     * @return false 
-     */
-    bool doesNodeExist();
-
-    /**
-     * @brief 
+     * @brief Returns the numbers of nodes in the graph
      * 
      * @return uint8_t 
      */
     uint8_t numerOfNodes() const;
 
     /**
-     * @brief 
+     * @brief  Add an edge to the graph between the observer and target nodes, giving it a unique edge id
      * 
      * @param observer_id 
      * @param target_id_ 
@@ -93,20 +85,20 @@ public:
                     uint8_t target_id_);
 
     /**
-     * @brief 
+     * @brief Remove an edge from the graph based on the observer's and target's id
      * 
      * @param edge_pair 
      */
     void removeEdgeByNodeIds(std::pair<uint8_t, uint8_t> edge_pair);
 
     /**
-     * @brief 
+     * @brief Remove all edges from a graph
      * 
      */
     void removeAllEdges();
 
     /**
-     * @brief 
+     * @brief Return a non modifiable read-only reference to an edge object based on the edge pair consisting of observer's ad target's id  
      * 
      * @param edge_pair 
      * @return const Edge& 
@@ -114,7 +106,7 @@ public:
     const Edge &findEdgeByNodeIdsReadOnly(std::pair<uint8_t, uint8_t> edge_pair) const; // read-only reference to an existing object
 
     /**
-     * @brief 
+     * @brief Return a modifiable read-write reference of an edge object based on the edge pair consisting of observer's ad target's id  
      * 
      * @param edge_pair 
      * @return Edge& 
@@ -122,15 +114,7 @@ public:
     Edge &findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t> edge_pair); // read-write reference to an existing object
 
     /**
-     * @brief 
-     * 
-     * @return true 
-     * @return false 
-     */
-    bool doesEdgeExist();
-
-    /**
-     * @brief 
+     * @brief Return the number of edges
      * 
      * @return uint8_t 
      */
@@ -151,7 +135,8 @@ public:
     const std::map<std::pair<uint8_t, uint8_t>, Edge> &getEdges() const;
 
     /**
-     * @brief 
+     * @brief Call updateAllEdges
+
      * 
      */
     void updateNodesAndEdges();
@@ -159,14 +144,14 @@ public:
 private:
     
     /**
-     * @brief 
+     * @brief Generate a unique node id 
      * 
      * @return uint8_t 
      */
     uint8_t nodeIDGeneration();
 
     /**
-     * @brief 
+     * @brief Verify that the passed node id generated is not taken.
      * 
      * @param node_id 
      * @return true 
@@ -175,14 +160,14 @@ private:
     bool isNodeIDValid(uint8_t node_id);
 
     /**
-     * @brief 
+     * @brief Generate a unique edge id
      * 
      * @return uint8_t 
      */
     uint8_t edgeIDGeneration();
 
     /**
-     * @brief 
+     * @brief Verify that the passed edge id generated is not taken.
      * 
      * @param edge_id 
      * @return true 
@@ -191,13 +176,13 @@ private:
     bool isEdgeIDValid(uint8_t edge_id);
 
     /**
-     * @brief   
+     * @brief Call updateEdge for all edges in the graph
      * 
      */
     void updateAllEdges();
 
     /**
-     * @brief 
+     * @brief Update the current distance from the observer and target and the angle between them
      * 
      * @param edge_id 
      * @param observer_id 

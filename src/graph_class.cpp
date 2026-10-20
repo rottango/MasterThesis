@@ -78,10 +78,6 @@ Node &Graph::findNodeByIdReadWrite(uint8_t node_id)
     return it->second;
 }
 
-// bool Graph::doesNodeExist() // implemented in findNodeByIdReadOnly
-// {
-// }
-
 uint8_t Graph::numerOfNodes() const
 {
     spdlog::info("Entering Graph::numerOfNodes()");
@@ -162,10 +158,6 @@ Edge &Graph::findEdgeByNodeIdsReadWrite(std::pair<uint8_t, uint8_t> edge_pair) /
 
     return it->second;
 }
-
-// bool Graph::doesEdgeExist() // implemented in findEdgeByNodeIdsReadOnly
-// {
-// }
 
 uint8_t Graph::numerOfEdges() const
 {
