@@ -34,10 +34,10 @@ sudo systemctl stop bluetooth.service
 sudo hciconfig hci0 down
 pgrep -af '[b]umble-hci-bridge'
 
-sudo env BUMBLE*LOGLEVEL=DEBUG
-~/bumble-test/venv/bin/bumble-hci-bridge \
- android-netsim:*:8877,mode=controller \
- hci-socket:0
+sudo env BUMBLE_LOGLEVEL=DEBUG \
+  ~/bumble-test/venv/bin/bumble-hci-bridge \
+  android-netsim:_:8877,mode=controller \
+  hci-socket:0
 ```
 
 Open another terminal and type this command:
