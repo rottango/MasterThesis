@@ -1,0 +1,3 @@
+class UwbDevice{
+    int b;
+};
