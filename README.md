@@ -64,6 +64,21 @@ Phone's bluetooth address should change if it worked
       - **Stores that information in containers of adequate type for all the information**
       - Gives the ability to access all measuerements that the user wants, so he can later calculate his own formulas
       - Provides and ok UI
+        - To create the software for this GOAL you should do this in UwbDevice repository:
+          1. Discovere the connected DW1001 device (On linux)
+
+          2. Open a serial connection to the DW1001
+
+          3. Send commands to the device
+
+          4. Recieve the status of the device
+
+          5. Recieve measurements from the device
+
+          6. Parse the measurements and store them in proper containers
+
+          7. Think about using Bluetooth as well?
+
 - Code for getting the data off the UWB Device for processing.
 - Configuration of the devices for the communication between two nodes such so they satisfy the tasks. (They localize each other).
 - Code for processing of the raw data, such so i calculate the atan2 (the relative bearing between nodes).
