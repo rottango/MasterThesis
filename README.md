@@ -56,6 +56,14 @@ Phone's bluetooth address should change if it worked
 
 - Doxygen comments on develop. - Anticipate a lot of modification on other branches - they are not worth documenting
 - Physical Hardware Configuration and basic tests. - Not yet relevant to the Master Thesis, but just a check if the hardware works at its core.
+  - **PRIORITY**: The current objective is to:
+    - Create a c++ program that interacts with the API of the UWB, as described by: DWM1001-API-Guide.pdf form Decawave Ltd, it has to:
+      - **Send commands**
+      - **Recieve measurements**
+      - Recieve the status of the device
+      - **Stores that information in containers of adequate type for all the information**
+      - Gives the ability to access all measuerements that the user wants, so he can later calculate his own formulas
+      - Provides and ok UI
 - Code for getting the data off the UWB Device for processing.
 - Configuration of the devices for the communication between two nodes such so they satisfy the tasks. (They localize each other).
 - Code for processing of the raw data, such so i calculate the atan2 (the relative bearing between nodes).
