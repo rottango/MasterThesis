@@ -52,6 +52,19 @@ Phone's bluetooth address should change if it worked
 
 ## Support
 
+## Current Roadmap on feat/uwb_device
+
+1. Fix existing visualization problems
+2. Define ownership and coordinate conventions
+3. Define PositionSample
+4. Implement LatestPositionBuffer
+5. Connect the buffer to visualization
+6. Implement Dwm1001Protocol
+7. Implement SerialPort
+8. Implement UwbService
+9. Integrate everything in main.cpp
+10. Implement CommandQueue and user commands
+
 ## Roadmap
 
 - Doxygen comments on develop. - Anticipate a lot of modification on other branches - they are not worth documenting
