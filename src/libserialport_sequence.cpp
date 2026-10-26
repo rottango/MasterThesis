@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <cstring>
 #include <cstdlib>
+#include <cstdint>
+#include <iostream>
+#include <iomanip>
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
@@ -98,7 +101,7 @@ int main(int argc, char **argv)
 	 * use that port in the rest of your program), take a copy
 	 * of it first using sp_copy_port(). */
 
-     //=============================================
+//=============================================
      
 	/* A pointer to a struct sp_port, which will refer to
 	 * the port found. */
@@ -153,6 +156,8 @@ int main(int argc, char **argv)
 		printf("MAC: %s\n", sp_get_port_bluetooth_address(port));
 	}
 
+//=============================================
+
 	/* Display some basic information about the port. */
 	printf("Port name: %s\n", sp_get_port_name(port));
 	printf("Description: %s\n", sp_get_port_description(port));
@@ -193,56 +198,109 @@ int main(int argc, char **argv)
 	 * There are no "default" settings applied by libserialport.
 	 * When you open a port it has the defaults from the OS or driver,
 	 * or the settings left over by the last program to use it. */
-	printf("Setting port to 115200 8N1, no flow control.\n");
-	check(sp_set_baudrate(port, 115200));
-	check(sp_set_bits(port, 8));
-	check(sp_set_parity(port, SP_PARITY_NONE));
-	check(sp_set_stopbits(port, 1));
-	check(sp_set_flowcontrol(port, SP_FLOWCONTROL_NONE));
 
 	/* A pointer to a struct sp_port_config, which we'll use for the config
 	 * read back from the port. The pointer will be set by sp_new_config(). */
-	struct sp_port_config *initial_config;
-
+	struct sp_port_config *config;
+	const int config_baudrate = 115200;
+	const int config_bits = 8;
+	const int config_stopbits = 1;
+	const enum sp_parity config_parity = SP_PARITY_NONE;
+	const enum sp_flowcontrol config_flowcontrol= SP_FLOWCONTROL_NONE;
 	/* Allocate a configuration for us to read the port config into. */
-	check(sp_new_config(&initial_config));
+	check(sp_new_config(&config));
 
-	/* Read the current config from the port into that configuration. */
-	check(sp_get_config(port, initial_config));
+	printf("Setting port parameters according to MDEK1001 kit user manual.\n");
+	check(sp_set_config_baudrate(config, config_baudrate));
+	check(sp_set_config_bits(config, config_bits));
+	check(sp_set_config_stopbits(config, config_stopbits));
+	check(sp_set_config_parity(config, config_parity));
+	check(sp_set_config_flowcontrol(config, config_flowcontrol));
 
-	/* Display some of the settings read back from the port. */
-	int baudrate, bits, stopbits;
-	enum sp_parity parity;
-	check(sp_get_config_baudrate(initial_config, &baudrate));
-	check(sp_get_config_bits(initial_config, &bits));
-	check(sp_get_config_stopbits(initial_config, &stopbits));
-	check(sp_get_config_parity(initial_config, &parity));
-	printf("Baudrate: %d, data bits: %d, parity: %s, stop bits: %d\n",
-			baudrate, bits, parity_name(parity), stopbits);
-
-	/* Create a different configuration to have ready for use. */
-	printf("Creating new config for 9600 7E2, XON/XOFF flow control.\n");
-	struct sp_port_config *other_config;
-	check(sp_new_config(&other_config));
-	check(sp_set_config_baudrate(other_config, 9600));
-	check(sp_set_config_bits(other_config, 7));
-	check(sp_set_config_parity(other_config, SP_PARITY_EVEN));
-	check(sp_set_config_stopbits(other_config, 2));
-	check(sp_set_config_flowcontrol(other_config, SP_FLOWCONTROL_XONXOFF));
-
-	/* We can apply the new config to the port in one call. */
 	printf("Applying new configuration.\n");
-	check(sp_set_config(port, other_config));
+	check(sp_set_config(port, config));
 
-	/* And now switch back to our original config. */
-	printf("Setting port back to previous config.\n");
-	check(sp_set_config(port, initial_config));
+	
+	struct sp_port_config *device_config;
+	check(sp_new_config(&device_config));
+
+	int device_baudrate, device_bits, device_stopbits;
+	enum sp_parity device_parity;
+
+	printf("Verifying device configuration.\n");
+	/* Read the current config from the port into that configuration. */
+	check(sp_get_config(port, device_config));
+
+	check(sp_get_config_baudrate(device_config, &device_baudrate));
+	check(sp_get_config_bits(device_config, &device_bits));
+	check(sp_get_config_stopbits(device_config, &device_stopbits));
+	check(sp_get_config_parity(device_config, &device_parity));
+
+	if(config_baudrate == device_baudrate &&
+		config_bits == device_bits &&
+		config_stopbits == device_stopbits &&
+		config_parity == device_parity)
+	{
+			printf("Device has a correct configuration.\n");
+	}else{
+			printf("Error: Device has an incorrect configuration.\n");
+
+	}
+	
+	printf("Configuration: Baudrate: %d, data bits: %d, parity: %s, stop bits: %d\n",
+			device_baudrate, device_bits, parity_name(device_parity), device_stopbits);
+
+/* This example can be used with one or two ports. With one port, it
+	 * will send data and try to receive it on the same port. This can be
+	 * done by connecting a single wire between the TX and RX pins of the
+	 * port.
+	 *
+	 * Alternatively it can be used with two serial ports connected to each
+	 * other, so that data can be sent on one and received on the other.
+	 * This can be done with two ports with TX/RX cross-connected, e.g. by
+	 * a "null modem" cable, or with a pair of interconnected virtual ports,
+	 * such as those created by com0com on Windows or tty0tty on Linux. */
+
+
+	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
+
+	
+	uint8_t request[2] = {0x02, 0x00};
+	enum sp_return write_result = sp_blocking_write(port,request,sizeof(request),1000);
+	if(write_result<0){
+		std::cout<<"Timeout reached on write probably... \n";
+	}
+	else{
+		uint8_t response[18];
+
+		enum sp_return read_result = sp_blocking_read(port,response,sizeof(response),1000);
+
+		std::cout<<"Ammount of bytes written is "<<write_result<<" out of "<<sizeof(request) <<"\n";
+
+		if(read_result<0){
+		std::cout<<"Timeout reached on read probably... \n";
+		}
+		else{
+			std::cout<<"Ammount of bytes read is "<<read_result<<" out of "<<sizeof(response) <<"\n";
+			for (int i = 0; i < read_result; i++) {
+            std::cout << "0x"
+                      << std::hex
+                      << std::uppercase
+                      << std::setw(2)
+                      << std::setfill('0')
+                      << static_cast<unsigned>(response[i])
+                      << " ";
+        	}
+		}
+		std::cout<<"\n";
+	}
 
 	/* Now clean up by closing the port and freeing structures. */
 	check(sp_close(port));
 	sp_free_port(port);
-	sp_free_config(initial_config);
-	sp_free_config(other_config);
+	sp_free_config(device_config);
+	sp_free_config(config);
+
 	free(uwb_port_name);
 	
 	return 0;
