@@ -66,6 +66,7 @@ bool Application::initialize()
     // node_id_2 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 3 / 6, screen_height_ * 2 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv2ColorPalet);
     // node_id_3 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 5 / 6, screen_height_ * 1 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
     // node_id_4 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 2, screen_height_ * 1 / 2), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
+    node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_)));
 
     // edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
     // edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
@@ -216,7 +217,7 @@ void Application::processInput()
 {
     spdlog::info("Entering Application::processInput()");
 
-    char pressedKey = cv::waitKey();
+    char pressedKey = cv::waitKey(100);
     switch (pressedKey)
     {
     case 'w':
