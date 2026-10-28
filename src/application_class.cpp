@@ -15,7 +15,12 @@ void Application::run()
         clearFrame();
         processInput();
         update();
-        render();
+        if(graph_.numerOfNodes()==0){
+            spdlog::warn("There is no nodes in the graph");
+        }
+        else{
+            render();
+        }
         presentFrame();
     }
     end();
@@ -66,7 +71,7 @@ bool Application::initialize()
     // node_id_2 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 3 / 6, screen_height_ * 2 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv2ColorPalet);
     // node_id_3 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 5 / 6, screen_height_ * 1 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
     // node_id_4 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 2, screen_height_ * 1 / 2), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
-    node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_)));
+    // node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_)));
 
     // edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
     // edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
@@ -115,29 +120,51 @@ void Application::end()
 void Application::exectuteInput(char character)
 {
     spdlog::info("Entering Application::exectuteInput()");
-
-    Node &node = graph_.findNodeByIdReadWrite(movable_node_id_);
+    Node *node = nullptr;
+    bool doesAnyNodeExist;
+    
+    if(graph_.numerOfNodes()==0){
+        doesAnyNodeExist = false;  
+    }else{
+        doesAnyNodeExist = true;
+        node = &graph_.findNodeByIdReadWrite(movable_node_id_);
+    }
     switch (character)
     {
     case 'a':
-        node.changePosition(cv::Point2d(node.getXYPoint().x - position_step_size_, node.getXYPoint().y));
+        if(doesAnyNodeExist==false){
+            break;
+        }
+        node->changePosition(cv::Point2d(node->getXYPoint().x - position_step_size_, node->getXYPoint().y));
         break;
     case 's':
-        node.changePosition(cv::Point2d(node.getXYPoint().x, node.getXYPoint().y - position_step_size_));
+        if(!doesAnyNodeExist)
+            break;
+        node->changePosition(cv::Point2d(node->getXYPoint().x, node->getXYPoint().y - position_step_size_));
         break;
     case 'd':
-        node.changePosition(cv::Point2d(node.getXYPoint().x + position_step_size_, node.getXYPoint().y));
+        if(!doesAnyNodeExist)
+            break;
+        node->changePosition(cv::Point2d(node->getXYPoint().x + position_step_size_, node->getXYPoint().y));
         break;
     case 'w':
-        node.changePosition(cv::Point2d(node.getXYPoint().x, node.getXYPoint().y + position_step_size_));
+        if(!doesAnyNodeExist)
+            break;
+        node->changePosition(cv::Point2d(node->getXYPoint().x, node->getXYPoint().y + position_step_size_));
         break;
     case 'l':
-        node.rotateNodesAxis(-angle_step_size_);
+        if(!doesAnyNodeExist)
+            break;
+        node->rotateNodesAxis(-angle_step_size_);
         break;
     case 'r':
-        node.rotateNodesAxis(angle_step_size_);
+        if(!doesAnyNodeExist)
+            break;
+        node->rotateNodesAxis(angle_step_size_);
         break;
     case 'x':
+        if(!doesAnyNodeExist)
+            break;
         min_difference_ = 255;
         node_id_of_min_difference = movable_node_id_;
         for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
@@ -161,23 +188,51 @@ void Application::exectuteInput(char character)
         movable_node_id_ = 1;
         spdlog::info("movable_node_id=1");
     case '=':
-        node.setMeasurmentErrorCm(node.getMeasurmentError() + 1);
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
+        node->setMeasurmentErrorCm(node->getMeasurmentError() + 1);
     case '-':
-        node.setMeasurmentErrorCm(node.getMeasurmentError() - 1);
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
+        node->setMeasurmentErrorCm(node->getMeasurmentError() - 1);
         break;
     case ']':
-        node.setVehicleSize(node.getVehicleSize() + 1);
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
+        node->setVehicleSize(node->getVehicleSize() + 1);
         break;
     case '[':
-        node.setVehicleSize(node.getVehicleSize() - 1);
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
+        node->setVehicleSize(node->getVehicleSize() - 1);
         break;
     case '\'':
-        node.setInner(node.getInner() + 1);
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
+        node->setInner(node->getInner() + 1);
         break;
     case ';':
-        node.setInner(node.getInner() - 1);
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
+        node->setInner(node->getInner() - 1);
         break;
     case 'e':
+        if(!doesAnyNodeExist){
+            spdlog::warn("There is no nodes in the graph");
+            break;
+        }
         int target_id_temp;
 
         std::cout << "Provide target_id: ";
