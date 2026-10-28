@@ -129,6 +129,7 @@ void Application::exectuteInput(char character)
         doesAnyNodeExist = true;
         node = &graph_.findNodeByIdReadWrite(movable_node_id_);
     }
+
     switch (character)
     {
     case 'a':
@@ -165,6 +166,7 @@ void Application::exectuteInput(char character)
     case 'x':
         if(!doesAnyNodeExist)
             break;
+        
         min_difference_ = 255;
         node_id_of_min_difference = movable_node_id_;
         for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
@@ -176,7 +178,8 @@ void Application::exectuteInput(char character)
                 min_difference_ = temp_result;
                 node_id_of_min_difference = it->second.getNodeId();
             }
-        };
+        }
+
         if (node_id_of_min_difference != movable_node_id_)
         {
             movable_node_id_ = node_id_of_min_difference;
@@ -187,12 +190,14 @@ void Application::exectuteInput(char character)
 
         movable_node_id_ = 1;
         spdlog::info("movable_node_id=1");
+        break;
     case '=':
         if(!doesAnyNodeExist){
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setMeasurmentErrorCm(node->getMeasurmentError() + 1);
+        break;
     case '-':
         if(!doesAnyNodeExist){
             spdlog::warn("There is no nodes in the graph");
