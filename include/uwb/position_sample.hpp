@@ -15,7 +15,7 @@ enum UwbErrorCode{
     OPERATION_NOT_PERMITTED
 };
 
-std::string errorCodeToText(const UwbErrorCode &error_code){
+inline std::string errorCodeToText(const UwbErrorCode &error_code){
     switch (error_code)
     {
         case OK:
@@ -64,7 +64,7 @@ struct UwbPositionDecoded{
     std::uint8_t value_quality_factor;
 };
 
-bool decodeUwbPosition(const struct UwbPositionRaw &UwbPositionRaw, struct UwbPositionDecoded &UwbPositionDecoded){
+inline bool decodeUwbPosition(const struct UwbPositionRaw &UwbPositionRaw, struct UwbPositionDecoded &UwbPositionDecoded){
 
     UwbPositionDecoded.type_general = static_cast<std::uint8_t>(UwbPositionRaw.type_general);
     UwbPositionDecoded.length_general = static_cast<std::uint8_t>(UwbPositionRaw.length_general);
@@ -82,7 +82,7 @@ bool decodeUwbPosition(const struct UwbPositionRaw &UwbPositionRaw, struct UwbPo
     return true;
 }
 
-void displayUwbPositionData(const struct UwbPositionDecoded &UwbPositionDecoded, const struct UwbPositionRaw &UwbPositionRaw){
+inline void displayUwbPositionData(const struct UwbPositionDecoded &UwbPositionDecoded, const struct UwbPositionRaw &UwbPositionRaw){
     std::cout<<std::dec<<"General Type: "<<static_cast<unsigned>(UwbPositionDecoded.type_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.type_general)<<"\n";
     std::cout<<std::dec<<"General Length [B]: "<<static_cast<unsigned>(UwbPositionDecoded.length_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length_general)<<"\n";
     std::cout<<std::dec<<"General Error Code: "<<static_cast<unsigned>(UwbPositionDecoded.value_err_code_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.value_err_code_general)<<"\n";
@@ -95,7 +95,7 @@ void displayUwbPositionData(const struct UwbPositionDecoded &UwbPositionDecoded,
 }
 
 
-UwbErrorCode verifyErrorCode(const struct UwbPositionDecoded &UwbPositionDecoded){
+inline UwbErrorCode verifyErrorCode(const struct UwbPositionDecoded &UwbPositionDecoded){
     switch(UwbPositionDecoded.value_err_code_general){
         case OK:
             return OK;

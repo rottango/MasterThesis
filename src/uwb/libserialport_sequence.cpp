@@ -63,7 +63,7 @@ const char *parity_name(enum sp_parity parity)
  *
  * This example file is released to the public domain. */
 
-int main(int argc, char **argv)
+int UwbDeviceProcess()
 {
 	char *uwb_port_name;
 	/* A pointer to a null-terminated array of pointers to
