@@ -15,6 +15,30 @@ enum UwbErrorCode{
     OPERATION_NOT_PERMITTED
 };
 
+std::string errorCodeToText(const UwbErrorCode &error_code){
+    switch (error_code)
+    {
+        case OK:
+            return "OK";
+        case UNKNOWN_OR_BROKEN_TLV:
+            return "UNKNOWN_OR_BROKEN_TLV";
+
+        case INTERNAL_ERROR:
+            return "INTERNAL_ERROR";
+
+        case INVALID_PARAMETER:
+            return "INVALID_PARAMETER";
+
+        case BUSY:
+            return "BUSY";
+        case OPERATION_NOT_PERMITTED:
+            return "OPERATION_NOT_PERMITTED";
+        default:
+            return "ERROR CODE NOT RECOGNIZED";
+        
+    }
+};
+
 struct UwbPositionRaw
 {
     std::byte type_general;
@@ -60,12 +84,37 @@ bool decodeUwbPosition(const struct UwbPositionRaw &UwbPositionRaw, struct UwbPo
 
 void displayUwbPositionData(const struct UwbPositionDecoded &UwbPositionDecoded, const struct UwbPositionRaw &UwbPositionRaw){
     std::cout<<std::dec<<"General Type: "<<static_cast<unsigned>(UwbPositionDecoded.type_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.type_general)<<"\n";
-    std::cout<<std::dec<<"General Length: "<<static_cast<unsigned>(UwbPositionDecoded.length_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length_general)<<"\n";
+    std::cout<<std::dec<<"General Length [B]: "<<static_cast<unsigned>(UwbPositionDecoded.length_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length_general)<<"\n";
     std::cout<<std::dec<<"General Error Code: "<<static_cast<unsigned>(UwbPositionDecoded.value_err_code_general)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.value_err_code_general)<<"\n";
     std::cout<<std::dec<<"Type: "<<static_cast<unsigned>(UwbPositionDecoded.type)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.type)<<"\n";
-    std::cout<<std::dec<<"Length: "<<static_cast<unsigned>(UwbPositionDecoded.length)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length)<<"\n";
+    std::cout<<std::dec<<"Length [B]: "<<static_cast<unsigned>(UwbPositionDecoded.length)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length)<<"\n";
     std::cout<<std::dec<<"Position x [mm]: "<<UwbPositionDecoded.value_position_x<<"\t" <<std::hex << std::uppercase << std::setw(2)<< std::setfill('0') << static_cast<unsigned>(UwbPositionRaw.value_position_x[0]) <<" "<<std::setw(2)<<static_cast<unsigned>(UwbPositionRaw.value_position_x[1]) <<" "<<std::setw(2)<< static_cast<unsigned>(UwbPositionRaw.value_position_x[2]) <<" "<<std::setw(2)<<static_cast<unsigned>(UwbPositionRaw.value_position_x[3]) <<std::setfill(' ')<<"\n";
     std::cout<<std::dec<<"Position y [mm]: "<<UwbPositionDecoded.value_position_y<<"\t" <<std::hex << std::uppercase << std::setw(2)<< std::setfill('0') << static_cast<unsigned>(UwbPositionRaw.value_position_y[0]) <<" "<<std::setw(2)<<static_cast<unsigned>(UwbPositionRaw.value_position_y[1]) <<" "<<std::setw(2)<< static_cast<unsigned>(UwbPositionRaw.value_position_y[2]) <<" "<<std::setw(2)<<static_cast<unsigned>(UwbPositionRaw.value_position_y[3]) <<std::setfill(' ')<<"\n";
     std::cout<<std::dec<<"Position z [mm]: "<<UwbPositionDecoded.value_position_z<<"\t" <<std::hex << std::uppercase << std::setw(2)<< std::setfill('0') << static_cast<unsigned>(UwbPositionRaw.value_position_z[0]) <<" "<<std::setw(2)<<static_cast<unsigned>(UwbPositionRaw.value_position_z[1]) <<" "<<std::setw(2)<< static_cast<unsigned>(UwbPositionRaw.value_position_z[2]) <<" "<<std::setw(2)<<static_cast<unsigned>(UwbPositionRaw.value_position_z[3]) <<std::setfill(' ')<<"\n";
-    std::cout<<std::dec<<"Length: "<<static_cast<unsigned>(UwbPositionDecoded.value_quality_factor)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.value_quality_factor)<<"\n";
+    std::cout<<std::dec<<"Quality [%]: "<<static_cast<unsigned>(UwbPositionDecoded.value_quality_factor)<<"\t" <<std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.value_quality_factor)<<"\n";
 }
+
+
+UwbErrorCode verifyErrorCode(const struct UwbPositionDecoded &UwbPositionDecoded){
+    switch(UwbPositionDecoded.value_err_code_general){
+        case OK:
+            return OK;
+        case UNKNOWN_OR_BROKEN_TLV:
+            std::cout<<errorCodeToText(UNKNOWN_OR_BROKEN_TLV)<<"\n";
+            return UNKNOWN_OR_BROKEN_TLV;
+        case INTERNAL_ERROR:
+            std::cout<<errorCodeToText(INTERNAL_ERROR)<<"\n";
+            return UNKNOWN_OR_BROKEN_TLV;
+        case INVALID_PARAMETER:
+            std::cout<<errorCodeToText(INVALID_PARAMETER)<<"\n";
+            return UNKNOWN_OR_BROKEN_TLV;
+        case BUSY:
+            std::cout<<errorCodeToText(BUSY)<<"\n";
+            return UNKNOWN_OR_BROKEN_TLV;
+        case OPERATION_NOT_PERMITTED:
+            std::cout<<errorCodeToText(OPERATION_NOT_PERMITTED)<<"\n";
+            return UNKNOWN_OR_BROKEN_TLV;
+        default:
+            break;
+    }
+};
