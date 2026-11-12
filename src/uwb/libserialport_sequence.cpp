@@ -1,4 +1,6 @@
 #include <libserialport.h>
+#include <position_sample.hpp>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
@@ -6,6 +8,8 @@
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
+
+
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
@@ -263,7 +267,9 @@ int main(int argc, char **argv)
 
 
 	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
-
+	
+	UwbPositionRaw uwb_position_raw;
+	UwbPositionDecoded uwb_position_decoded;
 	
 	uint8_t request[2] = {0x02, 0x00};
 	enum sp_return write_result = sp_blocking_write(port,request,sizeof(request),1000);
@@ -293,7 +299,31 @@ int main(int argc, char **argv)
         	}
 		}
 		std::cout<<"\n";
+		uwb_position_raw.type_general=static_cast<std::byte>(response[0]);
+		uwb_position_raw.length_general=static_cast<std::byte>(response[1]);
+		uwb_position_raw.value_err_code_general=static_cast<std::byte>(response[2]);
+		uwb_position_raw.type=static_cast<std::byte>(response[3]);
+		uwb_position_raw.length=static_cast<std::byte>(response[4]);
+		uwb_position_raw.value_position_x[0]=static_cast<std::byte>(response[5]);
+		uwb_position_raw.value_position_x[1]=static_cast<std::byte>(response[6]);
+		uwb_position_raw.value_position_x[2]=static_cast<std::byte>(response[7]);
+		uwb_position_raw.value_position_x[3]=static_cast<std::byte>(response[8]);
+
+		uwb_position_raw.value_position_y[0]=static_cast<std::byte>(response[9]);
+		uwb_position_raw.value_position_y[1]=static_cast<std::byte>(response[10]);
+		uwb_position_raw.value_position_y[2]=static_cast<std::byte>(response[11]);
+		uwb_position_raw.value_position_y[3]=static_cast<std::byte>(response[12]);
+
+		uwb_position_raw.value_position_z[0]=static_cast<std::byte>(response[13]);
+		uwb_position_raw.value_position_z[1]=static_cast<std::byte>(response[14]);
+		uwb_position_raw.value_position_z[2]=static_cast<std::byte>(response[15]);
+		uwb_position_raw.value_position_z[3]=static_cast<std::byte>(response[16]);
+
+		uwb_position_raw.value_quality_factor=static_cast<std::byte>(response[17]);
 	}
+
+	decodeUwbPosition(uwb_position_raw,uwb_position_decoded);
+	displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
 
 	/* Now clean up by closing the port and freeing structures. */
 	check(sp_close(port));
