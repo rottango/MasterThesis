@@ -297,6 +297,11 @@ int main(int argc, char **argv)
 		}else{
 		std::cout<<"\n";
 		std::cout<<"Ammount of bytes read is "<<read_result<<" out of 18" <<"\n";
+
+		for (int i = 0; i < read_result; i++) {
+            std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " <<std::dec;
+        }
+
 		uwb_position_raw.type_general=static_cast<std::byte>(response[0]);
 		uwb_position_raw.length_general=static_cast<std::byte>(response[1]);
 		uwb_position_raw.value_err_code_general=static_cast<std::byte>(response[2]);
@@ -324,15 +329,15 @@ int main(int argc, char **argv)
 		/*
 			Decide here whether or not the recieved data is valid.
 		*/
-		
-		displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
-
+		UwbErrorCode error_code = verifyErrorCode(uwb_position_decoded);
+		if(error_code == OK){
+			displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
+		}
 		auto end = std::chrono::steady_clock::now();
 		auto elapsed = end - start;
-
 		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 
-		std::cout << std::dec << "L.p = "<<i<<" \nTime that this loop took: "<< duration.count() << " ms\n\n";
+		std::cout << std::dec << "L.p. = "<<i<<" \nTime that this loop took: "<< duration.count() << " ms\n\n";
 		}
 	}
 
