@@ -8,8 +8,8 @@
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
-
-
+#include <chrono>
+#include <thread>
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
@@ -270,7 +270,10 @@ int main(int argc, char **argv)
 	
 	UwbPositionRaw uwb_position_raw;
 	UwbPositionDecoded uwb_position_decoded;
-	
+
+	for(int i=0;i<10;i++){
+	auto start = std::chrono::steady_clock::now();
+	std::this_thread::sleep_for(std::chrono::milliseconds(7));
 	uint8_t request[2] = {0x02, 0x00};
 	enum sp_return write_result = sp_blocking_write(port,request,sizeof(request),1000);
 	if(write_result<0){
@@ -325,6 +328,13 @@ int main(int argc, char **argv)
 	decodeUwbPosition(uwb_position_raw,uwb_position_decoded);
 	displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
 
+	auto end = std::chrono::steady_clock::now();
+	auto elapsed = end - start;
+
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+
+	std::cout << std::dec << "Time that this loop took: "<< duration.count() << " ms\n\n";
+	}
 	/* Now clean up by closing the port and freeing structures. */
 	check(sp_close(port));
 	sp_free_port(port);
