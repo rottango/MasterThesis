@@ -1,4 +1,5 @@
 #include <libserialport_sequence.hpp>
+#include <application_class.hpp>
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
@@ -52,7 +53,7 @@ const char *parity_name(enum sp_parity parity)
  *
  * This example file is released to the public domain. */
 
-int UwbDeviceProcess()
+int UwbDeviceProcess(Application &app)
 {
 	char *uwb_port_name;
 	/* A pointer to a null-terminated array of pointers to
@@ -260,7 +261,7 @@ int UwbDeviceProcess()
 	UwbPositionRaw uwb_position_raw;
 	UwbPositionDecoded uwb_position_decoded;
 
-	for(int i=0;i<1000;i++){
+	while(app.getUwbRunning()){
 	auto start = std::chrono::steady_clock::now();
 	std::this_thread::sleep_for(std::chrono::milliseconds(997));
 	uint8_t request[2] = {0x02, 0x00};
@@ -321,11 +322,11 @@ int UwbDeviceProcess()
 		UwbErrorCode error_code = verifyErrorCode(uwb_position_decoded);
 		if(error_code == OK){
 			displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
+			app.setUwbPosition(uwb_position_decoded.value_position_x,uwb_position_decoded.value_position_y);
 		}
 		auto end = std::chrono::steady_clock::now();
 		auto elapsed = end - start;
 		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-
 		std::cout << std::dec << "L.p. = "<<i<<" \nTime that this loop took: "<< duration.count() << " ms\n\n";
 		}
 	}

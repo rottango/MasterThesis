@@ -6,8 +6,10 @@
 #include <group_class.hpp>
 #include <grouping_manager_class.hpp>
 #include <node_class.hpp>
-#include <libserialport_sequence.hpp>
 #include <thread>
+#include <mutex>
+#include <atomic>
+#include <optional>
 
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
@@ -20,6 +22,12 @@
 *
 * @brief Header file for the application class, thats the main coordinator of all tasks
 */
+
+struct UwbPosition
+{
+    std::int32_t x_mm = 0;
+    std::int32_t y_mm = 0;
+};
 
 class Application
 {
@@ -35,6 +43,12 @@ public:
      * 
      */
     void start();
+
+    void setUwbPosition(int32_t x, int32_t y);
+    void getUwbPosition(int32_t &x, int32_t &y);
+    bool getUwbRunning() const { return uwb_running_; }
+
+    std::optional<UwbPosition> getUwbPosition() const;
 
 private:
     cv::Mat img_;
@@ -58,6 +72,11 @@ private:
 
     std::vector<uint8_t> node_id_list_;
     std::vector<uint8_t> edge_id_list_;
+
+    mutable std::mutex uwb_mutex_;
+    int uwb_x_ = 0;
+    int uwb_y_ = 0;
+    std::atomic<bool> uwb_running_{true};
 
     /**
      * @brief This function is responsible for handling each user input, and thus starting the cascade of all function calls, until the running flag is not false. 

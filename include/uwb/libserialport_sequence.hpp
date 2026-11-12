@@ -13,9 +13,10 @@
 #include <chrono>
 #include <thread>
 
+class Application;
 
 int check(enum sp_return result);
 
 const char *parity_name(enum sp_parity parity);
 
-int UwbDeviceProcess();
+int UwbDeviceProcess(Application &app);
