@@ -284,7 +284,7 @@ void Application::processInput()
     case 'o':
         //miliseconds=40;
         exectuteInput(pressedKey);
-
+        break;
     default:
         break;
     }
