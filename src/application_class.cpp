@@ -262,7 +262,7 @@ void Application::exectuteInput(char character)
     case 'o':
         int32_t x, y;
         this->getUwbPosition(x,y);
-        node.changePosition(cv::Point2d(x/10, y/10));
+        node->changePosition(cv::Point2d(x/10, y/10));
     default:
         break;
     }
