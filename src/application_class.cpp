@@ -97,6 +97,7 @@ void Application::start()
 
     initialUserInput();
     initialize();
+    std::thread UwbDataRead(UwbDeviceProcess);
     run();
 
     spdlog::info("Exiting Application::start()");

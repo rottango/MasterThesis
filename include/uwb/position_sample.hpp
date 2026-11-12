@@ -1,5 +1,5 @@
 
-#pragma ONCE
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -12,7 +12,8 @@ enum UwbErrorCode{
     INTERNAL_ERROR,
     INVALID_PARAMETER,
     BUSY,
-    OPERATION_NOT_PERMITTED
+    OPERATION_NOT_PERMITTED,
+    UNRECOGNIZED_ERROR_CODE
 };
 
 inline std::string errorCodeToText(const UwbErrorCode &error_code){
@@ -35,8 +36,8 @@ inline std::string errorCodeToText(const UwbErrorCode &error_code){
             return "OPERATION_NOT_PERMITTED";
         default:
             return "ERROR CODE NOT RECOGNIZED";
-        
     }
+    return "ERROR";
 };
 
 struct UwbPositionRaw
@@ -104,17 +105,17 @@ inline UwbErrorCode verifyErrorCode(const struct UwbPositionDecoded &UwbPosition
             return UNKNOWN_OR_BROKEN_TLV;
         case INTERNAL_ERROR:
             std::cout<<errorCodeToText(INTERNAL_ERROR)<<"\n";
-            return UNKNOWN_OR_BROKEN_TLV;
+            return INTERNAL_ERROR;
         case INVALID_PARAMETER:
             std::cout<<errorCodeToText(INVALID_PARAMETER)<<"\n";
-            return UNKNOWN_OR_BROKEN_TLV;
+            return INVALID_PARAMETER;
         case BUSY:
             std::cout<<errorCodeToText(BUSY)<<"\n";
-            return UNKNOWN_OR_BROKEN_TLV;
+            return BUSY;
         case OPERATION_NOT_PERMITTED:
             std::cout<<errorCodeToText(OPERATION_NOT_PERMITTED)<<"\n";
-            return UNKNOWN_OR_BROKEN_TLV;
+            return OPERATION_NOT_PERMITTED;
         default:
-            break;
+            return UNRECOGNIZED_ERROR_CODE;
     }
 };

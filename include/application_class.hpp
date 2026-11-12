@@ -1,9 +1,13 @@
+#pragma once
+
 #include <cstdint>
 #include <draw_class.hpp>
 #include <graph_class.hpp>
 #include <group_class.hpp>
 #include <grouping_manager_class.hpp>
 #include <node_class.hpp>
+#include <libserialport_sequence.hpp>
+#include <thread>
 
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>

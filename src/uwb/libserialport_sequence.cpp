@@ -1,15 +1,4 @@
-#include <libserialport.h>
-#include <position_sample.hpp>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <cstring>
-#include <cstdlib>
-#include <cstdint>
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-#include <thread>
+#include <libserialport_sequence.hpp>
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
