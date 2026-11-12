@@ -1,4 +1,5 @@
 #include <application_class.hpp>
+#include <libserialport_sequence.hpp>
 #include <color_palet_struct.hpp>
 
 Application::Application() : draw_{graph_, img_}
@@ -44,6 +45,8 @@ bool Application::initialize()
                       this->make_type_flag_,
                       this->background_color_};
     img_ = img_temp_;
+
+    movable_node_id_ = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_));
 
     running_ = true;
 
@@ -97,8 +100,16 @@ void Application::start()
 
     initialUserInput();
     initialize();
+
+    uwb_running_ = true;
+    std::thread uwbThread([this]() {
+        UwbDeviceProcess(*this);
+    });
+
     run();
 
+    uwb_running_ = false;
+    uwbThread.join();
     spdlog::info("Exiting Application::start()");
 }
 
@@ -187,6 +198,10 @@ void Application::exectuteInput(char character)
     case 'n':
         node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_)));
         break;
+    case 'o':
+        int32_t x, y;
+        this->getUwbPosition(x,y);
+        node.changePosition(cv::Point2d(x/10, y/10));
     default:
         break;
     }
@@ -215,8 +230,7 @@ void Application::presentFrame()
 void Application::processInput()
 {
     spdlog::info("Entering Application::processInput()");
-
-    char pressedKey = cv::waitKey();
+    char pressedKey = cv::waitKey(40);
     switch (pressedKey)
     {
     case 'w':
@@ -267,6 +281,10 @@ void Application::processInput()
     case 'n':
         exectuteInput(pressedKey);
         break;
+    case 'o':
+        //miliseconds=40;
+        exectuteInput(pressedKey);
+
     default:
         break;
     }
@@ -287,6 +305,11 @@ bool Application::shutdown()
 
 void Application::update()
 {
+    int32_t x, y;
+    getUwbPosition(x, y);
+    Node &node = graph_.findNodeByIdReadWrite(movable_node_id_);
+    node.changePosition(cv::Point2d(x / 10.0, y / 10.0));
+
     graph_.updateNodesAndEdges();
 }
 
@@ -299,3 +322,20 @@ void Application::createNamedWindow()
 
     spdlog::info("Exiting Application::createNamedWindow()");
 }
+
+void Application::setUwbPosition(int32_t x, int32_t y)
+{
+    std::lock_guard<std::mutex> lock(uwb_mutex_);
+
+    uwb_x_ = x;
+    uwb_y_ = y;
+}
+
+void Application::getUwbPosition(int32_t &x, int32_t &y)
+{
+    std::lock_guard<std::mutex> lock(uwb_mutex_);
+
+    x = uwb_x_;
+    y = uwb_y_;
+}
+

@@ -8,9 +8,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  
  find_package(OpenCV REQUIRED)
  find_package(spdlog CONFIG REQUIRED)
- 
+ find_package(PkgConfig REQUIRED)
  #create a source variable with a link to all cpp files to compile
  
+ pkg_check_modules(LIBSERIALPORT REQUIRED IMPORTED_TARGET libserialport)
+
  set(
  SOURCES
  src/application_class.cpp
@@ -23,6 +25,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  src/node_class.cpp
  src/grouping_manager_class.cpp
  src/reusable_calculations.cpp
+ src/uwb/libserialport_sequence.cpp
  )
  
  
@@ -36,6 +39,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  animationLoopProject
  PRIVATE
  ${PROJECT_SOURCE_DIR}/include 
+ ${PROJECT_SOURCE_DIR}/include/uwb
  ${OpenCV_INCLUDE_DIRS}
  )
  
@@ -44,4 +48,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  PRIVATE 
  ${OpenCV_LIBS}
  spdlog::spdlog
+ PkgConfig::LIBSERIALPORT
  )
