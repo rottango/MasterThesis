@@ -1,11 +1,5 @@
-#include <libserialport.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <cstring>
-#include <cstdlib>
-#include <cstdint>
-#include <iostream>
-#include <iomanip>
+#include <libserialport_sequence.hpp>
+#include <application_class.hpp>
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
@@ -59,7 +53,7 @@ const char *parity_name(enum sp_parity parity)
  *
  * This example file is released to the public domain. */
 
-int main(int argc, char **argv)
+int UwbDeviceProcess(Application &app)
 {
 	char *uwb_port_name;
 	/* A pointer to a null-terminated array of pointers to
@@ -263,14 +257,19 @@ int main(int argc, char **argv)
 
 
 	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
-
 	
+	UwbPositionRaw uwb_position_raw;
+	UwbPositionDecoded uwb_position_decoded;
+
+	while(app.getUwbRunning()){
+	auto start = std::chrono::steady_clock::now();
+	std::this_thread::sleep_for(std::chrono::milliseconds(997));
 	uint8_t request[2] = {0x02, 0x00};
 	enum sp_return write_result = sp_blocking_write(port,request,sizeof(request),1000);
 	if(write_result<0){
 		std::cout<<"Timeout reached on write probably... \n";
 	}
-	else{
+	else if(write_result == 2){
 		uint8_t response[18];
 
 		enum sp_return read_result = sp_blocking_read(port,response,sizeof(response),1000);
@@ -280,21 +279,59 @@ int main(int argc, char **argv)
 		if(read_result<0){
 		std::cout<<"Timeout reached on read probably... \n";
 		}
-		else{
-			std::cout<<"Ammount of bytes read is "<<read_result<<" out of "<<sizeof(response) <<"\n";
+		else if(read_result < 18){
+			std::cout<<"Ammount of bytes read is "<<read_result<<" out of 18" <<"\n";
 			for (int i = 0; i < read_result; i++) {
-            std::cout << "0x"
-                      << std::hex
-                      << std::uppercase
-                      << std::setw(2)
-                      << std::setfill('0')
-                      << static_cast<unsigned>(response[i])
-                      << " ";
+            	std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " <<std::dec;
         	}
-		}
+		}else{
 		std::cout<<"\n";
+		std::cout<<"Ammount of bytes read is "<<read_result<<" out of 18" <<"\n";
+
+		for (int i = 0; i < read_result; i++) {
+            std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " <<std::dec;
+        }
+
+		uwb_position_raw.type_general=static_cast<std::byte>(response[0]);
+		uwb_position_raw.length_general=static_cast<std::byte>(response[1]);
+		uwb_position_raw.value_err_code_general=static_cast<std::byte>(response[2]);
+		uwb_position_raw.type=static_cast<std::byte>(response[3]);
+		uwb_position_raw.length=static_cast<std::byte>(response[4]);
+		uwb_position_raw.value_position_x[0]=static_cast<std::byte>(response[5]);
+		uwb_position_raw.value_position_x[1]=static_cast<std::byte>(response[6]);
+		uwb_position_raw.value_position_x[2]=static_cast<std::byte>(response[7]);
+		uwb_position_raw.value_position_x[3]=static_cast<std::byte>(response[8]);
+
+		uwb_position_raw.value_position_y[0]=static_cast<std::byte>(response[9]);
+		uwb_position_raw.value_position_y[1]=static_cast<std::byte>(response[10]);
+		uwb_position_raw.value_position_y[2]=static_cast<std::byte>(response[11]);
+		uwb_position_raw.value_position_y[3]=static_cast<std::byte>(response[12]);
+
+		uwb_position_raw.value_position_z[0]=static_cast<std::byte>(response[13]);
+		uwb_position_raw.value_position_z[1]=static_cast<std::byte>(response[14]);
+		uwb_position_raw.value_position_z[2]=static_cast<std::byte>(response[15]);
+		uwb_position_raw.value_position_z[3]=static_cast<std::byte>(response[16]);
+
+		uwb_position_raw.value_quality_factor=static_cast<std::byte>(response[17]);
+
+		decodeUwbPosition(uwb_position_raw,uwb_position_decoded);
+
+		/*
+			Decide here whether or not the recieved data is valid.
+		*/
+		UwbErrorCode error_code = verifyErrorCode(uwb_position_decoded);
+		if(error_code == OK){
+			displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
+			app.setUwbPosition(uwb_position_decoded.value_position_x,uwb_position_decoded.value_position_y);
+		}
+		auto end = std::chrono::steady_clock::now();
+		auto elapsed = end - start;
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+		std::cout << std::dec << "L.p. = "<<i<<" \nTime that this loop took: "<< duration.count() << " ms\n\n";
+		}
 	}
 
+	}
 	/* Now clean up by closing the port and freeing structures. */
 	check(sp_close(port));
 	sp_free_port(port);
