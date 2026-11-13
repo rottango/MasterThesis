@@ -363,8 +363,6 @@ void Draw::drawGeneratedText(cv::Point2d origin_point,
 {
     for (auto it = generated_text.rbegin(); it != generated_text.rend(); it++)
     {
-        spdlog::warn("Origin point of drawnText ({},{})  ", origin_point.x, origin_point.y);
-
         if ((*it).length() == 0)
         {
             spdlog::warn("text of generated_text is empty");
@@ -388,8 +386,6 @@ void Draw::drawGeneratedText(cv::Point2d origin_point,
                     font_scale_,
                     graph_.findNodeByIdReadOnly(movable_node_id_).getColorPalet().text_color,
                     font_thickness_);
-
-        spdlog::warn("text_size.height ({}), gap_size_pixels_ ({}), baseline_ ({})  ", text_size.height, gap_size_pixels_, baseline_);
 
         origin_point.y -= (text_size.height + gap_size_pixels_ + baseline_);
     }
@@ -454,19 +450,22 @@ bool Draw::doesTextFitOnScreen(cv::Size rectangle)
 std::pair<cv::Point2d, cv::Point2d> Draw::layoutNodeAndEdgeText(cv::Size rectangleNodeText,
                                                                 cv::Size rectangleEdgeText)
 {
-    spdlog::warn("screen_width_ ({}), screen_height_({})", screen_width_, screen_height_);
-    spdlog::warn("1rectangle_width_ ({}), rectangle_height_({})", rectangleNodeText.width, rectangleNodeText.height);
-    spdlog::warn("2rectangle_width_ ({}), rectangle_height_({})", rectangleEdgeText.width, rectangleEdgeText.height);
     cv::Point2d node_text_origin_point;
     cv::Point2d edge_text_origin_point;
 
     if (!doesTextFitOnScreen(rectangleNodeText))
     {
         // do formatting algorithm and return something
+        spdlog::warn("screen_width_ ({}), screen_height_({})", screen_width_, screen_height_);
+        spdlog::warn("1rectangle_width_ ({}), rectangle_height_({})", rectangleNodeText.width, rectangleNodeText.height);
+        spdlog::warn("2rectangle_width_ ({}), rectangle_height_({})", rectangleEdgeText.width, rectangleEdgeText.height);
     }
     if (!doesTextFitOnScreen(rectangleEdgeText))
     {
         // do formatting algorithm and return something
+        spdlog::warn("screen_width_ ({}), screen_height_({})", screen_width_, screen_height_);
+        spdlog::warn("1rectangle_width_ ({}), rectangle_height_({})", rectangleNodeText.width, rectangleNodeText.height);
+        spdlog::warn("2rectangle_width_ ({}), rectangle_height_({})", rectangleEdgeText.width, rectangleEdgeText.height);
     }
 
     node_text_origin_point.x = margin_from_edge_;
