@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  find_package(OpenCV REQUIRED)
  find_package(spdlog CONFIG REQUIRED)
  find_package(PkgConfig REQUIRED)
- #create a source variable with a link to all cpp files to compile
  
  pkg_check_modules(LIBSERIALPORT REQUIRED IMPORTED_TARGET libserialport)
 
@@ -32,7 +31,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  add_executable(${PROJECT_NAME} ${SOURCES})
  
  
- ###Add libs (relative to cmakelists.txt):
+ 
  
  
  target_include_directories(

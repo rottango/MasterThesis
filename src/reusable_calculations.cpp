@@ -1,7 +1,6 @@
 #include <reusable_calculations.hpp>
 #include <spdlog/spdlog.h>
 
-// each cartesian unit equals to one pixel for now.
 // this logging is naievee and wrong, focus on error handling
 cv::Point2d openCVPointToCartesianPoint(cv::Point2d opencv_point, int screen_width, int screen_height)
 {
@@ -40,7 +39,7 @@ double radiansToDegrees(double angle_radians)
     return angle_radians * 180 / std::numbers::pi;
 }
 
-double normalizeAngleDegrees(double angle_degrees) // return value only <-180,180)
+double normalizeAngleDegrees(double angle_degrees) 
 {
     while (angle_degrees < -180 || angle_degrees >= 180) // std::isfinite for future reading
     {
@@ -66,7 +65,7 @@ double distanceBetweenTwoPoints(cv::Point2d point_1, cv::Point2d point_2)
     return distance;
 }
 
-double bearingBetweenTwoPointsDegrees(cv::Point2d point_observer, cv::Point2d point_target) // this is the standard bearing calculations, that should be dispalyed
+double bearingBetweenTwoPointsDegrees(cv::Point2d point_observer, cv::Point2d point_target) 
 {
     double result = radiansToDegrees((std::atan2(point_target.y - point_observer.y, point_target.x - point_observer.x)));
     return normalizeAngleDegrees(result);
@@ -75,7 +74,7 @@ double bearingBetweenTwoPointsDegrees(cv::Point2d point_observer, cv::Point2d po
 cv::Point2d calculatePointFromCenter(cv::Point2d center_point, double theta_rotation_degrees, double distance)
 {
 
-    // using polar coordinates, it calculates from the cartesian axis origin point
+    
     double r = distance;
     double x = r * std::cos(degreesToRadians(theta_rotation_degrees));
     double y = r * std::sin(degreesToRadians(theta_rotation_degrees));

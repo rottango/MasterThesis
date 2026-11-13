@@ -4,13 +4,10 @@
 
 Application::Application() : draw_{graph_, img_}
 {
-    spdlog::info("Entering Application::Application()");
-    spdlog::info("Exiting Application::Application()");
 }
 
 void Application::run()
 {
-    spdlog::info("Entering Application::run()");
     while (this->running_)
     {
         clearFrame();
@@ -25,7 +22,6 @@ void Application::run()
         presentFrame();
     }
     end();
-    spdlog::info("Exiting Application::run()");
 }
 void Application::initialUserInput()
 {
@@ -37,8 +33,6 @@ void Application::initialUserInput()
 
 bool Application::initialize()
 {
-    spdlog::info("Entering Application::initialize()");
-
     createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
@@ -55,55 +49,16 @@ bool Application::initialize()
 
     running_ = true;
 
-    // uint8_t node_id_1;
-    // uint8_t node_id_2;
-    // uint8_t node_id_3;
-    // uint8_t node_id_4;
-
-    // uint8_t edge_id_1;
-    // uint8_t edge_id_2;
-    // uint8_t edge_id_3;
-    // uint8_t edge_id_4;
-    // uint8_t edge_id_5;
-    // uint8_t edge_id_6;
-    // uint8_t edge_id_7;
-    // uint8_t edge_id_8;
-    // uint8_t edge_id_9;
-
-    // node_id_1 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, ugv1ColorPalet);
-    // node_id_2 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 3 / 6, screen_height_ * 2 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv2ColorPalet);
-    // node_id_3 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ * 5 / 6, screen_height_ * 1 / 3), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
-    // node_id_4 = graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 2, screen_height_ * 1 / 2), screen_width_, screen_height_), 0, 45, 55, 65, ugv3ColorPalet);
-    // node_id_list_.push_back(graph_.addNode(openCVPointToCartesianPoint(cv::Point2d(screen_width_ / 6), screen_width_, screen_height_ * 1 / 3), 0, 45, 55, 65, generateColorPalet(color_positon_)));
-
-    // edge_id_1 = graph_.addEdge(node_id_1, node_id_2);
-    // edge_id_2 = graph_.addEdge(node_id_1, node_id_3);
-    // edge_id_3 = graph_.addEdge(node_id_2, node_id_1);
-    // edge_id_4 = graph_.addEdge(node_id_2, node_id_3);
-    // edge_id_5 = graph_.addEdge(node_id_3, node_id_1);
-    // edge_id_6 = graph_.addEdge(node_id_3, node_id_2);
-
-    // edge_id_7 = graph_.addEdge(node_id_4, node_id_1);
-    // edge_id_8 = graph_.addEdge(node_id_4, node_id_2);
-    // edge_id_9 = graph_.addEdge(node_id_4, node_id_3);
-
-    spdlog::info("Exiting Application::createNamedWindow()");
     return true;
 }
 
 void Application::clearFrame()
 {
-    spdlog::info("Entering Application::clearFrame()");
-
     this->img_.setTo(background_color_);
-
-    spdlog::info("Exiting Application::clearFrame()");
 }
 
 void Application::start()
 {
-    spdlog::info("Entering Application::start()");
-
     initialUserInput();
     initialize();
 
@@ -116,21 +71,15 @@ void Application::start()
 
     uwb_running_ = false;
     uwbThread.join();
-    spdlog::info("Exiting Application::start()");
 }
 
 void Application::end()
 {
-    spdlog::info("Entering Application::end()");
-
     shutdown();
-
-    spdlog::info("Exiting Application::end()");
 }
 
 void Application::exectuteInput(char character)
 {
-    spdlog::info("Entering Application::exectuteInput()");
     Node *node = nullptr;
     bool doesAnyNodeExist;
     
@@ -266,31 +215,20 @@ void Application::exectuteInput(char character)
     default:
         break;
     }
-
-    spdlog::info("Exiting Application::exectuteInput()");
 }
 
 void Application::render()
 {
-    spdlog::info("Entering Application::render()");
-
     draw_.drawFrame(movable_node_id_);
-
-    spdlog::info("Exitng Application::render()");
 }
 
 void Application::presentFrame()
 {
-    spdlog::info("Entering Application::presentFrame()");
-
     cv::imshow(this->named_window_name_, this->img_);
-
-    spdlog::info("Exiting Application::presentFrame()");
 }
 
 void Application::processInput()
 {
-    spdlog::info("Entering Application::processInput()");
     char pressedKey = cv::waitKey(40);
     switch (pressedKey)
     {
@@ -349,17 +287,11 @@ void Application::processInput()
     default:
         break;
     }
-
-    spdlog::info("Exiting Application::processInput()");
 }
 
 bool Application::shutdown()
 {
-    spdlog::info("Entering Application::shutdown()");
-
     cv::destroyWindow(this->named_window_name_);
-
-    spdlog::info("Exiting Application::shutdown()");
 
     return true;
 }
@@ -376,12 +308,8 @@ void Application::update()
 
 void Application::createNamedWindow()
 {
-    spdlog::info("Entering Application::createNamedWindow()");
-
     cv::namedWindow(this->named_window_name_, this->flag_);
     cv::resizeWindow(this->named_window_name_, cv::Size(this->screen_width_, this->screen_height_));
-
-    spdlog::info("Exiting Application::createNamedWindow()");
 }
 
 void Application::setUwbPosition(int32_t x, int32_t y)
