@@ -1,0 +1,21 @@
+#pragma once
+
+enum DWM1001ErrorCode
+{
+    OK,
+    UNKNOWN_OR_BROKEN_TLV,
+    INTERNAL_ERROR,
+    INVALID_PARAMETER,
+    BUSY,
+    OPERATION_NOT_PERMITTED,
+    UNRECOGNIZED_ERROR_CODE
+};
+
+enum ApiFunction
+{
+    DWM_POS_GET,
+    DWM_UPD_RATE_SET,
+    DWM_UPD_RATE_GET,
+    DWM_ANCHOR_LIST_GET,
+    DWM_LOC_GET
+};
