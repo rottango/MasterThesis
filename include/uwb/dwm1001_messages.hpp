@@ -34,20 +34,9 @@ inline std::string errorCodeToText(const DWM1001ErrorCode &error_code)
     }
 };
 
-struct UwbMessages
-{
-    ApiFunction request_message_type;
-
-    DwmPosGet dwm_pos_get;
-    DwmUpdRateGet dwm_upd_rate_get;
-    DwmUpdRateSet dwm_upd_rate_set;
-    DwmAnchorListGet dwm_anchor_list_get;
-    DwmLocGet dwm_loc_get;
-};
-
 struct DwmUpdRateSet
 {
-    ApiFunction ApiFunction = DWM_UPD_RATE_SET;
+    ApiFunction api_function = DWM_UPD_RATE_SET;
 
     TLVRequest request{std::byte{0x04}, std::byte{0x00}};
 
@@ -68,10 +57,18 @@ struct DwmUpdRateSet
         std::uint8_t value_err_code_general;
     } uwb_position_decoded;
 
-    bool read(std::array<uint8_t,> &response){
-        
-        
-        return false;
+    bool read(std::array<uint8_t, 3> &response)
+    {
+        if (sizeof(response) != 3)
+        {
+            return false;
+        }
+
+        this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
+        this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
+        this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
+
+        return true;
     }
 
     bool decode()
@@ -84,7 +81,7 @@ struct DwmUpdRateSet
         return true;
     }
 
-    inline void display()
+    void display()
     {
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
@@ -94,7 +91,7 @@ struct DwmUpdRateSet
 
 struct DwmUpdRateGet
 {
-    ApiFunction ApiFunction = DWM_UPD_RATE_GET;
+    ApiFunction api_function = DWM_UPD_RATE_GET;
 
     TLVRequest request{std::byte{0x04}, std::byte{0x00}};
 
@@ -120,7 +117,25 @@ struct DwmUpdRateGet
         std::uint16_t update_rate_stationary;
     } uwb_position_decoded;
 
-    inline bool decode()
+    bool read(std::array<uint8_t, 9> &response)
+    {
+        if (sizeof(response) != 9)
+        {
+            return false;
+        }
+
+        this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
+        this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
+        this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
+        this->uwb_position_raw.type = static_cast<std::byte>(response[3]);
+        this->uwb_position_raw.length = static_cast<std::byte>(response[4]);
+
+        // TODO rest ...
+
+        return true;
+    }
+
+    bool decode()
     {
 
         this->uwb_position_decoded.type_general = static_cast<std::uint8_t>(this->uwb_position_raw.type_general);
@@ -128,24 +143,27 @@ struct DwmUpdRateGet
         this->uwb_position_decoded.value_err_code_general = static_cast<std::uint8_t>(this->uwb_position_raw.value_err_code_general);
         this->uwb_position_decoded.type = static_cast<std::uint8_t>(this->uwb_position_raw.type);
         this->uwb_position_decoded.length = static_cast<std::uint8_t>(this->uwb_position_raw.length);
+
+        // TODO rest ...
+
         return true;
     }
 
-    inline void display()
+    void display()
     {
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
         std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
-    };
 
-    inline void read();
+        // TODO rest ...
+    };
 };
 
 struct DwmAnchorListGet
 {
-    ApiFunction ApiFunction = DWM_ANCHOR_LIST_GET;
+    ApiFunction api_function = DWM_ANCHOR_LIST_GET;
 
     TLVRequest request{std::byte{0x0B}, std::byte{0x01}};
     uint8_t page_number;
@@ -174,7 +192,23 @@ struct DwmAnchorListGet
         AnchorsDecoded anchor_list[15];  // anchor nr 1 is index 0, anchor nr 15 is index 14
     } uwb_position_decoded;
 
-    inline bool decode()
+    bool read(std::array<uint8_t, 3> &response) // TODO: ... I dont know how to do the size thing here, i think we have to assume max size is for all 15 anchors, and check the inside to see how much data we actually have
+    {
+        if (sizeof(response) != 3)
+        {
+            return false;
+        }
+
+        this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
+        this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
+        this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
+        this->uwb_position_raw.type = static_cast<std::byte>(response[3]);
+        this->uwb_position_raw.length = static_cast<std::byte>(response[4]);
+
+        return true;
+    }
+
+    bool decode()
     {
 
         this->uwb_position_decoded.type_general = static_cast<std::uint8_t>(this->uwb_position_raw.type_general);
@@ -186,7 +220,7 @@ struct DwmAnchorListGet
         return true;
     }
 
-    inline void display()
+    void display()
     {
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
@@ -198,7 +232,7 @@ struct DwmAnchorListGet
 
 struct DwmLocGet
 {
-    ApiFunction ApiFunction = DWM_LOC_GET;
+    ApiFunction api_function = DWM_LOC_GET;
 
     TLVRequest request{std::byte{0x0C}, std::byte{0x00}};
 
@@ -242,7 +276,23 @@ struct DwmLocGet
         ANxDecoded list_of_an[4];
     } uwb_position_decoded;
 
-    inline bool decode()
+    bool read(std::array<uint8_t, 3> &response) // TODO: Here we again i think have to assume all AN4 are populated, and then just see how much we actually read, and then decide how much actual data is there.
+    {
+        if (sizeof(response) != 3)
+        {
+            return false;
+        }
+
+        this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
+        this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
+        this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
+        this->uwb_position_raw.type = static_cast<std::byte>(response[3]);
+        this->uwb_position_raw.length = static_cast<std::byte>(response[4]);
+
+        return true;
+    }
+
+    bool decode()
     {
 
         this->uwb_position_decoded.type_general = static_cast<std::uint8_t>(this->uwb_position_raw.type_general);
@@ -260,7 +310,7 @@ struct DwmLocGet
         return true;
     }
 
-    inline void display()
+    void display()
     {
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
@@ -276,7 +326,7 @@ struct DwmLocGet
 
 struct DwmPosGet
 {
-    ApiFunction ApiFunction = DWM_POS_GET;
+    ApiFunction api_function = DWM_POS_GET;
 
     struct UwbPositionRaw
     {
@@ -304,7 +354,7 @@ struct DwmPosGet
         std::uint8_t value_quality_factor;
     } uwb_position_decoded;
 
-    inline bool read(const std::array<uint8_t, 18> &response)
+    bool read(const std::array<uint8_t, 18> &response)
     {
         if (sizeof(response) != 18)
         {
@@ -331,9 +381,11 @@ struct DwmPosGet
         this->uwb_position_raw.value_position_z[3] = static_cast<std::byte>(response[16]);
 
         this->uwb_position_raw.value_quality_factor = static_cast<std::byte>(response[17]);
+
+        return true;
     }
 
-    inline bool decode()
+    bool decode()
     {
 
         this->uwb_position_decoded.type_general = static_cast<std::uint8_t>(this->uwb_position_raw.type_general);
@@ -351,20 +403,30 @@ struct DwmPosGet
         return true;
     }
 
-    inline void display(const struct UwbPositionDecoded &UwbPositionDecoded, const struct UwbPositionRaw &UwbPositionRaw)
+    void display()
     {
-        std::cout << std::dec << "General Type: " << static_cast<unsigned>(UwbPositionDecoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.type_general) << "\n";
-        std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(UwbPositionDecoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length_general) << "\n";
-        std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(UwbPositionDecoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.value_err_code_general) << "\n";
-        std::cout << std::dec << "Type: " << static_cast<unsigned>(UwbPositionDecoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.type) << "\n";
-        std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(UwbPositionDecoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.length) << "\n";
-        std::cout << std::dec << "Position x [mm]: " << UwbPositionDecoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(UwbPositionRaw.value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_x[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Position y [mm]: " << UwbPositionDecoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(UwbPositionRaw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_y[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Position z [mm]: " << UwbPositionDecoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(UwbPositionRaw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(UwbPositionRaw.value_position_z[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(UwbPositionDecoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(UwbPositionRaw.value_quality_factor) << "\n";
+        std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
+        std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
+        std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
+        std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
     }
 };
 
+struct UwbMessages
+{
+    ApiFunction request_message_type;
+
+    DwmPosGet dwm_pos_get;
+    DwmUpdRateGet dwm_upd_rate_get;
+    DwmUpdRateSet dwm_upd_rate_set;
+    DwmAnchorListGet dwm_anchor_list_get;
+    DwmLocGet dwm_loc_get;
+};
 /*
 inline DWM1001ErrorCode verifyErrorCode(const struct UwbMessages &UwbMessages){
     switch(UwbPositionDecoded.value_err_code_general){
