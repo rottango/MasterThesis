@@ -4,28 +4,26 @@
 
 Application::Application() : draw_{graph_, img_}
 {
-    spdlog::info("Entering Application::Application()");
-    spdlog::info("Exiting Application::Application()");
 }
 
 void Application::run()
 {
-    spdlog::info("Entering Application::run()");
     while (this->running_)
     {
         clearFrame();
         processInput();
         update();
-        if(graph_.numerOfNodes()==0){
+        if (graph_.numerOfNodes() == 0)
+        {
             spdlog::warn("There is no nodes in the graph");
         }
-        else{
+        else
+        {
             render();
         }
         presentFrame();
     }
     end();
-    spdlog::info("Exiting Application::run()");
 }
 void Application::initialUserInput()
 {
@@ -37,8 +35,6 @@ void Application::initialUserInput()
 
 bool Application::initialize()
 {
-    spdlog::info("Entering Application::initialize()");
-
     createNamedWindow();
     cv::Size windowSize{this->screen_width_, this->screen_height_};
 
@@ -86,57 +82,45 @@ bool Application::initialize()
     // edge_id_7 = graph_.addEdge(node_id_4, node_id_1);
     // edge_id_8 = graph_.addEdge(node_id_4, node_id_2);
     // edge_id_9 = graph_.addEdge(node_id_4, node_id_3);
-
-    spdlog::info("Exiting Application::createNamedWindow()");
     return true;
 }
 
 void Application::clearFrame()
 {
-    spdlog::info("Entering Application::clearFrame()");
-
     this->img_.setTo(background_color_);
-
-    spdlog::info("Exiting Application::clearFrame()");
 }
 
 void Application::start()
 {
-    spdlog::info("Entering Application::start()");
-
     initialUserInput();
     initialize();
 
     uwb_running_ = true;
-    std::thread uwbThread([this]() {
-        UwbDeviceProcess(*this);
-    });
+    std::thread uwbThread([this]()
+                          { UwbDeviceProcess(*this); });
 
     run();
 
     uwb_running_ = false;
     uwbThread.join();
-    spdlog::info("Exiting Application::start()");
 }
 
 void Application::end()
 {
-    spdlog::info("Entering Application::end()");
-
     shutdown();
-
-    spdlog::info("Exiting Application::end()");
 }
 
 void Application::exectuteInput(char character)
 {
-    spdlog::info("Entering Application::exectuteInput()");
     Node *node = nullptr;
     bool doesAnyNodeExist;
-    
-    if(graph_.numerOfNodes()==0){
-        doesAnyNodeExist = false;  
-    }else{
+
+    if (graph_.numerOfNodes() == 0)
+    {
+        doesAnyNodeExist = false;
+    }
+    else
+    {
         doesAnyNodeExist = true;
         node = &graph_.findNodeByIdReadWrite(movable_node_id_);
     }
@@ -144,40 +128,41 @@ void Application::exectuteInput(char character)
     switch (character)
     {
     case 'a':
-        if(doesAnyNodeExist==false){
+        if (doesAnyNodeExist == false)
+        {
             break;
         }
         node->changePosition(cv::Point2d(node->getXYPoint().x - position_step_size_, node->getXYPoint().y));
         break;
     case 's':
-        if(!doesAnyNodeExist)
+        if (!doesAnyNodeExist)
             break;
         node->changePosition(cv::Point2d(node->getXYPoint().x, node->getXYPoint().y - position_step_size_));
         break;
     case 'd':
-        if(!doesAnyNodeExist)
+        if (!doesAnyNodeExist)
             break;
         node->changePosition(cv::Point2d(node->getXYPoint().x + position_step_size_, node->getXYPoint().y));
         break;
     case 'w':
-        if(!doesAnyNodeExist)
+        if (!doesAnyNodeExist)
             break;
         node->changePosition(cv::Point2d(node->getXYPoint().x, node->getXYPoint().y + position_step_size_));
         break;
     case 'l':
-        if(!doesAnyNodeExist)
+        if (!doesAnyNodeExist)
             break;
         node->rotateNodesAxis(-angle_step_size_);
         break;
     case 'r':
-        if(!doesAnyNodeExist)
+        if (!doesAnyNodeExist)
             break;
         node->rotateNodesAxis(angle_step_size_);
         break;
     case 'x':
-        if(!doesAnyNodeExist)
+        if (!doesAnyNodeExist)
             break;
-        
+
         min_difference_ = 255;
         node_id_of_min_difference = movable_node_id_;
         for (auto it = graph_.getNodes().begin(); it != graph_.getNodes().end(); it++)
@@ -203,49 +188,56 @@ void Application::exectuteInput(char character)
         spdlog::info("movable_node_id=1");
         break;
     case '=':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setMeasurmentErrorCm(node->getMeasurmentError() + 1);
         break;
     case '-':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setMeasurmentErrorCm(node->getMeasurmentError() - 1);
         break;
     case ']':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setVehicleSize(node->getVehicleSize() + 1);
         break;
     case '[':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setVehicleSize(node->getVehicleSize() - 1);
         break;
     case '\'':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setInner(node->getInner() + 1);
         break;
     case ';':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
         node->setInner(node->getInner() - 1);
         break;
     case 'e':
-        if(!doesAnyNodeExist){
+        if (!doesAnyNodeExist)
+        {
             spdlog::warn("There is no nodes in the graph");
             break;
         }
@@ -261,36 +253,25 @@ void Application::exectuteInput(char character)
         break;
     case 'o':
         int32_t x, y;
-        this->getUwbPosition(x,y);
-        node->changePosition(cv::Point2d(x/10, y/10));
+        this->getUwbPosition(x, y);
+        node->changePosition(cv::Point2d(x / 10, y / 10));
     default:
         break;
     }
-
-    spdlog::info("Exiting Application::exectuteInput()");
 }
 
 void Application::render()
 {
-    spdlog::info("Entering Application::render()");
-
     draw_.drawFrame(movable_node_id_);
-
-    spdlog::info("Exitng Application::render()");
 }
 
 void Application::presentFrame()
 {
-    spdlog::info("Entering Application::presentFrame()");
-
     cv::imshow(this->named_window_name_, this->img_);
-
-    spdlog::info("Exiting Application::presentFrame()");
 }
 
 void Application::processInput()
 {
-    spdlog::info("Entering Application::processInput()");
     char pressedKey = cv::waitKey(40);
     switch (pressedKey)
     {
@@ -343,23 +324,17 @@ void Application::processInput()
         exectuteInput(pressedKey);
         break;
     case 'o':
-        //miliseconds=40;
+        // miliseconds=40;
         exectuteInput(pressedKey);
         break;
     default:
         break;
     }
-
-    spdlog::info("Exiting Application::processInput()");
 }
 
 bool Application::shutdown()
 {
-    spdlog::info("Entering Application::shutdown()");
-
     cv::destroyWindow(this->named_window_name_);
-
-    spdlog::info("Exiting Application::shutdown()");
 
     return true;
 }
@@ -376,12 +351,8 @@ void Application::update()
 
 void Application::createNamedWindow()
 {
-    spdlog::info("Entering Application::createNamedWindow()");
-
     cv::namedWindow(this->named_window_name_, this->flag_);
     cv::resizeWindow(this->named_window_name_, cv::Size(this->screen_width_, this->screen_height_));
-
-    spdlog::info("Exiting Application::createNamedWindow()");
 }
 
 void Application::setUwbPosition(int32_t x, int32_t y)
@@ -399,4 +370,3 @@ void Application::getUwbPosition(int32_t &x, int32_t &y)
     x = uwb_x_;
     y = uwb_y_;
 }
-

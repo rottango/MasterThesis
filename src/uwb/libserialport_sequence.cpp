@@ -315,37 +315,6 @@ int UwbDeviceProcess(Application &app)
 				messages.dwm_pos_get.decode();
 				messages.dwm_pos_get.display();
 
-				// uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
-				// uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
-				// uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
-				// uwb_position_raw.type = static_cast<std::byte>(response[3]);
-				// uwb_position_raw.length = static_cast<std::byte>(response[4]);
-				// uwb_position_raw.value_position_x[0] = static_cast<std::byte>(response[5]);
-				// uwb_position_raw.value_position_x[1] = static_cast<std::byte>(response[6]);
-				// uwb_position_raw.value_position_x[2] = static_cast<std::byte>(response[7]);
-				// uwb_position_raw.value_position_x[3] = static_cast<std::byte>(response[8]);
-
-				// uwb_position_raw.value_position_y[0] = static_cast<std::byte>(response[9]);
-				// uwb_position_raw.value_position_y[1] = static_cast<std::byte>(response[10]);
-				// uwb_position_raw.value_position_y[2] = static_cast<std::byte>(response[11]);
-				// uwb_position_raw.value_position_y[3] = static_cast<std::byte>(response[12]);
-
-				// uwb_position_raw.value_position_z[0] = static_cast<std::byte>(response[13]);
-				// uwb_position_raw.value_position_z[1] = static_cast<std::byte>(response[14]);
-				// uwb_position_raw.value_position_z[2] = static_cast<std::byte>(response[15]);
-				// uwb_position_raw.value_position_z[3] = static_cast<std::byte>(response[16]);
-
-				// uwb_position_raw.value_quality_factor = static_cast<std::byte>(response[17]);
-
-				// decodeUwbPosition(uwb_position_raw, uwb_position_decoded);
-
-				/*
-					Decide here whether or not the recieved data is valid.
-				*/
-				// DWM1001ErrorCode error_code = verifyErrorCode(uwb_position_decoded);
-				// if (error_code == OK)
-				// {
-				// 	displayUwbPositionData(uwb_position_decoded, uwb_position_raw);
 				app.setUwbPosition(messages.dwm_pos_get.uwb_position_decoded.value_position_x, messages.dwm_pos_get.uwb_position_decoded.value_position_y);
 			}
 			auto end = std::chrono::steady_clock::now();
