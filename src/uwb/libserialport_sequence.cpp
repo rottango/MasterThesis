@@ -7,7 +7,8 @@ int check(enum sp_return result)
 	/* For this example we'll just exit on any error by calling abort(). */
 	char *error_message;
 
-	switch (result) {
+	switch (result)
+	{
 	case SP_ERR_ARG:
 		printf("Error: Invalid argument.\n");
 		abort();
@@ -31,7 +32,8 @@ int check(enum sp_return result)
 /* Helper function to give a name for each parity mode. */
 const char *parity_name(enum sp_parity parity)
 {
-	switch (parity) {
+	switch (parity)
+	{
 	case SP_PARITY_INVALID:
 		return "(Invalid)";
 	case SP_PARITY_NONE:
@@ -66,7 +68,8 @@ int UwbDeviceProcess(Application &app)
 	 * pointer will be updated to refer to the array created. */
 	enum sp_return result = sp_list_ports(&port_list);
 
-	if (result != SP_OK) {
+	if (result != SP_OK)
+	{
 		printf("sp_list_ports() failed!\n");
 		return -1;
 	}
@@ -74,7 +77,8 @@ int UwbDeviceProcess(Application &app)
 	/* Iterate through the ports. When port_list[i] is NULL
 	 * this indicates the end of the list. */
 	int i;
-	for (i = 0; port_list[i] != NULL; i++) {
+	for (i = 0; port_list[i] != NULL; i++)
+	{
 		struct sp_port *port = port_list[i];
 
 		/* Get the name of the port. */
@@ -95,8 +99,8 @@ int UwbDeviceProcess(Application &app)
 	 * use that port in the rest of your program), take a copy
 	 * of it first using sp_copy_port(). */
 
-//=============================================
-     
+	//=============================================
+
 	/* A pointer to a struct sp_port, which will refer to
 	 * the port found. */
 	struct sp_port *port;
@@ -107,7 +111,8 @@ int UwbDeviceProcess(Application &app)
 	 * pointer will be updated to refer to the port found. */
 	enum sp_return result_info = sp_get_port_by_name(uwb_port_name, &port);
 
-	if (result_info != SP_OK) {
+	if (result_info != SP_OK)
+	{
 		printf("sp_get_port_by_name() failed!\n");
 		return -1;
 	}
@@ -120,11 +125,14 @@ int UwbDeviceProcess(Application &app)
 	 * e.g. native port, USB or Bluetooth. */
 	enum sp_transport transport = sp_get_port_transport(port);
 
-	if (transport == SP_TRANSPORT_NATIVE) {
+	if (transport == SP_TRANSPORT_NATIVE)
+	{
 		/* This is a "native" port, usually directly connected
 		 * to the system rather than some external interface. */
 		printf("Type: Native\n");
-	} else if (transport == SP_TRANSPORT_USB) {
+	}
+	else if (transport == SP_TRANSPORT_USB)
+	{
 		/* This is a USB to serial converter of some kind. */
 		printf("Type: USB\n");
 
@@ -142,7 +150,9 @@ int UwbDeviceProcess(Application &app)
 		int usb_bus, usb_address;
 		sp_get_port_usb_bus_address(port, &usb_bus, &usb_address);
 		printf("Bus: %d Address: %d\n", usb_bus, usb_address);
-	} else if (transport == SP_TRANSPORT_BLUETOOTH) {
+	}
+	else if (transport == SP_TRANSPORT_BLUETOOTH)
+	{
 		/* This is a Bluetooth serial port. */
 		printf("Type: Bluetooth\n");
 
@@ -150,7 +160,7 @@ int UwbDeviceProcess(Application &app)
 		printf("MAC: %s\n", sp_get_port_bluetooth_address(port));
 	}
 
-//=============================================
+	//=============================================
 
 	/* Display some basic information about the port. */
 	printf("Port name: %s\n", sp_get_port_name(port));
@@ -200,7 +210,7 @@ int UwbDeviceProcess(Application &app)
 	const int config_bits = 8;
 	const int config_stopbits = 1;
 	const enum sp_parity config_parity = SP_PARITY_NONE;
-	const enum sp_flowcontrol config_flowcontrol= SP_FLOWCONTROL_NONE;
+	const enum sp_flowcontrol config_flowcontrol = SP_FLOWCONTROL_NONE;
 	/* Allocate a configuration for us to read the port config into. */
 	check(sp_new_config(&config));
 
@@ -214,7 +224,6 @@ int UwbDeviceProcess(Application &app)
 	printf("Applying new configuration.\n");
 	check(sp_set_config(port, config));
 
-	
 	struct sp_port_config *device_config;
 	check(sp_new_config(&device_config));
 
@@ -230,21 +239,22 @@ int UwbDeviceProcess(Application &app)
 	check(sp_get_config_stopbits(device_config, &device_stopbits));
 	check(sp_get_config_parity(device_config, &device_parity));
 
-	if(config_baudrate == device_baudrate &&
+	if (config_baudrate == device_baudrate &&
 		config_bits == device_bits &&
 		config_stopbits == device_stopbits &&
 		config_parity == device_parity)
 	{
-			printf("Device has a correct configuration.\n");
-	}else{
-			printf("Error: Device has an incorrect configuration.\n");
-
+		printf("Device has a correct configuration.\n");
 	}
-	
-	printf("Configuration: Baudrate: %d, data bits: %d, parity: %s, stop bits: %d\n",
-			device_baudrate, device_bits, parity_name(device_parity), device_stopbits);
+	else
+	{
+		printf("Error: Device has an incorrect configuration.\n");
+	}
 
-/* This example can be used with one or two ports. With one port, it
+	printf("Configuration: Baudrate: %d, data bits: %d, parity: %s, stop bits: %d\n",
+		   device_baudrate, device_bits, parity_name(device_parity), device_stopbits);
+
+	/* This example can be used with one or two ports. With one port, it
 	 * will send data and try to receive it on the same port. This can be
 	 * done by connecting a single wire between the TX and RX pins of the
 	 * port.
@@ -255,83 +265,66 @@ int UwbDeviceProcess(Application &app)
 	 * a "null modem" cable, or with a pair of interconnected virtual ports,
 	 * such as those created by com0com on Windows or tty0tty on Linux. */
 
-
 	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
-	
-	UwbPositionRaw uwb_position_raw;
-	UwbPositionDecoded uwb_position_decoded;
+	UwbMessages messages;
 
-	while(app.getUwbRunning()){
-	auto start = std::chrono::steady_clock::now();
-	std::this_thread::sleep_for(std::chrono::milliseconds(997));
-	uint8_t request[2] = {0x02, 0x00};
-	enum sp_return write_result = sp_blocking_write(port,request,sizeof(request),1000);
-	if(write_result<0){
-		std::cout<<"Timeout reached on write probably... \n";
-	}
-	else if(write_result == 2){
-		uint8_t response[18];
-
-		enum sp_return read_result = sp_blocking_read(port,response,sizeof(response),1000);
-
-		std::cout<<"Ammount of bytes written is "<<write_result<<" out of "<<sizeof(request) <<"\n";
-
-		if(read_result<0){
-		std::cout<<"Timeout reached on read probably... \n";
+	// UwbPositionRaw uwb_position_raw;
+	// UwbPositionDecoded uwb_position_decoded;
+	int j = 1;
+	while (app.getUwbRunning())
+	{
+		auto start = std::chrono::steady_clock::now();
+		std::this_thread::sleep_for(std::chrono::milliseconds(997));
+		uint8_t request[2] = {0x02, 0x00};
+		enum sp_return write_result = sp_blocking_write(port, request, sizeof(request), 1000);
+		if (write_result < 0)
+		{
+			std::cout << "Timeout reached on write probably... \n";
 		}
-		else if(read_result < 18){
-			std::cout<<"Ammount of bytes read is "<<read_result<<" out of 18" <<"\n";
-			for (int i = 0; i < read_result; i++) {
-            	std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " <<std::dec;
-        	}
-		}else{
-		std::cout<<"\n";
-		std::cout<<"Ammount of bytes read is "<<read_result<<" out of 18" <<"\n";
+		else if (write_result == 2)
+		{
+			std::array<uint8_t, 18> response{};
 
-		for (int i = 0; i < read_result; i++) {
-            std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " <<std::dec;
-        }
+			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 1000);
 
-		uwb_position_raw.type_general=static_cast<std::byte>(response[0]);
-		uwb_position_raw.length_general=static_cast<std::byte>(response[1]);
-		uwb_position_raw.value_err_code_general=static_cast<std::byte>(response[2]);
-		uwb_position_raw.type=static_cast<std::byte>(response[3]);
-		uwb_position_raw.length=static_cast<std::byte>(response[4]);
-		uwb_position_raw.value_position_x[0]=static_cast<std::byte>(response[5]);
-		uwb_position_raw.value_position_x[1]=static_cast<std::byte>(response[6]);
-		uwb_position_raw.value_position_x[2]=static_cast<std::byte>(response[7]);
-		uwb_position_raw.value_position_x[3]=static_cast<std::byte>(response[8]);
+			std::cout << "Ammount of bytes written is " << write_result << " out of " << sizeof(request) << "\n";
 
-		uwb_position_raw.value_position_y[0]=static_cast<std::byte>(response[9]);
-		uwb_position_raw.value_position_y[1]=static_cast<std::byte>(response[10]);
-		uwb_position_raw.value_position_y[2]=static_cast<std::byte>(response[11]);
-		uwb_position_raw.value_position_y[3]=static_cast<std::byte>(response[12]);
+			if (read_result < 0)
+			{
+				std::cout << "Timeout reached on read probably... \n";
+			}
+			else if (read_result < 18)
+			{
+				std::cout << "Ammount of bytes read is " << read_result << " out of 18" << "\n";
+				for (int i = 0; i < read_result; i++)
+				{
+					std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " << std::dec;
+				}
+			}
+			else
+			{
+				std::cout << "\n";
+				std::cout << "Ammount of bytes read is " << read_result << " out of 18" << "\n";
 
-		uwb_position_raw.value_position_z[0]=static_cast<std::byte>(response[13]);
-		uwb_position_raw.value_position_z[1]=static_cast<std::byte>(response[14]);
-		uwb_position_raw.value_position_z[2]=static_cast<std::byte>(response[15]);
-		uwb_position_raw.value_position_z[3]=static_cast<std::byte>(response[16]);
+				for (int i = 0; i < read_result; i++)
+				{
+					std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " << std::dec;
+				}
 
-		uwb_position_raw.value_quality_factor=static_cast<std::byte>(response[17]);
+				messages.dwm_pos_get.read(response);
+				messages.dwm_pos_get.decode();
+				messages.dwm_pos_get.display();
 
-		decodeUwbPosition(uwb_position_raw,uwb_position_decoded);
-
-		/*
-			Decide here whether or not the recieved data is valid.
-		*/
-		UwbErrorCode error_code = verifyErrorCode(uwb_position_decoded);
-		if(error_code == OK){
-			displayUwbPositionData(uwb_position_decoded,uwb_position_raw);
-			app.setUwbPosition(uwb_position_decoded.value_position_x,uwb_position_decoded.value_position_y);
+				app.setUwbPosition(messages.dwm_pos_get.uwb_position_decoded.value_position_x, messages.dwm_pos_get.uwb_position_decoded.value_position_y);
+			}
+			auto end = std::chrono::steady_clock::now();
+			auto elapsed = end - start;
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+			std::cout << std::dec << "L.p. = " << j << " \nTime that this loop took: " << duration.count() << " ms\n\n";
 		}
-		auto end = std::chrono::steady_clock::now();
-		auto elapsed = end - start;
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-		std::cout << std::dec << "L.p. = "<<i<<" \nTime that this loop took: "<< duration.count() << " ms\n\n";
-		}
+		j++;
 	}
 
-	}
 	/* Now clean up by closing the port and freeing structures. */
 	check(sp_close(port));
 	sp_free_port(port);
@@ -339,6 +332,6 @@ int UwbDeviceProcess(Application &app)
 	sp_free_config(config);
 
 	free(uwb_port_name);
-	
+
 	return 0;
 }

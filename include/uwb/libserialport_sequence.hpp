@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libserialport.h>
-#include <position_sample.hpp>
+#include <dwm1001_messages.hpp>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
+#include <array>
 
 class Application;
 

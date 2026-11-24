@@ -19,9 +19,9 @@ struct colorPalet
 extern cv::Scalar colors[];
 
 /**
- * @brief 
- * 
- * @param color_positon 
- * @return colorPalet 
+ * @brief
+ *
+ * @param color_positon
+ * @return colorPalet
  */
 colorPalet generateColorPalet(int &color_positon);

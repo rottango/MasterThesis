@@ -15,16 +15,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
  set(
  SOURCES
- src/application_class.cpp
- src/color_palet_struct.cpp
- src/draw_class.cpp
- src/edge_class.cpp
- src/graph_class.cpp
- src/group_class.cpp
- src/main.cpp
- src/node_class.cpp
- src/grouping_manager_class.cpp
- src/reusable_calculations.cpp
+ src/application/application_class.cpp
+ src/colors/color_palet_struct.cpp
+ src/visualization/draw_class.cpp
+ src/visualization/edge_class.cpp
+ src/visualization/graph_class.cpp
+ src/visualization/group_class.cpp
+ src/application/main.cpp
+ src/visualization/node_class.cpp
+ src/visualization/grouping_manager_class.cpp
+ src/calculations/reusable_calculations.cpp
  src/uwb/libserialport_sequence.cpp
  )
  
@@ -40,6 +40,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
  PRIVATE
  ${PROJECT_SOURCE_DIR}/include 
  ${PROJECT_SOURCE_DIR}/include/uwb
+ ${PROJECT_SOURCE_DIR}/include/visualization
+ ${PROJECT_SOURCE_DIR}/include/application
+ ${PROJECT_SOURCE_DIR}/include/calculations
+ ${PROJECT_SOURCE_DIR}/include/colors
  ${OpenCV_INCLUDE_DIRS}
  )
  

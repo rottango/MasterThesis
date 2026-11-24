@@ -15,13 +15,13 @@
 #include <spdlog/spdlog.h>
 
 /**
-* @file application_class.hpp
-* @author rottango
-* @date 20.10.2026
-* @see ‘‘ OpenCV2 ’’ 
-*
-* @brief Header file for the application class, thats the main coordinator of all tasks
-*/
+ * @file application_class.hpp
+ * @author rottango
+ * @date 20.10.2026
+ * @see ‘‘ OpenCV2 ’’
+ *
+ * @brief Header file for the application class, thats the main coordinator of all tasks
+ */
 
 struct UwbPosition
 {
@@ -34,13 +34,13 @@ class Application
 public:
     /**
      * @brief Construct a new Application object
-     * 
+     *
      */
     Application();
 
     /**
      * @brief This function begins application, starting with initalization, and then calling the looped run function
-     * 
+     *
      */
     void start();
 
@@ -79,79 +79,79 @@ private:
     std::atomic<bool> uwb_running_{true};
 
     /**
-     * @brief This function is responsible for handling each user input, and thus starting the cascade of all function calls, until the running flag is not false. 
-     * 
+     * @brief This function is responsible for handling each user input, and thus starting the cascade of all function calls, until the running flag is not false.
+     *
      */
     void run();
 
     /**
      * @brief Get the size of the screen from the user
-     * 
+     *
      */
     void initialUserInput();
 
     /**
      * @brief Start up the program, create the window and rise the running_ flag
-     * 
-     * @return true 
-     * @return false 
+     *
+     * @return true
+     * @return false
      */
     bool initialize();
 
     /**
      * @brief Reset the image to a single solid color
-     * 
+     *
      */
     void clearFrame();
 
     /**
      * @brief Call the shutdown function
-     * 
+     *
      */
     void end();
 
     /**
      * @brief Based on the input from the processInput function, exectute differ functions in the run step
-     * 
-     * @param character 
+     *
+     * @param character
      */
     void exectuteInput(char character);
 
     /**
      * @brief Call the draw's main function - drawFrame() for the currently active node
-     * 
+     *
      */
     void render();
 
     /**
      * @brief Display the drawn image by the Draw object
-     * 
+     *
      */
     void presentFrame();
 
     /**
      * @brief Based on the input, refer the program exectution to differ functions in the run step
-     * 
+     *
      */
     void processInput();
 
     /**
      * @brief Call the graph's updateNodesAndEdges
-     * 
+     *
      */
     void update();
 
     /**
      * @brief ToDo: Free all objects here
-     * 
-     * @return true 
-     * @return false 
+     *
+     * @return true
+     * @return false
      */
     bool shutdown();
 
     /**
      * @brief Create a Named Window object and resize it to the user inputed screen width and height
-     * 
+     *
      */
     void createNamedWindow();
 };
