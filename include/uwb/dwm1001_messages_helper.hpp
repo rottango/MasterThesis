@@ -29,7 +29,7 @@ struct AnchorsDecoded
     std::uint8_t seat_number_and_neighbor_network;
 };
 
-struct ANxRaw
+struct ANxRawTag
 { // from documentation TLV repsonse from dwm_loc_get
     std::byte uwb_address[2];
     std::byte distance[4];
@@ -38,10 +38,9 @@ struct ANxRaw
     std::byte value_position_x[4];
     std::byte value_position_y[4];
     std::byte value_position_z[4];
-    std::byte value_quality_factor;
 };
 
-struct ANxDecoded
+struct ANxDecodedTag
 {
     std::uint16_t uwb_address;
     std::int32_t distance;
@@ -50,5 +49,4 @@ struct ANxDecoded
     std::int32_t value_position_x;
     std::int32_t value_position_y;
     std::int32_t value_position_z;
-    std::uint8_t value_quality_factor;
 };

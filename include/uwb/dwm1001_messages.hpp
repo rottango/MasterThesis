@@ -129,8 +129,10 @@ struct DwmUpdRateGet
         this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
         this->uwb_position_raw.type = static_cast<std::byte>(response[3]);
         this->uwb_position_raw.length = static_cast<std::byte>(response[4]);
-
-        // TODO rest ...
+        this->uwb_position_raw.update_rate[0] = static_cast<std::byte>(response[5]);
+        this->uwb_position_raw.update_rate[1] = static_cast<std::byte>(response[6]);
+        this->uwb_position_raw.update_rate_stationary[0] = static_cast<std::byte>(response[7]);
+        this->uwb_position_raw.update_rate_stationary[1] = static_cast<std::byte>(response[8]);
 
         return true;
     }
@@ -143,8 +145,8 @@ struct DwmUpdRateGet
         this->uwb_position_decoded.value_err_code_general = static_cast<std::uint8_t>(this->uwb_position_raw.value_err_code_general);
         this->uwb_position_decoded.type = static_cast<std::uint8_t>(this->uwb_position_raw.type);
         this->uwb_position_decoded.length = static_cast<std::uint8_t>(this->uwb_position_raw.length);
-
-        // TODO rest ...
+        this->uwb_position_decoded.update_rate = static_cast<int32_t>(static_cast<std::uint32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.update_rate[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.update_rate[0])));
+        this->uwb_position_decoded.update_rate_stationary = static_cast<int32_t>(static_cast<std::uint32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.update_rate_stationary[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.update_rate_stationary[0])));
 
         return true;
     }
@@ -204,6 +206,30 @@ struct DwmAnchorListGet
         this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
         this->uwb_position_raw.type = static_cast<std::byte>(response[3]);
         this->uwb_position_raw.length = static_cast<std::byte>(response[4]);
+        this->uwb_position_raw.number_of_elements = static_cast<std::byte>(response[5]);
+
+        uint8_t temp_index = 6;
+        for (int i = 0; i < 15; i++) // TODO: Decide how many times execute the loop.
+        {
+            this->uwb_position_raw.anchor_list[i].uwb_address[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].uwb_address[1] = static_cast<std::byte>(response[temp_index++]);
+
+            this->uwb_position_raw.anchor_list[i].value_position_x[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_x[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_x[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_x[3] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_y[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_y[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_y[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_y[3] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_z[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_z[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_z[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].value_position_z[3] = static_cast<std::byte>(response[temp_index++]);
+
+            this->uwb_position_raw.anchor_list[i].rssi = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network = static_cast<std::byte>(response[temp_index++]);
+        }
 
         return true;
     }
@@ -217,10 +243,22 @@ struct DwmAnchorListGet
         this->uwb_position_decoded.type = static_cast<std::uint8_t>(this->uwb_position_raw.type);
         this->uwb_position_decoded.length = static_cast<std::uint8_t>(this->uwb_position_raw.length);
 
+        this->uwb_position_decoded.number_of_elements = static_cast<std::uint8_t>(this->uwb_position_raw.number_of_elements);
+
+        for (int i = 0; i < 15; i++)
+        {
+            this->uwb_position_decoded.anchor_list[i].uwb_address = static_cast<int16_t>(static_cast<std::uint16_t>(static_cast<std::uint16_t>(this->uwb_position_raw.anchor_list[i].uwb_address[1]) << 8 | static_cast<std::uint16_t>(this->uwb_position_raw.anchor_list[i].uwb_address[0])));
+
+            this->uwb_position_decoded.anchor_list[i].value_position_x = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[0]));
+            this->uwb_position_decoded.anchor_list[i].value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[0]));
+            this->uwb_position_decoded.anchor_list[i].value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[0]));
+            this->uwb_position_decoded.anchor_list[i].rssi = static_cast<std::int8_t>(this->uwb_position_raw.anchor_list[i].rssi);
+            this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network = static_cast<std::uint8_t>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network);
+        }
         return true;
     }
 
-    void display()
+    void display() // TODO: finish displaying
     {
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
@@ -253,7 +291,7 @@ struct DwmLocGet
         std::byte length_specific;
         std::byte value_distances_encoded;
 
-        ANxRaw list_of_an[4];
+        ANxRawTag list_of_an[4];
     } uwb_position_raw;
 
     struct UwbPositionDecoded
@@ -273,7 +311,7 @@ struct DwmLocGet
         std::uint8_t length_specific;
         std::uint8_t value_distances_encoded;
 
-        ANxDecoded list_of_an[4];
+        ANxDecodedTag list_of_an[4];
     } uwb_position_decoded;
 
     bool read(std::array<uint8_t, 3> &response) // TODO: Here we again i think have to assume all AN4 are populated, and then just see how much we actually read, and then decide how much actual data is there.
@@ -288,6 +326,52 @@ struct DwmLocGet
         this->uwb_position_raw.value_err_code_general = static_cast<std::byte>(response[2]);
         this->uwb_position_raw.type = static_cast<std::byte>(response[3]);
         this->uwb_position_raw.length = static_cast<std::byte>(response[4]);
+
+        this->uwb_position_raw.value_position_x[0] = static_cast<std::byte>(response[5]);
+        this->uwb_position_raw.value_position_x[1] = static_cast<std::byte>(response[6]);
+        this->uwb_position_raw.value_position_x[2] = static_cast<std::byte>(response[7]);
+        this->uwb_position_raw.value_position_x[3] = static_cast<std::byte>(response[8]);
+        this->uwb_position_raw.value_position_y[0] = static_cast<std::byte>(response[9]);
+        this->uwb_position_raw.value_position_y[1] = static_cast<std::byte>(response[10]);
+        this->uwb_position_raw.value_position_y[2] = static_cast<std::byte>(response[11]);
+        this->uwb_position_raw.value_position_y[3] = static_cast<std::byte>(response[12]);
+        this->uwb_position_raw.value_position_z[0] = static_cast<std::byte>(response[13]);
+        this->uwb_position_raw.value_position_z[1] = static_cast<std::byte>(response[14]);
+        this->uwb_position_raw.value_position_z[2] = static_cast<std::byte>(response[15]);
+        this->uwb_position_raw.value_position_z[3] = static_cast<std::byte>(response[16]);
+
+        this->uwb_position_raw.value_quality_factor = static_cast<std::byte>(response[17]);
+
+        this->uwb_position_raw.type_specific = static_cast<std::byte>(response[18]);
+        this->uwb_position_raw.length_specific = static_cast<std::byte>(response[19]);
+        this->uwb_position_raw.value_distances_encoded = static_cast<std::byte>(response[20]);
+
+        uint8_t temp_index = 21;
+        for (int i = 0; i < 4; i++)
+        {
+            this->uwb_position_raw.list_of_an[i].uwb_address[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].uwb_address[1] = static_cast<std::byte>(response[temp_index++]);
+
+            this->uwb_position_raw.list_of_an[i].distance[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].distance[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].distance[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].distance[3] = static_cast<std::byte>(response[temp_index++]);
+
+            this->uwb_position_raw.list_of_an[i].distance_quality_factor = static_cast<std::byte>(response[temp_index++]);
+
+            this->uwb_position_raw.list_of_an[i].value_position_x[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_x[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_x[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_x[3] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_y[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_y[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_y[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_y[3] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_z[0] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_z[1] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_z[2] = static_cast<std::byte>(response[temp_index++]);
+            this->uwb_position_raw.list_of_an[i].value_position_z[3] = static_cast<std::byte>(response[temp_index++]);
+        }
 
         return true;
     }
@@ -305,12 +389,30 @@ struct DwmLocGet
         this->uwb_position_decoded.value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.value_position_y[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.value_position_y[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.value_position_y[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.value_position_y[0]));
         this->uwb_position_decoded.value_position_z = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.value_position_z[0]));
 
-        this->uwb_position_decoded.value_quality_factor = static_cast<std::uint8_t>(this->uwb_position_raw.value_quality_factor);
+        this->uwb_position_decoded.value_quality_factor = static_cast<uint8_t>(this->uwb_position_raw.value_quality_factor);
+
+        this->uwb_position_decoded.type_specific = static_cast<std::uint8_t>(this->uwb_position_raw.type_specific);
+        this->uwb_position_decoded.length_specific = static_cast<std::uint8_t>(this->uwb_position_raw.length_specific);
+
+        this->uwb_position_decoded.value_distances_encoded = static_cast<std::uint8_t>(this->uwb_position_raw.value_distances_encoded);
+
+        for (int i = 0; i < 4; i++)
+        {
+            this->uwb_position_decoded.list_of_an[i].uwb_address = static_cast<int16_t>(static_cast<std::uint16_t>(static_cast<std::uint16_t>(this->uwb_position_raw.list_of_an[i].uwb_address[1]) << 8 | static_cast<std::uint16_t>(this->uwb_position_raw.list_of_an[i].uwb_address[0])));
+
+            this->uwb_position_decoded.list_of_an[i].distance = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].distance[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].distance[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].distance[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].distance[0]));
+
+            this->uwb_position_decoded.list_of_an[i].distance_quality_factor = static_cast<uint8_t>(this->uwb_position_raw.list_of_an[i].distance_quality_factor);
+
+            this->uwb_position_decoded.value_position_x = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[0]));
+            this->uwb_position_decoded.value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[0]));
+            this->uwb_position_decoded.value_position_z = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[0]));
+        }
 
         return true;
     }
 
-    void display()
+    void display() // TODO!
     {
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
