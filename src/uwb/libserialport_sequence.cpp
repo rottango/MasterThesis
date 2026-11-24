@@ -270,7 +270,7 @@ int UwbDeviceProcess(Application &app)
 
 	// UwbPositionRaw uwb_position_raw;
 	// UwbPositionDecoded uwb_position_decoded;
-
+	int j = 1;
 	while (app.getUwbRunning())
 	{
 		auto start = std::chrono::steady_clock::now();
@@ -320,8 +320,9 @@ int UwbDeviceProcess(Application &app)
 			auto end = std::chrono::steady_clock::now();
 			auto elapsed = end - start;
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-			std::cout << std::dec << "L.p. = " << i << " \nTime that this loop took: " << duration.count() << " ms\n\n";
+			std::cout << std::dec << "L.p. = " << j << " \nTime that this loop took: " << duration.count() << " ms\n\n";
 		}
+		j++;
 	}
 
 	/* Now clean up by closing the port and freeing structures. */
