@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
-#include <array>
+#include <vector>
 
 #include <dwm1001_messages_helper.hpp>
 #include <dwm1001_enum.hpp>
@@ -38,10 +38,11 @@ struct DwmUpdRateSet
 {
     ApiFunction api_function = DWM_UPD_RATE_SET;
 
-    TLVRequest request{std::byte{0x04}, std::byte{0x00}};
+    std::uint8_t request[2] = {0x04, 0x00};
+    std::uint16_t read_size = 3;
 
-    uint16_t update_rate;
-    uint16_t update_rate_stationary;
+    uint16_t update_rate;            // update_rate = goal_update_rate_ms/100
+    uint16_t update_rate_stationary; // update_rate_stationary = goal_update_rate_stationary_ms/100
 
     struct UwbPositionRaw
     {
@@ -57,9 +58,9 @@ struct DwmUpdRateSet
         std::uint8_t value_err_code_general;
     } uwb_position_decoded;
 
-    bool read(std::array<uint8_t, 3> &response)
+    bool read(std::vector<uint8_t> &response)
     {
-        if (sizeof(response) != 3)
+        if (sizeof(response) != read_size)
         {
             return false;
         }
@@ -86,6 +87,8 @@ struct DwmUpdRateSet
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        std::cout << std::dec << "Set update rate each [ms] :" << update_rate << "\t" << std::hex << std::uppercase << update_rate << "\n";
+        std::cout << std::dec << "Set stationary update rate each [ms] :" << (update_rate_stationary * 10) << "\t" << std::hex << std::uppercase << (update_rate_stationary * 10) << "\n";
     }
 };
 
@@ -93,7 +96,8 @@ struct DwmUpdRateGet
 {
     ApiFunction api_function = DWM_UPD_RATE_GET;
 
-    TLVRequest request{std::byte{0x04}, std::byte{0x00}};
+    std::uint8_t request[2] = {0x04, 0x00};
+    std::uint16_t read_size = 9;
 
     struct UwbPositionRaw
     {
@@ -117,9 +121,9 @@ struct DwmUpdRateGet
         std::uint16_t update_rate_stationary;
     } uwb_position_decoded;
 
-    bool read(std::array<uint8_t, 9> &response)
+    bool read(std::vector<uint8_t> &response)
     {
-        if (sizeof(response) != 9)
+        if (sizeof(response) != read_size)
         {
             return false;
         }
@@ -167,7 +171,8 @@ struct DwmAnchorListGet
 {
     ApiFunction api_function = DWM_ANCHOR_LIST_GET;
 
-    TLVRequest request{std::byte{0x0B}, std::byte{0x01}};
+    std::uint8_t request[2] = {0x0B, 0x01};
+    std::uint16_t read_size = 300;
     uint8_t page_number;
 
     struct UwbPositionRaw
@@ -194,12 +199,12 @@ struct DwmAnchorListGet
         AnchorsDecoded anchor_list[15];  // anchor nr 1 is index 0, anchor nr 15 is index 14
     } uwb_position_decoded;
 
-    bool read(std::array<uint8_t, 3> &response) // TODO: ... I dont know how to do the size thing here, i think we have to assume max size is for all 15 anchors, and check the inside to see how much data we actually have
+    bool read(std::vector<uint8_t> &response) // TODO: ... I dont know how to do the size thing here, i think we have to assume max size is for all 15 anchors, and check the inside to see how much data we actually have
     {
-        if (sizeof(response) != 3)
-        {
-            return false;
-        }
+        // if (sizeof(response) !=)
+        // {
+        //     return false;
+        // }
 
         this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
         this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
@@ -272,7 +277,8 @@ struct DwmLocGet
 {
     ApiFunction api_function = DWM_LOC_GET;
 
-    TLVRequest request{std::byte{0x0C}, std::byte{0x00}};
+    std::uint8_t request[2] = {0x0C, 0x00};
+    std::uint16_t read_size = 200;
 
     struct UwbPositionRaw
     {
@@ -314,12 +320,12 @@ struct DwmLocGet
         ANxDecodedTag list_of_an[4];
     } uwb_position_decoded;
 
-    bool read(std::array<uint8_t, 3> &response) // TODO: Here we again i think have to assume all AN4 are populated, and then just see how much we actually read, and then decide how much actual data is there.
+    bool read(std::vector<uint8_t> &response) // TODO: Here we again i think have to assume all AN4 are populated, and then just see how much we actually read, and then decide how much actual data is there.
     {
-        if (sizeof(response) != 3)
-        {
-            return false;
-        }
+        // if (sizeof(response) != 3)
+        // {
+        //     return false;
+        // }
 
         this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
         this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
@@ -430,6 +436,9 @@ struct DwmPosGet
 {
     ApiFunction api_function = DWM_POS_GET;
 
+    std::uint8_t request[2] = {0x02, 0x00};
+    std::uint16_t read_size = 18;
+
     struct UwbPositionRaw
     {
         std::byte type_general;
@@ -456,9 +465,9 @@ struct DwmPosGet
         std::uint8_t value_quality_factor;
     } uwb_position_decoded;
 
-    bool read(const std::array<uint8_t, 18> &response)
+    bool read(const std::vector<uint8_t> &response)
     {
-        if (sizeof(response) != 18)
+        if (sizeof(response) != read_size)
         {
             return false;
         }
@@ -521,7 +530,7 @@ struct DwmPosGet
 
 struct UwbMessages
 {
-    ApiFunction request_message_type;
+    ApiFunction current_request_function;
 
     DwmPosGet dwm_pos_get;
     DwmUpdRateGet dwm_upd_rate_get;

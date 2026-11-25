@@ -5,8 +5,7 @@
 
 struct TLVRequest
 {
-    std::byte Type;
-    std::byte Length;
+    std::uint8_t type_length[2];
 };
 
 struct AnchorsRaw
