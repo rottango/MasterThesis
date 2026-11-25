@@ -266,24 +266,27 @@ int UwbDeviceProcess(Application &app)
 	 * such as those created by com0com on Windows or tty0tty on Linux. */
 
 	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
+	check(sp_flush(port, SP_BUF_INPUT));
 	UwbMessages messages;
-	messages.current_request_function = DWM_POS_GET;
+	messages.current_request_function = DWM_UPD_RATE_GET;
 	std::vector<uint8_t> response{};
 	// DWM_POS_GET,
 	// DWM_UPD_RATE_SET,
 	// DWM_UPD_RATE_GET,
 	// DWM_ANCHOR_LIST_GET,
 	// DWM_LOC_GET
-	std::uint8_t *current_request = messages.dwm_pos_get.request;
-	std::uint16_t current_read_size = messages.dwm_pos_get.read_size;
+	messages.dwm_upd_rate_set.update_rate = 1;
+	messages.dwm_upd_rate_set.update_rate_stationary = 1;
+	messages.dwm_upd_rate_set.int_update_rate_to_byte();
+
+	std::uint8_t *current_request = messages.dwm_upd_rate_get.request;
+	std::uint16_t current_read_size = messages.dwm_upd_rate_get.read_size;
+	std::uint8_t current_write_size = 6;
 	// UwbPositionRaw uwb_position_raw;
 	// UwbPositionDecoded uwb_position_decoded;
 	int j = 1;
-	std::cout << "before while\n";
 	while (app.getUwbRunning())
 	{
-		std::cout << "first in while\n";
-
 		switch (messages.current_request_function)
 		{
 		case DWM_POS_GET:
@@ -320,15 +323,10 @@ int UwbDeviceProcess(Application &app)
 			break;
 		}
 
-		std::cout << "after switch\n";
-
 		auto start = std::chrono::steady_clock::now();
-		std::this_thread::sleep_for(std::chrono::milliseconds(97));
+		std::this_thread::sleep_for(std::chrono::milliseconds(997));
 
-		std::cout << "before blocking write\n";
-		enum sp_return write_result = sp_blocking_write(port, current_request, 2, 100);
-		std::cout << "after blocking write\n";
-		std::cout << "write_result: " << write_result << "\n";
+		enum sp_return write_result = sp_blocking_write(port, current_request, 2, 1000);
 
 		if (write_result < 0)
 		{
@@ -340,9 +338,7 @@ int UwbDeviceProcess(Application &app)
 		}
 		else if (write_result == 2)
 		{
-			std::cout << "before blocking read\n";
 			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 1000);
-			std::cout << "after blocking read\n";
 
 			std::cout << "Ammount of bytes written is " << write_result << " out of " << 2 << "\n";
 
@@ -357,42 +353,11 @@ int UwbDeviceProcess(Application &app)
 				{
 					std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " << std::dec;
 				}
-
-				switch (messages.current_request_function)
-				{
-				case DWM_POS_GET:
-					messages.dwm_pos_get.read(response);
-					messages.dwm_pos_get.decode();
-					messages.dwm_pos_get.display();
-					break;
-				case DWM_UPD_RATE_SET:
-					messages.dwm_upd_rate_set.read(response);
-					messages.dwm_upd_rate_set.decode();
-					messages.dwm_upd_rate_set.display();
-					break;
-				case DWM_UPD_RATE_GET:
-					messages.dwm_upd_rate_get.read(response);
-					messages.dwm_upd_rate_get.decode();
-					messages.dwm_upd_rate_get.display();
-					break;
-				case DWM_ANCHOR_LIST_GET:
-					messages.dwm_anchor_list_get.read(response);
-					messages.dwm_anchor_list_get.decode();
-					messages.dwm_anchor_list_get.display();
-					break;
-				case DWM_LOC_GET:
-					messages.dwm_loc_get.read(response);
-					messages.dwm_loc_get.decode();
-					messages.dwm_loc_get.display();
-					break;
-				default:
-					break;
-				}
 			}
 			else
 			{
 				std::cout << "\n";
-				std::cout << "Ammount of bytes read is " << read_result << " out of 18" << "\n";
+				std::cout << "Ammount of bytes read is " << read_result << " out of " << current_read_size << "\n";
 
 				for (int i = 0; i < read_result; i++)
 				{
@@ -402,6 +367,7 @@ int UwbDeviceProcess(Application &app)
 				switch (messages.current_request_function)
 				{
 				case DWM_POS_GET:
+					std::cout << "\nim here\n";
 					messages.dwm_pos_get.read(response);
 					messages.dwm_pos_get.decode();
 					messages.dwm_pos_get.display();

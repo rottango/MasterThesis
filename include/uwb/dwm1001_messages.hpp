@@ -38,11 +38,14 @@ struct DwmUpdRateSet
 {
     ApiFunction api_function = DWM_UPD_RATE_SET;
 
-    std::uint8_t request[2] = {0x04, 0x00};
-    std::uint16_t read_size = 3;
+    std::byte byte_update_rate[2]{};
+    std::byte byte_update_rate_stationary[2]{};
 
-    uint16_t update_rate;            // update_rate = goal_update_rate_ms/100
-    uint16_t update_rate_stationary; // update_rate_stationary = goal_update_rate_stationary_ms/100
+    uint16_t update_rate = 1;
+    uint16_t update_rate_stationary = 1;
+
+    std::uint8_t request[6] = {0x03, 0x04};
+    std::uint16_t read_size = 3;
 
     struct UwbPositionRaw
     {
@@ -58,10 +61,24 @@ struct DwmUpdRateSet
         std::uint8_t value_err_code_general;
     } uwb_position_decoded;
 
+    void int_update_rate_to_byte()
+    {
+        this->byte_update_rate[0] = static_cast<std::byte>(this->update_rate & 0xFF);
+        this->byte_update_rate[1] = static_cast<std::byte>(this->update_rate >> 8);
+        this->byte_update_rate_stationary[0] = static_cast<std::byte>(this->update_rate_stationary & 0xFF);
+        this->byte_update_rate_stationary[1] = static_cast<std::byte>(this->update_rate_stationary >> 8);
+        this->request[2] = static_cast<std::uint8_t>(byte_update_rate[0]);
+        this->request[3] = static_cast<std::uint8_t>(byte_update_rate[1]);
+        this->request[4] = static_cast<std::uint8_t>(byte_update_rate_stationary[0]);
+        this->request[5] = static_cast<std::uint8_t>(byte_update_rate_stationary[1]);
+    }
+
     bool read(std::vector<uint8_t> &response)
     {
-        if (sizeof(response) != read_size)
+        if (response.size() != read_size)
         {
+            std::cout << "size of response: " << response.size() << "\n";
+
             return false;
         }
 
@@ -87,8 +104,8 @@ struct DwmUpdRateSet
         std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
-        std::cout << std::dec << "Set update rate each [ms] :" << update_rate << "\t" << std::hex << std::uppercase << update_rate << "\n";
-        std::cout << std::dec << "Set stationary update rate each [ms] :" << (update_rate_stationary * 10) << "\t" << std::hex << std::uppercase << (update_rate_stationary * 10) << "\n";
+        std::cout << std::dec << "Set update rate each [ms] :" << (update_rate * 100) << "\t" << std::hex << std::uppercase << (update_rate * 100) << "\n";
+        std::cout << std::dec << "Set stationary update rate each [ms] :" << (update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (update_rate_stationary * 100) << "\n";
     }
 };
 
@@ -123,8 +140,10 @@ struct DwmUpdRateGet
 
     bool read(std::vector<uint8_t> &response)
     {
-        if (sizeof(response) != read_size)
+        if (response.size() != read_size)
         {
+            std::cout << "size of response: " << response.size() << "\n";
+
             return false;
         }
 
@@ -162,7 +181,8 @@ struct DwmUpdRateGet
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
         std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
-
+        std::cout << std::dec << "Set update rate each [ms] :" << (this->uwb_position_decoded.update_rate * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate * 100) << "\n";
+        std::cout << std::dec << "Set stationary update rate each [ms] :" << (this->uwb_position_decoded.update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate_stationary * 100) << "\n";
         // TODO rest ...
     };
 };
@@ -201,8 +221,10 @@ struct DwmAnchorListGet
 
     bool read(std::vector<uint8_t> &response) // TODO: ... I dont know how to do the size thing here, i think we have to assume max size is for all 15 anchors, and check the inside to see how much data we actually have
     {
-        // if (sizeof(response) !=)
+        // if (response.size()  !=)
         // {
+        //     std::cout << "size of response: " << response.size() << "\n";
+
         //     return false;
         // }
 
@@ -322,8 +344,9 @@ struct DwmLocGet
 
     bool read(std::vector<uint8_t> &response) // TODO: Here we again i think have to assume all AN4 are populated, and then just see how much we actually read, and then decide how much actual data is there.
     {
-        // if (sizeof(response) != 3)
+        // if (response.size()  != 3)
         // {
+        // std::cout << "size of response: " << response.size() << "\n";
         //     return false;
         // }
 
@@ -467,8 +490,9 @@ struct DwmPosGet
 
     bool read(const std::vector<uint8_t> &response)
     {
-        if (sizeof(response) != read_size)
+        if (response.size() != read_size)
         {
+            std::cout << "size of response: " << response.size() << "\n";
             return false;
         }
 
