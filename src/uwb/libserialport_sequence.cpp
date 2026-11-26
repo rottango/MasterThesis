@@ -512,29 +512,34 @@ int UwbDeviceProcess(Application &app)
 				{
 				case DWM_POS_GET:
 
-				messages.dwm_pos_get.read(response);
+					messages.dwm_pos_get.read(response);
 					messages.dwm_pos_get.decode();
 					messages.dwm_pos_get.display();
+					messages.dwm_pos_get.writeToLogFile();
 					break;
 				case DWM_UPD_RATE_SET:
 					messages.dwm_upd_rate_set.read(response);
 					messages.dwm_upd_rate_set.decode();
 					messages.dwm_upd_rate_set.display();
+					messages.dwm_upd_rate_set.writeToLogFile();
 					break;
 				case DWM_UPD_RATE_GET:
 					messages.dwm_upd_rate_get.read(response);
 					messages.dwm_upd_rate_get.decode();
 					messages.dwm_upd_rate_get.display();
+					messages.dwm_upd_rate_get.writeToLogFile();
 					break;
 				case DWM_ANCHOR_LIST_GET:
 					messages.dwm_anchor_list_get.read(response);
 					messages.dwm_anchor_list_get.decode();
 					messages.dwm_anchor_list_get.display();
+					messages.dwm_anchor_list_get.writeToLogFile();
 					break;
 				case DWM_LOC_GET:
 					messages.dwm_loc_get.read(response);
 					messages.dwm_loc_get.decode();
 					messages.dwm_loc_get.display();
+					messages.dwm_loc_get.writeToLogFile();
 					break;
 				default:
 					break;
@@ -553,30 +558,39 @@ int UwbDeviceProcess(Application &app)
 				switch (messages.current_request_function)
 				{
 				case DWM_POS_GET:
-					std::cout << "\nim here\n";
 					messages.dwm_pos_get.read(response);
 					messages.dwm_pos_get.decode();
 					messages.dwm_pos_get.display();
+					messages.dwm_pos_get.writeToLogFile();
+
 					break;
 				case DWM_UPD_RATE_SET:
 					messages.dwm_upd_rate_set.read(response);
 					messages.dwm_upd_rate_set.decode();
 					messages.dwm_upd_rate_set.display();
+					messages.dwm_upd_rate_set.writeToLogFile();
+
 					break;
 				case DWM_UPD_RATE_GET:
 					messages.dwm_upd_rate_get.read(response);
 					messages.dwm_upd_rate_get.decode();
 					messages.dwm_upd_rate_get.display();
+					messages.dwm_upd_rate_get.writeToLogFile();
+
 					break;
 				case DWM_ANCHOR_LIST_GET:
 					messages.dwm_anchor_list_get.read(response);
 					messages.dwm_anchor_list_get.decode();
 					messages.dwm_anchor_list_get.display();
+					messages.dwm_anchor_list_get.writeToLogFile();
+
 					break;
 				case DWM_LOC_GET:
 					messages.dwm_loc_get.read(response);
 					messages.dwm_loc_get.decode();
 					messages.dwm_loc_get.display();
+					messages.dwm_loc_get.writeToLogFile();
+
 					break;
 				default:
 					break;

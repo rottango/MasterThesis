@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include <dwm1001_messages_helper.hpp>
 #include <dwm1001_enum.hpp>
@@ -36,6 +37,22 @@ inline std::string errorCodeToText(const DWM1001ErrorCode &error_code)
 
 struct DwmUpdRateSet
 {
+    std::ofstream logFile;
+
+    DwmUpdRateSet(std::string &dateAndTime) : logFile("DwmUpdRateSet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmUpdRateSet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmUpdRateSet logFile Opened\n";
+            this->logFile << "decoded_type_general," << "decoded_length_general," << "decoded_value_err_code_general," << "decoded_update rate," << "decoded_update_rate_stationary," << "raw_type_general," << "raw_length_general," << "raw_value_err_code_general," << "raw_update_rate," << "raw_update_rate_stationary";
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_UPD_RATE_SET;
 
     std::byte byte_update_rate[2]{};
@@ -107,10 +124,36 @@ struct DwmUpdRateSet
         std::cout << std::dec << "Set update rate each [ms] :" << (update_rate * 100) << "\t" << std::hex << std::uppercase << (update_rate * 100) << "\n";
         std::cout << std::dec << "Set stationary update rate each [ms] :" << (update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (update_rate_stationary * 100) << "\n";
     }
+
+    void writeToLogFile()
+    {
+        this->logFile << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        this->logFile << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
+        this->logFile << std::dec << "Set stationary update rate each [ms] :" << (update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (update_rate_stationary * 100) << "\n";
+        this->logFile << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        this->logFile << std::dec << "Set update rate each [ms] :" << (update_rate * 100) << "\t" << std::hex << std::uppercase << (update_rate * 100) << "\n";
+        this->logFile.flush();
+    }
 };
 
 struct DwmUpdRateGet
 {
+    std::ofstream logFile;
+
+    DwmUpdRateGet(std::string &dateAndTime) : logFile("DwmUpdRateGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmUpdRateGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmUpdRateGet logFile Opened\n";
+            this->logFile << "decoded_type_general," << "decoded_length_general," << "decoded_value_err_code_general," << "decoded_type," << "decoded_length," << "decoded_update rate," << "decoded_update_rate_stationary," << "raw_type_general," << "raw_length_general," << "raw_value_err_code_general," << "raw_type," << "raw_length," << "raw_update_rate," << "raw_update_rate_stationary";
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_UPD_RATE_GET;
 
     std::uint8_t request[2] = {0x04, 0x00};
@@ -184,10 +227,35 @@ struct DwmUpdRateGet
         std::cout << std::dec << "Set update rate each [ms] :" << (this->uwb_position_decoded.update_rate * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate * 100) << "\n";
         std::cout << std::dec << "Set stationary update rate each [ms] :" << (this->uwb_position_decoded.update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate_stationary * 100) << "\n";
     };
+    void writeToLogFile()
+    {
+        this->logFile << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        this->logFile << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
+        this->logFile << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        this->logFile << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
+        this->logFile << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
+        this->logFile << std::dec << "Set update rate each [ms] :" << (this->uwb_position_decoded.update_rate * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate * 100) << "\n";
+        this->logFile << std::dec << "Set stationary update rate each [ms] :" << (this->uwb_position_decoded.update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate_stationary * 100) << "\n";
+        this->logFile.flush();
+    }
 };
 
 struct DwmAnchorListGet
 {
+    std::ofstream logFile;
+
+    DwmAnchorListGet(std::string &dateAndTime) : logFile("DwmAnchorListGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmAnchorListGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmAnchorListGet logFile Opened\n";
+        }
+    }
+
     ApiFunction api_function = DWM_ANCHOR_LIST_GET;
 
     std::uint8_t request[3] = {0x0B, 0x01, 0x00}; // 3rd byte is the page_number
@@ -307,10 +375,45 @@ struct DwmAnchorListGet
             std::cout << std::dec << "Seat number and neighbornetwork: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network) << "\n";
         }
     }
+    void writeToLogFile()
+    {
+        this->logFile << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        this->logFile << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
+        this->logFile << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        this->logFile << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
+        this->logFile << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
+        this->logFile << std::dec << "Number of anchors: " << static_cast<unsigned>(this->uwb_position_decoded.number_of_elements) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.number_of_elements) << "\n";
+        this->logFile << std::dec << "Printing out the data of each anchors: \n";
+        for (int i = 0; i < number_of_anchors; i++)
+        {
+            this->logFile << std::dec << "Anchor number: " << i + 1 << "\n";
+            this->logFile << std::dec << "UWB Address: " << this->uwb_position_decoded.anchor_list[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list->uwb_address[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].uwb_address[1]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Position x [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Position y [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Position z [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "RSSI: " << static_cast<int>(this->uwb_position_decoded.anchor_list[i].rssi) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].rssi) << "\n";
+            this->logFile << std::dec << "Seat number and neighbornetwork: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network) << "\n";
+        }
+        this->logFile.flush();
+    }
 };
 
 struct DwmLocGet
 {
+    std::ofstream logFile;
+
+    DwmLocGet(std::string &dateAndTime) : logFile("DwmLocGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmLocGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmLocGet logFile Opened\n";
+        }
+    }
+
     ApiFunction api_function = DWM_LOC_GET;
 
     std::uint8_t request[2] = {0x0C, 0x00};
@@ -491,10 +594,54 @@ struct DwmLocGet
             std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_quality_factor) << "\n";
         }
     }
+    void writeToLogFile()
+    {
+        this->logFile << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        this->logFile << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
+        this->logFile << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        this->logFile << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
+        this->logFile << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
+        this->logFile << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
+        this->logFile << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
+        this->logFile << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
+        this->logFile << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
+
+        this->logFile << std::dec << "Specific Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_specific) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_specific) << "\n";
+        this->logFile << std::dec << "Specific Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_specific) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_specific) << "\n";
+        this->logFile << std::dec << "Number of distnaces encoded: " << static_cast<unsigned>(this->uwb_position_decoded.value_distances_encoded) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_distances_encoded) << "\n";
+
+        this->logFile << std::dec << "Printing out the data of each anchors: \n";
+        for (int i = 0; i < number_of_anchors; i++)
+        {
+            this->logFile << std::dec << "Anchor number: " << i + 1 << "\n";
+            this->logFile << std::dec << "UWB Address: " << this->uwb_position_decoded.list_of_an[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[1]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Distance [mm]: " << this->uwb_position_decoded.list_of_an[i].distance << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Distance quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].distance_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance_quality_factor) << "\n";
+            this->logFile << std::dec << "Position x [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Position y [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Position z [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << std::setfill(' ') << "\n";
+            this->logFile << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_quality_factor) << "\n";
+        }
+        this->logFile.flush();
+    }
 };
 
 struct DwmPosGet
 {
+    std::ofstream logFile;
+
+    DwmPosGet(std::string &dateAndTime) : logFile("DwmPosGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmPosGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmPosGet logFile Opened\n";
+        }
+    }
+
     ApiFunction api_function = DWM_POS_GET;
 
     std::uint8_t request[2] = {0x02, 0x00};
@@ -588,11 +735,42 @@ struct DwmPosGet
         std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
         std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
     }
+    void writeToLogFile()
+    {
+        this->logFile << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        this->logFile << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
+        this->logFile << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
+        this->logFile << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
+        this->logFile << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
+        this->logFile << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
+        this->logFile << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
+        this->logFile << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
+        this->logFile << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
+        this->logFile.flush();
+    }
 };
 
 struct UwbMessages
 {
     ApiFunction current_request_function;
+
+    std::string datetime() // https://cplusplus.com/forum/general/205282/
+    {
+        time_t rawtime;
+        struct tm *timeinfo;
+        char buffer[80];
+
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+
+        strftime(buffer, 80, "%d-%m-%Y-%H-%M-%S", timeinfo);
+        return std::string(buffer);
+    }
+    std::string dateAndTime = datetime();
+
+    UwbMessages() : dwm_pos_get(dateAndTime), dwm_upd_rate_get(dateAndTime), dwm_upd_rate_set(dateAndTime), dwm_anchor_list_get(dateAndTime), dwm_loc_get(dateAndTime)
+    {
+    }
 
     DwmPosGet dwm_pos_get;
     DwmUpdRateGet dwm_upd_rate_get;
