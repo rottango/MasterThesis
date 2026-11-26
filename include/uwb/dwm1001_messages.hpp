@@ -41,8 +41,8 @@ struct DwmUpdRateSet
     std::byte byte_update_rate[2]{};
     std::byte byte_update_rate_stationary[2]{};
 
-    uint16_t update_rate = 1;
-    uint16_t update_rate_stationary = 1;
+    uint16_t update_rate;
+    uint16_t update_rate_stationary;
 
     std::uint8_t request[6] = {0x03, 0x04};
     std::uint16_t read_size = 3;
@@ -183,7 +183,6 @@ struct DwmUpdRateGet
         std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
         std::cout << std::dec << "Set update rate each [ms] :" << (this->uwb_position_decoded.update_rate * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate * 100) << "\n";
         std::cout << std::dec << "Set stationary update rate each [ms] :" << (this->uwb_position_decoded.update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate_stationary * 100) << "\n";
-        // TODO rest ...
     };
 };
 
@@ -304,7 +303,7 @@ struct DwmAnchorListGet
             std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << std::setfill(' ') << "\n";
             std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << std::setfill(' ') << "\n";
 
-            std::cout << std::dec << "RSSI: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].rssi) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].rssi) << "\n";
+            std::cout << std::dec << "RSSI: " << static_cast<int>(this->uwb_position_decoded.anchor_list[i].rssi) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].rssi) << "\n";
             std::cout << std::dec << "Seat number and neighbornetwork: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network) << "\n";
         }
     }
