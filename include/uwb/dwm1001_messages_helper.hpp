@@ -5,8 +5,7 @@
 
 struct TLVRequest
 {
-    std::byte Type;
-    std::byte Length;
+    std::uint8_t type_length[2];
 };
 
 struct AnchorsRaw
@@ -29,7 +28,7 @@ struct AnchorsDecoded
     std::uint8_t seat_number_and_neighbor_network;
 };
 
-struct ANxRaw
+struct ANxRawTag
 { // from documentation TLV repsonse from dwm_loc_get
     std::byte uwb_address[2];
     std::byte distance[4];
@@ -41,7 +40,7 @@ struct ANxRaw
     std::byte value_quality_factor;
 };
 
-struct ANxDecoded
+struct ANxDecodedTag
 {
     std::uint16_t uwb_address;
     std::int32_t distance;
