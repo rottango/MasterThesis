@@ -366,7 +366,7 @@ int UwbDeviceProcess(Application &app)
 		{
 			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 1000);
 
-			std::cout << "Ammount of bytes written is " << write_result << " out of " << 2 << "\n";
+			std::cout << "Ammount of bytes written is " << write_result << " out of " << current_write_size << "\n";
 
 			if (read_result < 0)
 			{
