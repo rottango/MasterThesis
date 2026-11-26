@@ -1,6 +1,10 @@
 #include <libserialport_sequence.hpp>
 #include <application_class.hpp>
 
+#include <unistd.h>
+#include <poll.h>
+#include <fcntl.h>
+
 /* Helper function for error handling. */
 int check(enum sp_return result)
 {
@@ -267,18 +271,105 @@ int UwbDeviceProcess(Application &app)
 
 	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
 	check(sp_flush(port, SP_BUF_INPUT));
+
+	/*
+		connect to fifo.
+	*/
+
+	const char *fifo_path = "/home/rottango/MasterThesis/build/fifo";
+	int fd = open(fifo_path, O_RDONLY | O_NONBLOCK);
+	if (fd == -1)
+	{
+		std::cout << "Error - fifo not opened";
+	}
+
+	// std::string buffer(256, '\0');
+	// ssize_t bytes_read = read(fd, buffer.data(), buffer.size());
+
+	struct pollfd poll_fifo;
+
+	memset(&poll_fifo, 0, sizeof(poll_fifo));
+	poll_fifo.fd = fd;
+	poll_fifo.events = POLLIN;
+
+	// if (bytes_read > 0)
+	// {
+	// 	buffer.resize(bytes_read);
+	// 	std::cout << "Recieved: " << buffer << "\n";
+	// 	buffer.resize(256);
+	// }
+	// else if (bytes_read == 0)
+	// {
+	// 	std::cout << "error - no data read" << "\n";
+	// }
+	char chosen_command[256];
+
 	UwbMessages messages;
-	messages.current_request_function = DWM_LOC_GET;
+	messages.current_request_function = DWM_UPD_RATE_GET;
 	std::vector<uint8_t> response{};
 
 	std::uint8_t *current_request;
 	std::uint16_t current_read_size;
 	std::uint8_t current_write_size;
 
-	std::uint16_t delay = 997;
+	std::uint16_t delay = 100;
+
+	bool dwm_upd_rate_set_flag = 0;
+	auto previous_request_function = messages.current_request_function;
+
 	int j = 1;
 	while (app.getUwbRunning())
 	{
+		if (poll(&poll_fifo, 1, 100) == 1)
+		{
+			if (poll_fifo.revents & POLLIN)
+			{
+				std::string buffer(256, '\0');
+
+				ssize_t bytes_read = read(fd, buffer.data(), buffer.size());
+
+				if (bytes_read > 0)
+				{
+					buffer.resize(bytes_read);
+					std::cout << "Read from FIFO: " << buffer;
+					switch (buffer[0] - '0')
+					{
+					case 0:
+						std::cout << "message request changed to DWM_POS_GET\n";
+						messages.current_request_function = DWM_POS_GET;
+						break;
+					case 1:
+						std::cout << "message request changed to DWM_UPD_RATE_SET\n";
+						messages.current_request_function = DWM_UPD_RATE_SET;
+						break;
+					case 2:
+						std::cout << "message request changed to DWM_UPD_RATE_GET\n";
+						messages.current_request_function = DWM_UPD_RATE_GET;
+						break;
+					case 3:
+						std::cout << "message request changed to DWM_ANCHOR_LIST_GET\n";
+						messages.current_request_function = DWM_ANCHOR_LIST_GET;
+						break;
+					case 4:
+						std::cout << "message request changed to DWM_LOC_GET\n";
+						messages.current_request_function = DWM_LOC_GET;
+						break;
+					default:
+						break;
+					}
+					if (buffer[1] - '0' >= 1 && buffer[1] - '0' <= 9)
+					{
+						messages.dwm_upd_rate_set.update_rate = buffer[1] - '0';
+						std::cout << "update_rate changed\n";
+					}
+					if (buffer[1] - '0' >= 1 && buffer[1] - '0' <= 9)
+					{
+						messages.dwm_upd_rate_set.update_rate_stationary = buffer[2] - '0';
+						std::cout << "update_rate_stationary changed\n";
+					}
+				}
+			}
+		}
 		switch (messages.current_request_function)
 		{
 		case DWM_POS_GET:
@@ -290,23 +381,44 @@ int UwbDeviceProcess(Application &app)
 			current_request = messages.dwm_pos_get.request;
 			current_write_size = 2;
 
-			delay = 97;
+			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+			else
+				delay = 1100;
 
 			break;
 		case DWM_UPD_RATE_SET:
 			response.clear();
-			response.resize(messages.dwm_upd_rate_set.read_size);
+			if (dwm_upd_rate_set_flag == 0)
+			{
+				response.resize(messages.dwm_upd_rate_set.read_size);
 
-			messages.current_request_function = DWM_UPD_RATE_SET;
-			current_read_size = messages.dwm_upd_rate_set.read_size;
-			current_request = messages.dwm_upd_rate_set.request;
-			current_write_size = 6;
+				messages.current_request_function = DWM_UPD_RATE_SET;
+				current_read_size = messages.dwm_upd_rate_set.read_size;
+				current_request = messages.dwm_upd_rate_set.request;
+				current_write_size = 6;
 
-			messages.dwm_upd_rate_set.update_rate = 1;
-			messages.dwm_upd_rate_set.update_rate_stationary = 1;
-			messages.dwm_upd_rate_set.int_update_rate_to_byte();
+				messages.dwm_upd_rate_set.int_update_rate_to_byte();
 
-			delay = 4997;
+				delay = 1000;
+				dwm_upd_rate_set_flag = 1;
+			}
+			else
+			{
+				response.clear();
+				response.resize(messages.dwm_upd_rate_get.read_size);
+
+				messages.current_request_function = DWM_UPD_RATE_GET;
+				current_read_size = messages.dwm_upd_rate_get.read_size;
+				current_request = messages.dwm_upd_rate_get.request;
+				current_write_size = 2;
+
+				if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+					delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+				else
+					delay = 1100;
+				dwm_upd_rate_set_flag = 0;
+			}
 
 			break;
 		case DWM_UPD_RATE_GET:
@@ -318,8 +430,12 @@ int UwbDeviceProcess(Application &app)
 			current_request = messages.dwm_upd_rate_get.request;
 			current_write_size = 2;
 
-			delay = 97;
+			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+			else
+				delay = 1100;
 
+			dwm_upd_rate_set_flag = 0;
 			break;
 		case DWM_ANCHOR_LIST_GET:
 			response.clear();
@@ -330,7 +446,7 @@ int UwbDeviceProcess(Application &app)
 			current_request = messages.dwm_anchor_list_get.request;
 			current_write_size = 3;
 
-			delay = 997;
+			delay = 500;
 
 			break;
 		case DWM_LOC_GET:
@@ -342,7 +458,10 @@ int UwbDeviceProcess(Application &app)
 			current_request = messages.dwm_loc_get.request;
 			current_write_size = 2;
 
-			delay = 997;
+			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+			else
+				delay = 1100;
 
 			break;
 		default:
@@ -351,6 +470,15 @@ int UwbDeviceProcess(Application &app)
 
 		auto start = std::chrono::steady_clock::now();
 		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+
+		if (previous_request_function != messages.current_request_function)
+		{
+			check(sp_flush(port, SP_BUF_INPUT));
+
+			previous_request_function = messages.current_request_function;
+
+			std::cout << "API function changed - UART input flushed\n";
+		}
 
 		enum sp_return write_result = sp_blocking_write(port, current_request, current_write_size, 1000);
 
@@ -364,9 +492,9 @@ int UwbDeviceProcess(Application &app)
 		}
 		else if (write_result == current_write_size)
 		{
-			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 1000);
+			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 300);
 
-			std::cout << "Ammount of bytes written is " << write_result << " out of " << 2 << "\n";
+			std::cout << "Ammount of bytes written is " << write_result << " out of " << current_write_size << "\n";
 
 			if (read_result < 0)
 			{
@@ -383,8 +511,8 @@ int UwbDeviceProcess(Application &app)
 				switch (messages.current_request_function)
 				{
 				case DWM_POS_GET:
-					std::cout << "\nim here\n";
-					messages.dwm_pos_get.read(response);
+
+				messages.dwm_pos_get.read(response);
 					messages.dwm_pos_get.decode();
 					messages.dwm_pos_get.display();
 					break;
@@ -469,6 +597,7 @@ int UwbDeviceProcess(Application &app)
 	sp_free_port(port);
 	sp_free_config(device_config);
 	sp_free_config(config);
+	close(fd);
 
 	free(uwb_port_name);
 

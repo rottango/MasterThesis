@@ -1,0 +1,15 @@
+#!/bin/bash
+
+fifo_path="$HOME/MasterThesis/build/fifo"
+
+exec 3>"$fifo_path"
+
+while true; do
+    printf '0 - DWM_POS_GET\n'
+    printf '1 - DWM_UPD_RATE_SET, 1xy - x = update_rate 0-9, y = update_rate_stationary 0-9\n'
+    printf '2 - DWM_UPD_RATE_GET\n'
+    printf '3 - DWM_ANCHOR_LIST_GET\n'
+    printf '4 - DWM_LOC_GET\n'
+    read -r -p "Enter message: " message
+    printf '%s\n' "$message" >&3
+done
