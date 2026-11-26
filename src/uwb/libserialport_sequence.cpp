@@ -268,22 +268,14 @@ int UwbDeviceProcess(Application &app)
 	// ok boys we bout to write the shit out of this transmit functions you hear me ? Godspeed
 	check(sp_flush(port, SP_BUF_INPUT));
 	UwbMessages messages;
-	messages.current_request_function = DWM_UPD_RATE_GET;
+	messages.current_request_function = DWM_LOC_GET;
 	std::vector<uint8_t> response{};
-	// DWM_POS_GET,
-	// DWM_UPD_RATE_SET,
-	// DWM_UPD_RATE_GET,
-	// DWM_ANCHOR_LIST_GET,
-	// DWM_LOC_GET
-	messages.dwm_upd_rate_set.update_rate = 1;
-	messages.dwm_upd_rate_set.update_rate_stationary = 1;
-	messages.dwm_upd_rate_set.int_update_rate_to_byte();
 
-	std::uint8_t *current_request = messages.dwm_upd_rate_get.request;
-	std::uint16_t current_read_size = messages.dwm_upd_rate_get.read_size;
-	std::uint8_t current_write_size = 6;
-	// UwbPositionRaw uwb_position_raw;
-	// UwbPositionDecoded uwb_position_decoded;
+	std::uint8_t *current_request;
+	std::uint16_t current_read_size;
+	std::uint8_t current_write_size;
+
+	std::uint16_t delay = 997;
 	int j = 1;
 	while (app.getUwbRunning())
 	{
@@ -292,51 +284,85 @@ int UwbDeviceProcess(Application &app)
 		case DWM_POS_GET:
 			response.clear();
 			response.resize(messages.dwm_pos_get.read_size);
-			current_read_size = messages.dwm_pos_get.read_size;
+
 			messages.current_request_function = DWM_POS_GET;
+			current_read_size = messages.dwm_pos_get.read_size;
+			current_request = messages.dwm_pos_get.request;
+			current_write_size = 2;
+
+			delay = 97;
+
 			break;
 		case DWM_UPD_RATE_SET:
 			response.clear();
 			response.resize(messages.dwm_upd_rate_set.read_size);
-			current_read_size = messages.dwm_upd_rate_set.read_size;
+
 			messages.current_request_function = DWM_UPD_RATE_SET;
+			current_read_size = messages.dwm_upd_rate_set.read_size;
+			current_request = messages.dwm_upd_rate_set.request;
+			current_write_size = 6;
+
+			messages.dwm_upd_rate_set.update_rate = 1;
+			messages.dwm_upd_rate_set.update_rate_stationary = 1;
+			messages.dwm_upd_rate_set.int_update_rate_to_byte();
+
+			delay = 4997;
+
 			break;
 		case DWM_UPD_RATE_GET:
 			response.clear();
 			response.resize(messages.dwm_upd_rate_get.read_size);
-			current_read_size = messages.dwm_upd_rate_get.read_size;
+
 			messages.current_request_function = DWM_UPD_RATE_GET;
+			current_read_size = messages.dwm_upd_rate_get.read_size;
+			current_request = messages.dwm_upd_rate_get.request;
+			current_write_size = 2;
+
+			delay = 97;
+
 			break;
 		case DWM_ANCHOR_LIST_GET:
 			response.clear();
 			response.resize(messages.dwm_anchor_list_get.read_size);
+
+			messages.current_request_function = DWM_ANCHOR_LIST_GET;
 			current_read_size = messages.dwm_anchor_list_get.read_size;
-			messages.current_request_function = DWM_UPD_RATE_GET;
+			current_request = messages.dwm_anchor_list_get.request;
+			current_write_size = 3;
+
+			delay = 997;
+
 			break;
 		case DWM_LOC_GET:
 			response.clear();
 			response.resize(messages.dwm_loc_get.read_size);
+
+			messages.current_request_function = DWM_LOC_GET;
 			current_read_size = messages.dwm_loc_get.read_size;
-			messages.current_request_function = DWM_UPD_RATE_GET;
+			current_request = messages.dwm_loc_get.request;
+			current_write_size = 2;
+
+			delay = 997;
+
 			break;
 		default:
 			break;
 		}
 
 		auto start = std::chrono::steady_clock::now();
-		std::this_thread::sleep_for(std::chrono::milliseconds(997));
+		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 
-		enum sp_return write_result = sp_blocking_write(port, current_request, 2, 1000);
+		enum sp_return write_result = sp_blocking_write(port, current_request, current_write_size, 1000);
 
 		if (write_result < 0)
 		{
 			std::cout << "Timeout reached on write probably... \n";
 		}
-		else if (write_result < 2)
+		else if (write_result < current_write_size)
 		{
 			std::cout << "Timeout was reached before the requested number of bytes was written... \n";
 		}
-		else if (write_result == 2)
+		else if (write_result == current_write_size)
 		{
 			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 1000);
 
@@ -352,6 +378,38 @@ int UwbDeviceProcess(Application &app)
 				for (int i = 0; i < read_result; i++)
 				{
 					std::cout << "0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(response[i]) << " " << std::dec;
+				}
+
+				switch (messages.current_request_function)
+				{
+				case DWM_POS_GET:
+					std::cout << "\nim here\n";
+					messages.dwm_pos_get.read(response);
+					messages.dwm_pos_get.decode();
+					messages.dwm_pos_get.display();
+					break;
+				case DWM_UPD_RATE_SET:
+					messages.dwm_upd_rate_set.read(response);
+					messages.dwm_upd_rate_set.decode();
+					messages.dwm_upd_rate_set.display();
+					break;
+				case DWM_UPD_RATE_GET:
+					messages.dwm_upd_rate_get.read(response);
+					messages.dwm_upd_rate_get.decode();
+					messages.dwm_upd_rate_get.display();
+					break;
+				case DWM_ANCHOR_LIST_GET:
+					messages.dwm_anchor_list_get.read(response);
+					messages.dwm_anchor_list_get.decode();
+					messages.dwm_anchor_list_get.display();
+					break;
+				case DWM_LOC_GET:
+					messages.dwm_loc_get.read(response);
+					messages.dwm_loc_get.decode();
+					messages.dwm_loc_get.display();
+					break;
+				default:
+					break;
 				}
 			}
 			else

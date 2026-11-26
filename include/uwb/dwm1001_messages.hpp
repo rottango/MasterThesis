@@ -101,7 +101,7 @@ struct DwmUpdRateSet
 
     void display()
     {
-        std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        std::cout << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Set update rate each [ms] :" << (update_rate * 100) << "\t" << std::hex << std::uppercase << (update_rate * 100) << "\n";
@@ -176,7 +176,7 @@ struct DwmUpdRateGet
 
     void display()
     {
-        std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        std::cout << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
@@ -191,10 +191,10 @@ struct DwmAnchorListGet
 {
     ApiFunction api_function = DWM_ANCHOR_LIST_GET;
 
-    std::uint8_t request[2] = {0x0B, 0x01};
+    std::uint8_t request[3] = {0x0B, 0x01, 0x00}; // 3rd byte is the page_number
     std::uint16_t read_size = 300;
     uint8_t page_number;
-
+    uint8_t number_of_anchors = 3;
     struct UwbPositionRaw
     {
         std::byte type_general;
@@ -204,7 +204,7 @@ struct DwmAnchorListGet
         std::byte length;
 
         std::byte number_of_elements; // number of anchors in anchor list
-        AnchorsRaw anchor_list[15];   // anchor nr 1 is index 0, anchor nr 15 is index 14
+        AnchorsRaw anchor_list[3];    // anchor nr 1 is index 0, anchor nr 15 is index 14
     } uwb_position_raw;
 
     struct UwbPositionDecoded
@@ -236,7 +236,7 @@ struct DwmAnchorListGet
         this->uwb_position_raw.number_of_elements = static_cast<std::byte>(response[5]);
 
         uint8_t temp_index = 6;
-        for (int i = 0; i < 15; i++) // TODO: Decide how many times execute the loop.
+        for (int i = 0; i < number_of_anchors; i++) // TODO: Decide how many times execute the loop.
         {
             this->uwb_position_raw.anchor_list[i].uwb_address[0] = static_cast<std::byte>(response[temp_index++]);
             this->uwb_position_raw.anchor_list[i].uwb_address[1] = static_cast<std::byte>(response[temp_index++]);
@@ -272,13 +272,13 @@ struct DwmAnchorListGet
 
         this->uwb_position_decoded.number_of_elements = static_cast<std::uint8_t>(this->uwb_position_raw.number_of_elements);
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < number_of_anchors; i++)
         {
             this->uwb_position_decoded.anchor_list[i].uwb_address = static_cast<int16_t>(static_cast<std::uint16_t>(static_cast<std::uint16_t>(this->uwb_position_raw.anchor_list[i].uwb_address[1]) << 8 | static_cast<std::uint16_t>(this->uwb_position_raw.anchor_list[i].uwb_address[0])));
 
             this->uwb_position_decoded.anchor_list[i].value_position_x = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_x[0]));
             this->uwb_position_decoded.anchor_list[i].value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_y[0]));
-            this->uwb_position_decoded.anchor_list[i].value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[0]));
+            this->uwb_position_decoded.anchor_list[i].value_position_z = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.anchor_list[i].value_position_z[0]));
             this->uwb_position_decoded.anchor_list[i].rssi = static_cast<std::int8_t>(this->uwb_position_raw.anchor_list[i].rssi);
             this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network = static_cast<std::uint8_t>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network);
         }
@@ -287,11 +287,26 @@ struct DwmAnchorListGet
 
     void display() // TODO: finish displaying
     {
-        std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        std::cout << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
         std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
+        std::cout << std::dec << "Number of anchors: " << static_cast<unsigned>(this->uwb_position_decoded.number_of_elements) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.number_of_elements) << "\n";
+
+        std::cout << std::dec << "Printing out the data of each anchors: \n";
+        for (int i = 0; i < number_of_anchors; i++)
+        {
+            std::cout << std::dec << "Anchor number: " << i + 1 << "\n";
+            std::cout << std::dec << "UWB Address: " << this->uwb_position_decoded.anchor_list[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list->uwb_address[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].uwb_address[1]) << std::setfill(' ') << "\n";
+
+            std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << std::setfill(' ') << "\n";
+
+            std::cout << std::dec << "RSSI: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].rssi) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].rssi) << "\n";
+            std::cout << std::dec << "Seat number and neighbornetwork: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network) << "\n";
+        }
     }
 };
 
@@ -300,7 +315,9 @@ struct DwmLocGet
     ApiFunction api_function = DWM_LOC_GET;
 
     std::uint8_t request[2] = {0x0C, 0x00};
-    std::uint16_t read_size = 200;
+    std::uint16_t read_size = 101;
+
+    std::uint8_t number_of_anchors = 4;
 
     struct UwbPositionRaw
     {
@@ -376,7 +393,7 @@ struct DwmLocGet
         this->uwb_position_raw.value_distances_encoded = static_cast<std::byte>(response[20]);
 
         uint8_t temp_index = 21;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < number_of_anchors; i++)
         {
             this->uwb_position_raw.list_of_an[i].uwb_address[0] = static_cast<std::byte>(response[temp_index++]);
             this->uwb_position_raw.list_of_an[i].uwb_address[1] = static_cast<std::byte>(response[temp_index++]);
@@ -400,6 +417,8 @@ struct DwmLocGet
             this->uwb_position_raw.list_of_an[i].value_position_z[1] = static_cast<std::byte>(response[temp_index++]);
             this->uwb_position_raw.list_of_an[i].value_position_z[2] = static_cast<std::byte>(response[temp_index++]);
             this->uwb_position_raw.list_of_an[i].value_position_z[3] = static_cast<std::byte>(response[temp_index++]);
+
+            this->uwb_position_raw.list_of_an[i].value_quality_factor = static_cast<std::byte>(response[temp_index++]);
         }
 
         return true;
@@ -425,7 +444,7 @@ struct DwmLocGet
 
         this->uwb_position_decoded.value_distances_encoded = static_cast<std::uint8_t>(this->uwb_position_raw.value_distances_encoded);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < number_of_anchors; i++)
         {
             this->uwb_position_decoded.list_of_an[i].uwb_address = static_cast<int16_t>(static_cast<std::uint16_t>(static_cast<std::uint16_t>(this->uwb_position_raw.list_of_an[i].uwb_address[1]) << 8 | static_cast<std::uint16_t>(this->uwb_position_raw.list_of_an[i].uwb_address[0])));
 
@@ -433,9 +452,10 @@ struct DwmLocGet
 
             this->uwb_position_decoded.list_of_an[i].distance_quality_factor = static_cast<uint8_t>(this->uwb_position_raw.list_of_an[i].distance_quality_factor);
 
-            this->uwb_position_decoded.value_position_x = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[0]));
-            this->uwb_position_decoded.value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[0]));
-            this->uwb_position_decoded.value_position_z = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[0]));
+            this->uwb_position_decoded.list_of_an[i].value_position_x = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_x[0]));
+            this->uwb_position_decoded.list_of_an[i].value_position_y = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_y[0]));
+            this->uwb_position_decoded.list_of_an[i].value_position_z = static_cast<int32_t>(static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << 24 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << 16 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << 8 | static_cast<std::uint32_t>(this->uwb_position_raw.list_of_an[i].value_position_z[0]));
+            this->uwb_position_decoded.list_of_an[i].value_quality_factor = static_cast<std::uint8_t>(this->uwb_position_raw.list_of_an[i].value_quality_factor);
         }
 
         return true;
@@ -443,7 +463,7 @@ struct DwmLocGet
 
     void display() // TODO!
     {
-        std::cout << std::dec << "General Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
+        std::cout << std::dec << "\nGeneral Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_general) << "\n";
         std::cout << std::dec << "General Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_general) << "\n";
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
@@ -452,6 +472,25 @@ struct DwmLocGet
         std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
         std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
         std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
+
+        std::cout << std::dec << "Specific Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_specific) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_specific) << "\n";
+        std::cout << std::dec << "Specific Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_specific) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_specific) << "\n";
+        std::cout << std::dec << "Number of distnaces encoded: " << static_cast<unsigned>(this->uwb_position_decoded.value_distances_encoded) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_distances_encoded) << "\n";
+
+        std::cout << std::dec << "Printing out the data of each anchors: \n";
+        for (int i = 0; i < number_of_anchors; i++)
+        {
+            std::cout << std::dec << "Anchor number: " << i + 1 << "\n";
+
+            std::cout << std::dec << "UWB Address: " << this->uwb_position_decoded.list_of_an[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[1]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Distance [mm]: " << this->uwb_position_decoded.list_of_an[i].distance << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Distance quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].distance_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance_quality_factor) << "\n";
+
+            std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_quality_factor) << "\n";
+        }
     }
 };
 

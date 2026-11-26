@@ -37,6 +37,7 @@ struct ANxRawTag
     std::byte value_position_x[4];
     std::byte value_position_y[4];
     std::byte value_position_z[4];
+    std::byte value_quality_factor;
 };
 
 struct ANxDecodedTag
@@ -48,4 +49,5 @@ struct ANxDecodedTag
     std::int32_t value_position_x;
     std::int32_t value_position_y;
     std::int32_t value_position_z;
+    std::uint8_t value_quality_factor;
 };
