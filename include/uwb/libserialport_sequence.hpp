@@ -1,18 +1,18 @@
 #pragma once
 
-#include <libserialport.h>
 #include <dwm1001_messages.hpp>
+#include <libserialport.h>
 
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <cstring>
-#include <cstdlib>
-#include <cstdint>
-#include <iostream>
-#include <iomanip>
-#include <chrono>
 #include <thread>
-#include <array>
 
 class Application;
 

@@ -1,9 +1,9 @@
-#include <libserialport_sequence.hpp>
 #include <application_class.hpp>
+#include <libserialport_sequence.hpp>
 
-#include <unistd.h>
-#include <poll.h>
 #include <fcntl.h>
+#include <poll.h>
+#include <unistd.h>
 
 /* Helper function for error handling. */
 int check(enum sp_return result)
@@ -313,11 +313,13 @@ int UwbDeviceProcess(Application &app)
 	std::uint8_t current_write_size;
 
 	std::uint16_t delay = 100;
+	std::uint16_t uart_read_timeout = 300;
 
 	bool dwm_upd_rate_set_flag = 0;
 	auto previous_request_function = messages.current_request_function;
 
 	int j = 1;
+	const auto experiment_start = std::chrono::steady_clock::now();
 	while (app.getUwbRunning())
 	{
 		if (poll(&poll_fifo, 1, 100) == 1)
@@ -386,6 +388,7 @@ int UwbDeviceProcess(Application &app)
 			else
 				delay = 1100;
 
+			uart_read_timeout = 300;
 			break;
 		case DWM_UPD_RATE_SET:
 			response.clear();
@@ -401,6 +404,7 @@ int UwbDeviceProcess(Application &app)
 				messages.dwm_upd_rate_set.int_update_rate_to_byte();
 
 				delay = 1000;
+				uart_read_timeout = 3000;
 				dwm_upd_rate_set_flag = 1;
 			}
 			else
@@ -417,6 +421,7 @@ int UwbDeviceProcess(Application &app)
 					delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
 				else
 					delay = 1100;
+				uart_read_timeout = 300;
 				dwm_upd_rate_set_flag = 0;
 			}
 
@@ -434,6 +439,7 @@ int UwbDeviceProcess(Application &app)
 				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
 			else
 				delay = 1100;
+			uart_read_timeout = 300;
 
 			dwm_upd_rate_set_flag = 0;
 			break;
@@ -445,8 +451,12 @@ int UwbDeviceProcess(Application &app)
 			current_read_size = messages.dwm_anchor_list_get.read_size;
 			current_request = messages.dwm_anchor_list_get.request;
 			current_write_size = 3;
+			uart_read_timeout = 300;
 
-			delay = 500;
+			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+			else
+				delay = 1100;
 
 			break;
 		case DWM_LOC_GET:
@@ -463,6 +473,7 @@ int UwbDeviceProcess(Application &app)
 			else
 				delay = 1100;
 
+			uart_read_timeout = 300;
 			break;
 		default:
 			break;
@@ -480,6 +491,7 @@ int UwbDeviceProcess(Application &app)
 			std::cout << "API function changed - UART input flushed\n";
 		}
 
+		const auto uart_request_start = std::chrono::steady_clock::now();
 		enum sp_return write_result = sp_blocking_write(port, current_request, current_write_size, 1000);
 
 		if (write_result < 0)
@@ -492,10 +504,23 @@ int UwbDeviceProcess(Application &app)
 		}
 		else if (write_result == current_write_size)
 		{
-			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), 300);
+			enum sp_return read_result = sp_blocking_read(port, response.data(), response.size(), uart_read_timeout);
+			const auto uart_rx_steady = std::chrono::steady_clock::now();
+			const auto uart_rx_system = std::chrono::system_clock::now();
 
-			std::cout << "Ammount of bytes written is " << write_result << " out of " << current_write_size << "\n";
+			const auto timestamp_unix_us = std::chrono::duration_cast<std::chrono::microseconds>(uart_rx_system.time_since_epoch()).count();
+			const auto elapsed_time_us = std::chrono::duration_cast<std::chrono::microseconds>(uart_rx_steady - experiment_start).count();
+			const auto uart_round_trip_us = std::chrono::duration_cast<std::chrono::microseconds>(uart_rx_steady - uart_request_start).count();
 
+			std::cout << "Ammount of bytes written is " << write_result << " out of " << static_cast<int>(current_write_size) << "\n";
+			if (read_result >= 0)
+			{
+				response.resize(static_cast<std::size_t>(read_result));
+			}
+			else
+			{
+				response.clear();
+			}
 			if (read_result < 0)
 			{
 				std::cout << "Timeout reached on read probably... \n";
@@ -515,31 +540,31 @@ int UwbDeviceProcess(Application &app)
 					messages.dwm_pos_get.read(response);
 					messages.dwm_pos_get.decode();
 					messages.dwm_pos_get.display();
-					messages.dwm_pos_get.writeToLogFile();
+					messages.dwm_pos_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, false);
 					break;
 				case DWM_UPD_RATE_SET:
 					messages.dwm_upd_rate_set.read(response);
 					messages.dwm_upd_rate_set.decode();
 					messages.dwm_upd_rate_set.display();
-					messages.dwm_upd_rate_set.writeToLogFile();
+					messages.dwm_upd_rate_set.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, false);
 					break;
 				case DWM_UPD_RATE_GET:
 					messages.dwm_upd_rate_get.read(response);
 					messages.dwm_upd_rate_get.decode();
 					messages.dwm_upd_rate_get.display();
-					messages.dwm_upd_rate_get.writeToLogFile();
+					messages.dwm_upd_rate_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, false);
 					break;
 				case DWM_ANCHOR_LIST_GET:
 					messages.dwm_anchor_list_get.read(response);
 					messages.dwm_anchor_list_get.decode();
 					messages.dwm_anchor_list_get.display();
-					messages.dwm_anchor_list_get.writeToLogFile();
+					messages.dwm_anchor_list_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, false);
 					break;
 				case DWM_LOC_GET:
 					messages.dwm_loc_get.read(response);
 					messages.dwm_loc_get.decode();
 					messages.dwm_loc_get.display();
-					messages.dwm_loc_get.writeToLogFile();
+					messages.dwm_loc_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, false);
 					break;
 				default:
 					break;
@@ -561,42 +586,42 @@ int UwbDeviceProcess(Application &app)
 					messages.dwm_pos_get.read(response);
 					messages.dwm_pos_get.decode();
 					messages.dwm_pos_get.display();
-					messages.dwm_pos_get.writeToLogFile();
+					messages.dwm_pos_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, true);
 
 					break;
 				case DWM_UPD_RATE_SET:
 					messages.dwm_upd_rate_set.read(response);
 					messages.dwm_upd_rate_set.decode();
 					messages.dwm_upd_rate_set.display();
-					messages.dwm_upd_rate_set.writeToLogFile();
+					messages.dwm_upd_rate_set.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, true);
 
 					break;
 				case DWM_UPD_RATE_GET:
 					messages.dwm_upd_rate_get.read(response);
 					messages.dwm_upd_rate_get.decode();
 					messages.dwm_upd_rate_get.display();
-					messages.dwm_upd_rate_get.writeToLogFile();
+					messages.dwm_upd_rate_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, true);
 
 					break;
 				case DWM_ANCHOR_LIST_GET:
 					messages.dwm_anchor_list_get.read(response);
 					messages.dwm_anchor_list_get.decode();
 					messages.dwm_anchor_list_get.display();
-					messages.dwm_anchor_list_get.writeToLogFile();
+					messages.dwm_anchor_list_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, true);
 
 					break;
 				case DWM_LOC_GET:
 					messages.dwm_loc_get.read(response);
 					messages.dwm_loc_get.decode();
 					messages.dwm_loc_get.display();
-					messages.dwm_loc_get.writeToLogFile();
+					messages.dwm_loc_get.writeToLogFile(timestamp_unix_us, elapsed_time_us, uart_round_trip_us, read_result, true);
 
 					break;
 				default:
 					break;
 				}
 
-				app.setUwbPosition(messages.dwm_pos_get.uwb_position_decoded.value_position_x, messages.dwm_pos_get.uwb_position_decoded.value_position_y);
+				app.setUwbPosition(messages.dwm_loc_get.uwb_position_decoded.value_position_x, messages.dwm_loc_get.uwb_position_decoded.value_position_y);
 			}
 			auto end = std::chrono::steady_clock::now();
 			auto elapsed = end - start;
