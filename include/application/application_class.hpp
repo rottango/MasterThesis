@@ -1,15 +1,15 @@
 #pragma once
 
+#include <atomic>
 #include <cstdint>
 #include <draw_class.hpp>
 #include <graph_class.hpp>
 #include <group_class.hpp>
 #include <grouping_manager_class.hpp>
-#include <node_class.hpp>
-#include <thread>
 #include <mutex>
-#include <atomic>
+#include <node_class.hpp>
 #include <optional>
+#include <thread>
 
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>

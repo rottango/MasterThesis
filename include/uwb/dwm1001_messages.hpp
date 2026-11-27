@@ -3,12 +3,13 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <vector>
 
-#include <dwm1001_messages_helper.hpp>
 #include <dwm1001_enum.hpp>
+#include <dwm1001_messages_helper.hpp>
 
 inline std::string errorCodeToText(const DWM1001ErrorCode &error_code)
 {
@@ -36,6 +37,40 @@ inline std::string errorCodeToText(const DWM1001ErrorCode &error_code)
 
 struct DwmUpdRateSet
 {
+    std::ofstream logFile;
+
+    DwmUpdRateSet(std::string &dateAndTime) : logFile("DwmUpdRateSet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmUpdRateSet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmUpdRateSet logFile Opened\n";
+            this->logFile << "time_of_uart_write"
+                        << "timestamp_unix_us,"
+                          << "elapsed_time_us,"
+                          << "uart_round_trip_us,"
+                          << "uart_read_result,"
+                          << "response_valid,"
+
+                          << "decoded_type_general,"
+                          << "decoded_length_general,"
+                          << "decoded_value_err_code_general,"
+                          << "decoded_update rate,"
+                          << "decoded_update_rate_stationary,"
+
+                          << "raw_type_general,"
+                          << "raw_length_general,"
+                          << "raw_value_err_code_general,"
+                          << "raw_update_rate,"
+                          << "raw_update_rate_stationary"
+                          << "\n";
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_UPD_RATE_SET;
 
     std::byte byte_update_rate[2]{};
@@ -78,7 +113,6 @@ struct DwmUpdRateSet
         if (response.size() != read_size)
         {
             std::cout << "size of response: " << response.size() << "\n";
-
             return false;
         }
 
@@ -107,10 +141,83 @@ struct DwmUpdRateSet
         std::cout << std::dec << "Set update rate each [ms] :" << (update_rate * 100) << "\t" << std::hex << std::uppercase << (update_rate * 100) << "\n";
         std::cout << std::dec << "Set stationary update rate each [ms] :" << (update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (update_rate_stationary * 100) << "\n";
     }
+
+    void writeToLogFile(std::int64_t timestamp_unix_us, std::int64_t elapsed_time_us, std::int64_t uart_round_trip_us, int uart_read_result, bool response_valid)
+    {
+        this->logFile << std::dec
+                      << timestamp_unix_us << ","
+                      << elapsed_time_us << ","
+                      << uart_round_trip_us << ","
+                      << uart_read_result << ","
+                      << static_cast<int>(response_valid);
+
+        if (!response_valid)
+        {
+            this->logFile << std::string(10, ',') << "\n";
+            this->logFile.flush();
+            return;
+        };
+
+        this->logFile << ","
+
+                      << static_cast<unsigned>(this->uwb_position_decoded.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << ","
+                      << (update_rate) << ","
+                      << (update_rate_stationary) << ","
+
+                      << std::hex << std::uppercase
+                      << static_cast<unsigned>(this->uwb_position_raw.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << ","
+                      << (update_rate) << ","
+                      << (update_rate_stationary)
+                      << "\n";
+
+        this->logFile.flush();
+    }
 };
 
 struct DwmUpdRateGet
 {
+    std::ofstream logFile;
+
+    DwmUpdRateGet(std::string &dateAndTime) : logFile("DwmUpdRateGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmUpdRateGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmUpdRateGet logFile Opened\n";
+            this->logFile << "timestamp_unix_us,"
+                          << "elapsed_time_us,"
+                          << "uart_round_trip_us,"
+                          << "uart_read_result,"
+                          << "response_valid,"
+
+                          << "decoded_type_general,"
+                          << "decoded_length_general,"
+                          << "decoded_value_err_code_general,"
+                          << "decoded_type,"
+                          << "decoded_length,"
+                          << "decoded_update rate,"
+                          << "decoded_update_rate_stationary,"
+
+                          << "raw_type_general,"
+                          << "raw_length_general,"
+                          << "raw_value_err_code_general,"
+                          << "raw_type,"
+                          << "raw_length,"
+                          << "raw_update_rate,"
+                          << "raw_update_rate_stationary"
+                          << "\n";
+
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_UPD_RATE_GET;
 
     std::uint8_t request[2] = {0x04, 0x00};
@@ -184,14 +291,129 @@ struct DwmUpdRateGet
         std::cout << std::dec << "Set update rate each [ms] :" << (this->uwb_position_decoded.update_rate * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate * 100) << "\n";
         std::cout << std::dec << "Set stationary update rate each [ms] :" << (this->uwb_position_decoded.update_rate_stationary * 100) << "\t" << std::hex << std::uppercase << (this->uwb_position_decoded.update_rate_stationary * 100) << "\n";
     };
+    void writeToLogFile(std::int64_t timestamp_unix_us, std::int64_t elapsed_time_us, std::int64_t uart_round_trip_us, int uart_read_result, bool response_valid)
+    {
+        this->logFile << std::dec
+                      << timestamp_unix_us << ","
+                      << elapsed_time_us << ","
+                      << uart_round_trip_us << ","
+                      << uart_read_result << ","
+                      << static_cast<int>(response_valid);
+
+        if (!response_valid)
+        {
+            this->logFile << std::string(14, ',') << "\n";
+            this->logFile.flush();
+            return;
+        };
+
+        this->logFile << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length) << ","
+                      << (this->uwb_position_decoded.update_rate) << ","
+                      << (this->uwb_position_decoded.update_rate_stationary) << ","
+
+                      << std::hex << std::uppercase
+                      << static_cast<unsigned>(this->uwb_position_raw.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length) << ","
+                      << (this->uwb_position_decoded.update_rate) << ","
+                      << (this->uwb_position_decoded.update_rate_stationary)
+                      << "\n";
+
+        this->logFile.flush();
+    }
 };
 
 struct DwmAnchorListGet
 {
+    std::ofstream logFile;
+
+    DwmAnchorListGet(std::string &dateAndTime) : logFile("DwmAnchorListGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmAnchorListGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmAnchorListGet logFile Opened\n";
+            this->logFile << "timestamp_unix_us,"
+                          << "elapsed_time_us,"
+                          << "uart_round_trip_us,"
+                          << "uart_read_result,"
+                          << "response_valid,"
+
+                          << "decoded_type_general,"
+                          << "decoded_length_general,"
+                          << "decoded_value_err_code_general,"
+                          << "decoded_type,"
+                          << "decoded_length,"
+                          << "decoded_number_of_anchors,"
+
+                          << "decoded_anchor_1_uwb_address,"
+                          << "decoded_anchor_1_position_x,"
+                          << "decoded_anchor_1_position_y,"
+                          << "decoded_anchor_1_position_z,"
+                          << "decoded_anchor_1_rssi,"
+                          << "decoded_anchor_1_seat_number_and_neighbor_network,"
+
+                          << "decoded_anchor_2_uwb_address,"
+                          << "decoded_anchor_2_position_x,"
+                          << "decoded_anchor_2_position_y,"
+                          << "decoded_anchor_2_position_z,"
+                          << "decoded_anchor_2_rssi,"
+                          << "decoded_anchor_2_seat_number_and_neighbor_network,"
+
+                          << "decoded_anchor_3_uwb_address,"
+                          << "decoded_anchor_3_position_x,"
+                          << "decoded_anchor_3_position_y,"
+                          << "decoded_anchor_3_position_z,"
+                          << "decoded_anchor_3_rssi,"
+                          << "decoded_anchor_3_seat_number_and_neighbor_network,"
+
+                          << "raw_type_general,"
+                          << "raw_length_general,"
+                          << "raw_value_err_code_general,"
+                          << "raw_type,"
+                          << "raw_length,"
+                          << "raw_number_of_anchors,"
+
+                          << "raw_anchor_1_uwb_address,"
+                          << "raw_anchor_1_position_x,"
+                          << "raw_anchor_1_position_y,"
+                          << "raw_anchor_1_position_z,"
+                          << "raw_anchor_1_rssi,"
+                          << "raw_anchor_1_seat_number_and_neighbor_network,"
+
+                          << "raw_anchor_2_uwb_address,"
+                          << "raw_anchor_2_position_x,"
+                          << "raw_anchor_2_position_y,"
+                          << "raw_anchor_2_position_z,"
+                          << "raw_anchor_2_rssi,"
+                          << "raw_anchor_2_seat_number_and_neighbor_network,"
+
+                          << "raw_anchor_3_uwb_address,"
+                          << "raw_anchor_3_position_x,"
+                          << "raw_anchor_3_position_y,"
+                          << "raw_anchor_3_position_z,"
+                          << "raw_anchor_3_rssi,"
+                          << "raw_anchor_3_seat_number_and_neighbor_network"
+                          << "\n";
+
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_ANCHOR_LIST_GET;
 
     std::uint8_t request[3] = {0x0B, 0x01, 0x00}; // 3rd byte is the page_number
-    std::uint16_t read_size = 300;
+    std::uint16_t read_size = 54;
     uint8_t page_number;
     uint8_t number_of_anchors = 3;
     struct UwbPositionRaw
@@ -220,12 +442,12 @@ struct DwmAnchorListGet
 
     bool read(std::vector<uint8_t> &response) // TODO: ... I dont know how to do the size thing here, i think we have to assume max size is for all 15 anchors, and check the inside to see how much data we actually have
     {
-        // if (response.size()  !=)
-        // {
-        //     std::cout << "size of response: " << response.size() << "\n";
+        if (response.size() != read_size)
+        {
+            std::cout << "size of response: " << response.size() << "\n";
 
-        //     return false;
-        // }
+            return false;
+        }
 
         this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
         this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
@@ -297,20 +519,210 @@ struct DwmAnchorListGet
         for (int i = 0; i < number_of_anchors; i++)
         {
             std::cout << std::dec << "Anchor number: " << i + 1 << "\n";
-            std::cout << std::dec << "UWB Address: " << this->uwb_position_decoded.anchor_list[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list->uwb_address[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].uwb_address[1]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "UWB Address: " << this->uwb_position_decoded.anchor_list[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].uwb_address[1]) << std::setfill(' ') << "\n";
 
-            std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[3]) << std::setfill(' ') << "\n";
-            std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << std::setfill(' ') << "\n";
-            std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_x[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_y[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.anchor_list[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].value_position_z[3]) << std::setfill(' ') << "\n";
 
             std::cout << std::dec << "RSSI: " << static_cast<int>(this->uwb_position_decoded.anchor_list[i].rssi) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].rssi) << "\n";
             std::cout << std::dec << "Seat number and neighbornetwork: " << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[i].seat_number_and_neighbor_network) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.anchor_list[i].seat_number_and_neighbor_network) << "\n";
         }
     }
+
+    void writeToLogFile(std::int64_t timestamp_unix_us, std::int64_t elapsed_time_us, std::int64_t uart_round_trip_us, int uart_read_result, bool response_valid)
+    {
+        this->logFile << std::dec
+                      << timestamp_unix_us << ","
+                      << elapsed_time_us << ","
+                      << uart_round_trip_us << ","
+                      << uart_read_result << ","
+                      << static_cast<int>(response_valid);
+
+        if (!response_valid)
+        {
+            this->logFile << std::string(48, ',') << "\n";
+            this->logFile.flush();
+            return;
+        };
+
+        this->logFile << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.number_of_elements) << ","
+
+                      << this->uwb_position_decoded.anchor_list[0].uwb_address << ","
+                      << this->uwb_position_decoded.anchor_list[0].value_position_x << ","
+                      << this->uwb_position_decoded.anchor_list[0].value_position_y << ","
+                      << this->uwb_position_decoded.anchor_list[0].value_position_z << ","
+                      << static_cast<int>(this->uwb_position_decoded.anchor_list[0].rssi) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[0].seat_number_and_neighbor_network) << ","
+
+                      << this->uwb_position_decoded.anchor_list[1].uwb_address << ","
+                      << this->uwb_position_decoded.anchor_list[1].value_position_x << ","
+                      << this->uwb_position_decoded.anchor_list[1].value_position_y << ","
+                      << this->uwb_position_decoded.anchor_list[1].value_position_z << ","
+                      << static_cast<int>(this->uwb_position_decoded.anchor_list[1].rssi) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[1].seat_number_and_neighbor_network) << ","
+
+                      << this->uwb_position_decoded.anchor_list[2].uwb_address << ","
+                      << this->uwb_position_decoded.anchor_list[2].value_position_x << ","
+                      << this->uwb_position_decoded.anchor_list[2].value_position_y << ","
+                      << this->uwb_position_decoded.anchor_list[2].value_position_z << ","
+                      << static_cast<int>(this->uwb_position_decoded.anchor_list[2].rssi) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.anchor_list[2].seat_number_and_neighbor_network) << ","
+
+                      << std::hex << std::uppercase
+                      << static_cast<unsigned>(this->uwb_position_raw.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.number_of_elements) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].rssi) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.anchor_list[0].seat_number_and_neighbor_network) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].rssi) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.anchor_list[1].seat_number_and_neighbor_network) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].rssi) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.anchor_list[2].seat_number_and_neighbor_network)
+                      << "\n";
+
+        this->logFile.flush();
+    }
 };
 
 struct DwmLocGet
 {
+    std::ofstream logFile;
+
+    DwmLocGet(std::string &dateAndTime) : logFile("DwmLocGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmLocGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmLocGet logFile Opened\n";
+            this->logFile << "timestamp_unix_us,"
+                          << "elapsed_time_us,"
+                          << "uart_round_trip_us,"
+                          << "uart_read_result,"
+                          << "response_valid,"
+
+                          << "decoded_type_general,"
+                          << "decoded_length_general,"
+                          << "decoded_error_code_general,"
+                          << "decoded_type,"
+                          << "decoded_length,"
+                          << "decoded_position_x_tag,"
+                          << "decoded_position_y_tag,"
+                          << "decoded_position_z_tag,"
+                          << "decoded_quality_tag,"
+                          << "decoded_type_specific,"
+                          << "decoded_length_specific,"
+                          << "decoded_number_of_distances_encoded,"
+
+                          << "decoded_anchor_1_uwb_address,"
+                          << "decoded_anchor_1_distance,"
+                          << "decoded_anchor_1_distance_quality,"
+                          << "decoded_anchor_1_position_x,"
+                          << "decoded_anchor_1_position_y,"
+                          << "decoded_anchor_1_position_z,"
+                          << "decoded_anchor_1_quality,"
+
+                          << "decoded_anchor_2_uwb_address,"
+                          << "decoded_anchor_2_distance,"
+                          << "decoded_anchor_2_distance_quality,"
+                          << "decoded_anchor_2_position_x,"
+                          << "decoded_anchor_2_position_y,"
+                          << "decoded_anchor_2_position_z,"
+                          << "decoded_anchor_2_quality,"
+
+                          << "decoded_anchor_3_uwb_address,"
+                          << "decoded_anchor_3_distance,"
+                          << "decoded_anchor_3_distance_quality,"
+                          << "decoded_anchor_3_position_x,"
+                          << "decoded_anchor_3_position_y,"
+                          << "decoded_anchor_3_position_z,"
+                          << "decoded_anchor_3_quality,"
+
+                          << "decoded_anchor_4_uwb_address,"
+                          << "decoded_anchor_4_distance,"
+                          << "decoded_anchor_4_distance_quality,"
+                          << "decoded_anchor_4_position_x,"
+                          << "decoded_anchor_4_position_y,"
+                          << "decoded_anchor_4_position_z,"
+                          << "decoded_anchor_4_quality,"
+
+                          << "raw_type_general,"
+                          << "raw_length_general,"
+                          << "raw_error_code_general,"
+                          << "raw_type,"
+                          << "raw_length,"
+                          << "raw_position_x,"
+                          << "raw_position_y,"
+                          << "raw_position_z,"
+                          << "raw_quality,"
+                          << "raw_type_specific,"
+                          << "raw_length_specific,"
+                          << "raw_number_of_distances_encoded,"
+
+                          << "raw_anchor_1_uwb_address,"
+                          << "raw_anchor_1_distance,"
+                          << "raw_anchor_1_distance_quality,"
+                          << "raw_anchor_1_position_x,"
+                          << "raw_anchor_1_position_y,"
+                          << "raw_anchor_1_position_z,"
+                          << "raw_anchor_1_quality,"
+
+                          << "raw_anchor_2_uwb_address,"
+                          << "raw_anchor_2_distance,"
+                          << "raw_anchor_2_distance_quality,"
+                          << "raw_anchor_2_position_x,"
+                          << "raw_anchor_2_position_y,"
+                          << "raw_anchor_2_position_z,"
+                          << "raw_anchor_2_quality,"
+
+                          << "raw_anchor_3_uwb_address,"
+                          << "raw_anchor_3_distance,"
+                          << "raw_anchor_3_distance_quality,"
+                          << "raw_anchor_3_position_x,"
+                          << "raw_anchor_3_position_y,"
+                          << "raw_anchor_3_position_z,"
+                          << "raw_anchor_3_quality,"
+
+                          << "raw_anchor_4_uwb_address,"
+                          << "raw_anchor_4_distance,"
+                          << "raw_anchor_4_distance_quality,"
+                          << "raw_anchor_4_position_x,"
+                          << "raw_anchor_4_position_y,"
+                          << "raw_anchor_4_position_z,"
+                          << "raw_anchor_4_quality"
+                          << "\n";
+
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_LOC_GET;
 
     std::uint8_t request[2] = {0x0C, 0x00};
@@ -360,11 +772,11 @@ struct DwmLocGet
 
     bool read(std::vector<uint8_t> &response) // TODO: Here we again i think have to assume all AN4 are populated, and then just see how much we actually read, and then decide how much actual data is there.
     {
-        // if (response.size()  != 3)
-        // {
-        // std::cout << "size of response: " << response.size() << "\n";
-        //     return false;
-        // }
+        if (response.size() != read_size)
+        {
+            std::cout << "size of response: " << response.size() << "\n";
+            return false;
+        }
 
         this->uwb_position_raw.type_general = static_cast<std::byte>(response[0]);
         this->uwb_position_raw.length_general = static_cast<std::byte>(response[1]);
@@ -467,34 +879,188 @@ struct DwmLocGet
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
         std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
-        std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
         std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
 
         std::cout << std::dec << "Specific Type: " << static_cast<unsigned>(this->uwb_position_decoded.type_specific) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type_specific) << "\n";
         std::cout << std::dec << "Specific Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length_specific) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length_specific) << "\n";
-        std::cout << std::dec << "Number of distnaces encoded: " << static_cast<unsigned>(this->uwb_position_decoded.value_distances_encoded) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_distances_encoded) << "\n";
+        std::cout << std::dec << "Number of distances encoded: " << static_cast<unsigned>(this->uwb_position_decoded.value_distances_encoded) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_distances_encoded) << "\n";
 
         std::cout << std::dec << "Printing out the data of each anchors: \n";
         for (int i = 0; i < number_of_anchors; i++)
         {
             std::cout << std::dec << "Anchor number: " << i + 1 << "\n";
 
-            std::cout << std::dec << "UWB Address: " << this->uwb_position_decoded.list_of_an[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[1]) << std::setfill(' ') << "\n";
-            std::cout << std::dec << "Distance [mm]: " << this->uwb_position_decoded.list_of_an[i].distance << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "UWB Address: " << this->uwb_position_decoded.list_of_an[i].uwb_address << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].uwb_address[1]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Distance [mm]: " << this->uwb_position_decoded.list_of_an[i].distance << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance[3]) << std::setfill(' ') << "\n";
             std::cout << std::dec << "Distance quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].distance_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].distance_quality_factor) << "\n";
 
-            std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << std::setfill(' ') << "\n";
-            std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << std::setfill(' ') << "\n";
-            std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_x[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_y[3]) << std::setfill(' ') << "\n";
+            std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.list_of_an[i].value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_position_z[3]) << std::setfill(' ') << "\n";
             std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[i].value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.list_of_an[i].value_quality_factor) << "\n";
         }
+    }
+    void writeToLogFile(std::int64_t timestamp_unix_us, std::int64_t elapsed_time_us, std::int64_t uart_round_trip_us, int uart_read_result, bool response_valid)
+    {
+        this->logFile << std::dec
+                      << timestamp_unix_us << ","
+                      << elapsed_time_us << ","
+                      << uart_round_trip_us << ","
+                      << uart_read_result << ","
+                      << static_cast<int>(response_valid);
+
+        if (!response_valid)
+        {
+            this->logFile << std::string(80, ',') << "\n";
+            this->logFile.flush();
+            return;
+        };
+
+        this->logFile << ","
+
+                      << static_cast<unsigned>(this->uwb_position_decoded.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length) << ","
+                      << this->uwb_position_decoded.value_position_x << ","
+                      << this->uwb_position_decoded.value_position_y << ","
+                      << this->uwb_position_decoded.value_position_z << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type_specific) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length_specific) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_distances_encoded) << ","
+
+                      << this->uwb_position_decoded.list_of_an[0].uwb_address << ","
+                      << this->uwb_position_decoded.list_of_an[0].distance << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[0].distance_quality_factor) << ","
+                      << this->uwb_position_decoded.list_of_an[0].value_position_x << ","
+                      << this->uwb_position_decoded.list_of_an[0].value_position_y << ","
+                      << this->uwb_position_decoded.list_of_an[0].value_position_z << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[0].value_quality_factor) << ","
+
+                      << this->uwb_position_decoded.list_of_an[1].uwb_address << ","
+                      << this->uwb_position_decoded.list_of_an[1].distance << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[1].distance_quality_factor) << ","
+                      << this->uwb_position_decoded.list_of_an[1].value_position_x << ","
+                      << this->uwb_position_decoded.list_of_an[1].value_position_y << ","
+                      << this->uwb_position_decoded.list_of_an[1].value_position_z << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[1].value_quality_factor) << ","
+
+                      << this->uwb_position_decoded.list_of_an[2].uwb_address << ","
+                      << this->uwb_position_decoded.list_of_an[2].distance << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[2].distance_quality_factor) << ","
+                      << this->uwb_position_decoded.list_of_an[2].value_position_x << ","
+                      << this->uwb_position_decoded.list_of_an[2].value_position_y << ","
+                      << this->uwb_position_decoded.list_of_an[2].value_position_z << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[2].value_quality_factor) << ","
+
+                      << this->uwb_position_decoded.list_of_an[3].uwb_address << ","
+                      << this->uwb_position_decoded.list_of_an[3].distance << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[3].distance_quality_factor) << ","
+                      << this->uwb_position_decoded.list_of_an[3].value_position_x << ","
+                      << this->uwb_position_decoded.list_of_an[3].value_position_y << ","
+                      << this->uwb_position_decoded.list_of_an[3].value_position_z << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.list_of_an[3].value_quality_factor) << ","
+
+                      << std::hex << std::uppercase
+                      << static_cast<unsigned>(this->uwb_position_raw.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.type_specific) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length_specific) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_distances_encoded) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].distance[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].distance[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].distance[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].distance[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].distance_quality_factor) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[0].value_quality_factor) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].distance[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].distance[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].distance[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].distance[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].distance_quality_factor) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[1].value_quality_factor) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].distance[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].distance[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].distance[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].distance[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].distance_quality_factor) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[2].value_quality_factor) << ","
+
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].uwb_address[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].uwb_address[1]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].distance[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].distance[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].distance[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].distance[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].distance_quality_factor) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.list_of_an[3].value_quality_factor)
+                      << "\n";
+
+        this->logFile.flush();
     }
 };
 
 struct DwmPosGet
 {
+    std::ofstream logFile;
+
+    DwmPosGet(std::string &dateAndTime) : logFile("DwmPosGet-" + dateAndTime + ".csv", std::ios::app)
+    {
+        if (!logFile.is_open())
+        {
+            std::cout << "DwmPosGet logFile has NOT been opened!\n";
+        }
+        else
+        {
+            std::cout << "DwmPosGet logFile Opened\n";
+            this->logFile << "timestamp_unix_us,"
+                          << "elapsed_time_us,"
+                          << "uart_round_trip_us,"
+                          << "uart_read_result,"
+                          << "response_valid,"
+
+                          << "decoded_type_general,"
+                          << "decoded_length_general,"
+                          << "decoded_error_code_general,"
+                          << "decoded_type,"
+                          << "decoded_length,"
+                          << "decoded_position_x,"
+                          << "decoded_position_y,"
+                          << "decoded_position_z,"
+                          << "decoded_quality,"
+
+                          << "raw_type_general,"
+                          << "raw_length_general,"
+                          << "raw_error_code_general,"
+                          << "raw_type,"
+                          << "raw_length,"
+                          << "raw_position_x,"
+                          << "raw_position_y,"
+                          << "raw_position_z,"
+                          << "raw_quality"
+                          << "\n";
+
+            this->logFile.flush();
+        }
+    }
+
     ApiFunction api_function = DWM_POS_GET;
 
     std::uint8_t request[2] = {0x02, 0x00};
@@ -583,16 +1149,76 @@ struct DwmPosGet
         std::cout << std::dec << "General Error Code: " << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << "\n";
         std::cout << std::dec << "Type: " << static_cast<unsigned>(this->uwb_position_decoded.type) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.type) << "\n";
         std::cout << std::dec << "Length [B]: " << static_cast<unsigned>(this->uwb_position_decoded.length) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.length) << "\n";
-        std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
-        std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << " " << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position x [mm]: " << this->uwb_position_decoded.value_position_x << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position y [mm]: " << this->uwb_position_decoded.value_position_y << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << std::setfill(' ') << "\n";
+        std::cout << std::dec << "Position z [mm]: " << this->uwb_position_decoded.value_position_z << "\t" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << std::setfill(' ') << "\n";
         std::cout << std::dec << "Quality [%]: " << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << "\t" << std::hex << std::uppercase << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor) << "\n";
+    }
+    void writeToLogFile(std::int64_t timestamp_unix_us, std::int64_t elapsed_time_us, std::int64_t uart_round_trip_us, int uart_read_result, bool response_valid)
+    {
+        this->logFile << std::dec
+                      << timestamp_unix_us << ","
+                      << elapsed_time_us << ","
+                      << uart_round_trip_us << ","
+                      << uart_read_result << ","
+                      << static_cast<int>(response_valid);
+
+        if (!response_valid)
+        {
+            this->logFile << std::string(18, ',') << "\n";
+            this->logFile.flush();
+            return;
+        };
+
+        this->logFile << ","
+
+                      << static_cast<unsigned>(this->uwb_position_decoded.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.length) << ","
+                      << this->uwb_position_decoded.value_position_x << ","
+                      << this->uwb_position_decoded.value_position_y << ","
+                      << this->uwb_position_decoded.value_position_z << ","
+                      << static_cast<unsigned>(this->uwb_position_decoded.value_quality_factor) << ","
+
+                      << std::hex << std::uppercase
+                      << static_cast<unsigned>(this->uwb_position_raw.type_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_err_code_general) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.type) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.length) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_x[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_x[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_y[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_y[3]) << ","
+                      << std::setw(2) << std::setfill('0') << static_cast<unsigned>(this->uwb_position_raw.value_position_z[0]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[1]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[2]) << std::setw(2) << static_cast<unsigned>(this->uwb_position_raw.value_position_z[3]) << ","
+                      << static_cast<unsigned>(this->uwb_position_raw.value_quality_factor)
+                      << "\n";
+
+        this->logFile.flush();
     }
 };
 
 struct UwbMessages
 {
     ApiFunction current_request_function;
+
+    std::string datetime() // https://cplusplus.com/forum/general/205282/
+    {
+        time_t rawtime;
+        struct tm *timeinfo;
+        char buffer[80];
+
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+
+        strftime(buffer, 80, "%d-%m-%Y-%H-%M-%S", timeinfo);
+        return std::string(buffer);
+    }
+    std::string dateAndTime = datetime();
+
+    UwbMessages() : dwm_pos_get(dateAndTime), dwm_upd_rate_get(dateAndTime), dwm_upd_rate_set(dateAndTime), dwm_anchor_list_get(dateAndTime), dwm_loc_get(dateAndTime)
+    {
+    }
 
     DwmPosGet dwm_pos_get;
     DwmUpdRateGet dwm_upd_rate_get;

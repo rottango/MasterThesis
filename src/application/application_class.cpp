@@ -1,6 +1,6 @@
 #include <application_class.hpp>
-#include <libserialport_sequence.hpp>
 #include <color_palet_struct.hpp>
+#include <libserialport_sequence.hpp>
 
 Application::Application() : draw_{graph_, img_}
 {
