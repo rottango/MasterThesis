@@ -49,7 +49,7 @@ struct DwmUpdRateSet
         {
             std::cout << "DwmUpdRateSet logFile Opened\n";
             this->logFile << "time_of_uart_write"
-                        << "timestamp_unix_us,"
+                          << "timestamp_unix_us,"
                           << "elapsed_time_us,"
                           << "uart_round_trip_us,"
                           << "uart_read_result,"

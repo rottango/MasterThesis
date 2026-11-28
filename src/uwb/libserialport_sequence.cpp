@@ -1,11 +1,9 @@
 #include <application_class.hpp>
 #include <libserialport_sequence.hpp>
 
-#include <fcntl.h>
 #include <poll.h>
 #include <unistd.h>
 
-/* Helper function for error handling. */
 int check(enum sp_return result)
 {
 	/* For this example we'll just exit on any error by calling abort(). */
@@ -33,7 +31,6 @@ int check(enum sp_return result)
 	}
 }
 
-/* Helper function to give a name for each parity mode. */
 const char *parity_name(enum sp_parity parity)
 {
 	switch (parity)
@@ -55,13 +52,86 @@ const char *parity_name(enum sp_parity parity)
 	}
 }
 
-/* Example of how to get a list of serial ports on the system.
- *
- * This example file is released to the public domain. */
+int openFifoFileDescriptor(std::string fifo_path_string)
+{
+	const char *fifo_path = fifo_path_string.data();
+	int fd = open(fifo_path, O_RDONLY | O_NONBLOCK);
 
-int UwbDeviceProcess(Application &app)
+	if (fd == -1)
+	{
+		std::cout << "Error - fifo not opened";
+	}
+
+	return fd;
+}
+
+int configureFifo(struct pollfd &poll_fifo, int &fd)
+{
+	memset(&poll_fifo, 0, sizeof(poll_fifo));
+	poll_fifo.fd = fd;
+	poll_fifo.events = POLLIN;
+
+	return fd;
+}
+
+void pollInEvent(struct pollfd &poll_fifo, int &fd, UwbMessages &messages)
+{
+	if (poll(&poll_fifo, 1, 100) == 1)
+	{
+		if (poll_fifo.revents & POLLIN)
+		{
+			std::string buffer(256, '\0');
+
+			ssize_t bytes_read = read(fd, buffer.data(), buffer.size());
+
+			if (bytes_read > 0)
+			{
+				buffer.resize(bytes_read);
+				std::cout << "Read from FIFO: " << buffer;
+				switch (buffer[0] - '0')
+				{
+				case 0:
+					std::cout << "message request changed to DWM_POS_GET\n";
+					messages.current_request_function = DWM_POS_GET;
+					break;
+				case 1:
+					std::cout << "message request changed to DWM_UPD_RATE_SET\n";
+					messages.current_request_function = DWM_UPD_RATE_SET;
+					break;
+				case 2:
+					std::cout << "message request changed to DWM_UPD_RATE_GET\n";
+					messages.current_request_function = DWM_UPD_RATE_GET;
+					break;
+				case 3:
+					std::cout << "message request changed to DWM_ANCHOR_LIST_GET\n";
+					messages.current_request_function = DWM_ANCHOR_LIST_GET;
+					break;
+				case 4:
+					std::cout << "message request changed to DWM_LOC_GET\n";
+					messages.current_request_function = DWM_LOC_GET;
+					break;
+				default:
+					break;
+				}
+				if (buffer[1] - '0' >= 1 && buffer[1] - '0' <= 9)
+				{
+					messages.dwm_upd_rate_set.update_rate = buffer[1] - '0';
+					std::cout << "update_rate changed\n";
+				}
+				if (buffer[1] - '0' >= 1 && buffer[1] - '0' <= 9)
+				{
+					messages.dwm_upd_rate_set.update_rate_stationary = buffer[2] - '0';
+					std::cout << "update_rate_stationary changed\n";
+				}
+			}
+		}
+	}
+}
+
+struct sp_port *configureLibserialport()
 {
 	char *uwb_port_name;
+
 	/* A pointer to a null-terminated array of pointers to
 	 * struct sp_port, which will contain the ports found.*/
 	struct sp_port **port_list;
@@ -75,7 +145,7 @@ int UwbDeviceProcess(Application &app)
 	if (result != SP_OK)
 	{
 		printf("sp_list_ports() failed!\n");
-		return -1;
+		// return -1;
 	}
 
 	/* Iterate through the ports. When port_list[i] is NULL
@@ -118,7 +188,7 @@ int UwbDeviceProcess(Application &app)
 	if (result_info != SP_OK)
 	{
 		printf("sp_get_port_by_name() failed!\n");
-		return -1;
+		// return -1;
 	}
 
 	/* Display some basic information about the port. */
@@ -276,21 +346,132 @@ int UwbDeviceProcess(Application &app)
 		connect to fifo.
 	*/
 
-	const char *fifo_path = "/home/rottango/MasterThesis/build/fifo";
-	int fd = open(fifo_path, O_RDONLY | O_NONBLOCK);
-	if (fd == -1)
-	{
-		std::cout << "Error - fifo not opened";
-	}
+	free(uwb_port_name);
+	sp_free_config(device_config);
+	sp_free_config(config);
 
-	// std::string buffer(256, '\0');
-	// ssize_t bytes_read = read(fd, buffer.data(), buffer.size());
+	return port;
+}
+
+void changingMessegeRequestFunction(UwbMessages &messages, std::vector<uint8_t> &response, std::uint8_t *&current_request, std::uint16_t &current_read_size, std::uint8_t &current_write_size, std::uint16_t &delay, std::uint16_t &uart_read_timeout, bool &dwm_upd_rate_set_flag)
+{
+	switch (messages.current_request_function)
+	{
+	case DWM_POS_GET:
+		response.clear();
+		response.resize(messages.dwm_pos_get.read_size);
+
+		messages.current_request_function = DWM_POS_GET;
+		current_read_size = messages.dwm_pos_get.read_size;
+		current_request = messages.dwm_pos_get.request;
+		current_write_size = 2;
+
+		if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+			delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+		else
+			delay = 1100;
+
+		uart_read_timeout = 300;
+		break;
+	case DWM_UPD_RATE_SET:
+		response.clear();
+		if (dwm_upd_rate_set_flag == 0)
+		{
+			response.resize(messages.dwm_upd_rate_set.read_size);
+
+			messages.current_request_function = DWM_UPD_RATE_SET;
+			current_read_size = messages.dwm_upd_rate_set.read_size;
+			current_request = messages.dwm_upd_rate_set.request;
+			current_write_size = 6;
+
+			messages.dwm_upd_rate_set.int_update_rate_to_byte();
+
+			delay = 1000;
+			uart_read_timeout = 3000;
+			dwm_upd_rate_set_flag = 1;
+		}
+		else
+		{
+			response.clear();
+			response.resize(messages.dwm_upd_rate_get.read_size);
+
+			messages.current_request_function = DWM_UPD_RATE_GET;
+			current_read_size = messages.dwm_upd_rate_get.read_size;
+			current_request = messages.dwm_upd_rate_get.request;
+			current_write_size = 2;
+
+			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+			else
+				delay = 1100;
+			uart_read_timeout = 300;
+			dwm_upd_rate_set_flag = 0;
+		}
+
+		break;
+	case DWM_UPD_RATE_GET:
+		response.clear();
+		response.resize(messages.dwm_upd_rate_get.read_size);
+
+		messages.current_request_function = DWM_UPD_RATE_GET;
+		current_read_size = messages.dwm_upd_rate_get.read_size;
+		current_request = messages.dwm_upd_rate_get.request;
+		current_write_size = 2;
+
+		if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+			delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+		else
+			delay = 1100;
+		uart_read_timeout = 300;
+
+		dwm_upd_rate_set_flag = 0;
+		break;
+	case DWM_ANCHOR_LIST_GET:
+		response.clear();
+		response.resize(messages.dwm_anchor_list_get.read_size);
+
+		messages.current_request_function = DWM_ANCHOR_LIST_GET;
+		current_read_size = messages.dwm_anchor_list_get.read_size;
+		current_request = messages.dwm_anchor_list_get.request;
+		current_write_size = 3;
+		uart_read_timeout = 300;
+
+		if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+			delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+		else
+			delay = 1100;
+
+		break;
+	case DWM_LOC_GET:
+		response.clear();
+		response.resize(messages.dwm_loc_get.read_size);
+
+		messages.current_request_function = DWM_LOC_GET;
+		current_read_size = messages.dwm_loc_get.read_size;
+		current_request = messages.dwm_loc_get.request;
+		current_write_size = 2;
+
+		if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
+			delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
+		else
+			delay = 1100;
+
+		uart_read_timeout = 300;
+		break;
+	default:
+		break;
+	}
+}
+
+int UwbDeviceProcess(Application &app)
+{
+
+	struct sp_port *port = configureLibserialport();
+
+	int fd = openFifoFileDescriptor("/home/rottango/MasterThesis/build/fifo");
 
 	struct pollfd poll_fifo;
-
-	memset(&poll_fifo, 0, sizeof(poll_fifo));
-	poll_fifo.fd = fd;
-	poll_fifo.events = POLLIN;
+	configureFifo(poll_fifo, fd);
 
 	// if (bytes_read > 0)
 	// {
@@ -322,162 +503,10 @@ int UwbDeviceProcess(Application &app)
 	const auto experiment_start = std::chrono::steady_clock::now();
 	while (app.getUwbRunning())
 	{
-		if (poll(&poll_fifo, 1, 100) == 1)
-		{
-			if (poll_fifo.revents & POLLIN)
-			{
-				std::string buffer(256, '\0');
 
-				ssize_t bytes_read = read(fd, buffer.data(), buffer.size());
+		pollInEvent(poll_fifo, fd, messages);
 
-				if (bytes_read > 0)
-				{
-					buffer.resize(bytes_read);
-					std::cout << "Read from FIFO: " << buffer;
-					switch (buffer[0] - '0')
-					{
-					case 0:
-						std::cout << "message request changed to DWM_POS_GET\n";
-						messages.current_request_function = DWM_POS_GET;
-						break;
-					case 1:
-						std::cout << "message request changed to DWM_UPD_RATE_SET\n";
-						messages.current_request_function = DWM_UPD_RATE_SET;
-						break;
-					case 2:
-						std::cout << "message request changed to DWM_UPD_RATE_GET\n";
-						messages.current_request_function = DWM_UPD_RATE_GET;
-						break;
-					case 3:
-						std::cout << "message request changed to DWM_ANCHOR_LIST_GET\n";
-						messages.current_request_function = DWM_ANCHOR_LIST_GET;
-						break;
-					case 4:
-						std::cout << "message request changed to DWM_LOC_GET\n";
-						messages.current_request_function = DWM_LOC_GET;
-						break;
-					default:
-						break;
-					}
-					if (buffer[1] - '0' >= 1 && buffer[1] - '0' <= 9)
-					{
-						messages.dwm_upd_rate_set.update_rate = buffer[1] - '0';
-						std::cout << "update_rate changed\n";
-					}
-					if (buffer[1] - '0' >= 1 && buffer[1] - '0' <= 9)
-					{
-						messages.dwm_upd_rate_set.update_rate_stationary = buffer[2] - '0';
-						std::cout << "update_rate_stationary changed\n";
-					}
-				}
-			}
-		}
-		switch (messages.current_request_function)
-		{
-		case DWM_POS_GET:
-			response.clear();
-			response.resize(messages.dwm_pos_get.read_size);
-
-			messages.current_request_function = DWM_POS_GET;
-			current_read_size = messages.dwm_pos_get.read_size;
-			current_request = messages.dwm_pos_get.request;
-			current_write_size = 2;
-
-			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
-				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
-			else
-				delay = 1100;
-
-			uart_read_timeout = 300;
-			break;
-		case DWM_UPD_RATE_SET:
-			response.clear();
-			if (dwm_upd_rate_set_flag == 0)
-			{
-				response.resize(messages.dwm_upd_rate_set.read_size);
-
-				messages.current_request_function = DWM_UPD_RATE_SET;
-				current_read_size = messages.dwm_upd_rate_set.read_size;
-				current_request = messages.dwm_upd_rate_set.request;
-				current_write_size = 6;
-
-				messages.dwm_upd_rate_set.int_update_rate_to_byte();
-
-				delay = 1000;
-				uart_read_timeout = 3000;
-				dwm_upd_rate_set_flag = 1;
-			}
-			else
-			{
-				response.clear();
-				response.resize(messages.dwm_upd_rate_get.read_size);
-
-				messages.current_request_function = DWM_UPD_RATE_GET;
-				current_read_size = messages.dwm_upd_rate_get.read_size;
-				current_request = messages.dwm_upd_rate_get.request;
-				current_write_size = 2;
-
-				if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
-					delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
-				else
-					delay = 1100;
-				uart_read_timeout = 300;
-				dwm_upd_rate_set_flag = 0;
-			}
-
-			break;
-		case DWM_UPD_RATE_GET:
-			response.clear();
-			response.resize(messages.dwm_upd_rate_get.read_size);
-
-			messages.current_request_function = DWM_UPD_RATE_GET;
-			current_read_size = messages.dwm_upd_rate_get.read_size;
-			current_request = messages.dwm_upd_rate_get.request;
-			current_write_size = 2;
-
-			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
-				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
-			else
-				delay = 1100;
-			uart_read_timeout = 300;
-
-			dwm_upd_rate_set_flag = 0;
-			break;
-		case DWM_ANCHOR_LIST_GET:
-			response.clear();
-			response.resize(messages.dwm_anchor_list_get.read_size);
-
-			messages.current_request_function = DWM_ANCHOR_LIST_GET;
-			current_read_size = messages.dwm_anchor_list_get.read_size;
-			current_request = messages.dwm_anchor_list_get.request;
-			current_write_size = 3;
-			uart_read_timeout = 300;
-
-			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
-				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
-			else
-				delay = 1100;
-
-			break;
-		case DWM_LOC_GET:
-			response.clear();
-			response.resize(messages.dwm_loc_get.read_size);
-
-			messages.current_request_function = DWM_LOC_GET;
-			current_read_size = messages.dwm_loc_get.read_size;
-			current_request = messages.dwm_loc_get.request;
-			current_write_size = 2;
-
-			if (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate <= 9 && messages.dwm_upd_rate_get.uwb_position_decoded.update_rate >= 1)
-				delay = (messages.dwm_upd_rate_get.uwb_position_decoded.update_rate * 100);
-			else
-				delay = 1100;
-
-			uart_read_timeout = 300;
-			break;
-		default:
-			break;
-		}
+		changingMessegeRequestFunction(messages, response, current_request, current_read_size, current_write_size, delay, uart_read_timeout, dwm_upd_rate_set_flag);
 
 		auto start = std::chrono::steady_clock::now();
 		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
@@ -634,11 +663,7 @@ int UwbDeviceProcess(Application &app)
 	/* Now clean up by closing the port and freeing structures. */
 	check(sp_close(port));
 	sp_free_port(port);
-	sp_free_config(device_config);
-	sp_free_config(config);
 	close(fd);
-
-	free(uwb_port_name);
 
 	return 0;
 }
